@@ -1,1 +1,8 @@
-{}
+collectd:
+  collectd::plugin::virt::connection: qemu:///system
+  tripleo.collectd.plugins.nova_compute:
+  - virt
+rsyslog:
+  tripleo_logging_sources_nova_compute:
+  - file: /var/log/containers/nova/nova-compute.log
+    tag: openstack.nova.compute

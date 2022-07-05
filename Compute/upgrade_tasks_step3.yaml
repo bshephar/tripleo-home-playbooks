@@ -1,1 +1,163 @@
-[]
+- block:
+  - name: fix grub entries to have name start with GRUB_
+    replace:
+      path: /etc/default/grub
+      regexp: ^(TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS)(.*)
+      replace: GRUB_\1\2
+  - name: fix grub entries in append statement
+    replace:
+      path: /etc/default/grub
+      regexp: (.*){(TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS)}(.*)
+      replace: \1{GRUB_\2}\3
+  name: upgrade prepare for leapp to align kernel arg shortcommings in leapp
+  tags:
+  - never
+  - system_upgrade
+  - system_upgrade_prepare
+  when:
+  - step|int == 3
+  - upgrade_leapp_enabled
+- block:
+  - args:
+      creates: /etc/sysconfig/ip6tables.n-o-upgrade
+    name: blank ipv6 rule before activating ipv6 firewall.
+    shell: cat /etc/sysconfig/ip6tables > /etc/sysconfig/ip6tables.n-o-upgrade; cat</dev/null>/etc/sysconfig/ip6tables
+  - name: cleanup unmanaged rules pushed by iptables-services
+    shell: "iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT &>/dev/null\
+      \ && \\\n  iptables -D INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n\
+      iptables -C INPUT -p icmp -j ACCEPT &>/dev/null && \\\n  iptables -D INPUT -p\
+      \ icmp -j ACCEPT\niptables -C INPUT -i lo -j ACCEPT &>/dev/null && \\\n  iptables\
+      \ -D INPUT -i lo -j ACCEPT\niptables -C INPUT -p tcp -m state --state NEW -m\
+      \ tcp --dport 22 -j ACCEPT &>/dev/null && \\\n  iptables -D INPUT -p tcp -m\
+      \ state --state NEW -m tcp --dport 22 -j ACCEPT\niptables -C INPUT -j REJECT\
+      \ --reject-with icmp-host-prohibited &>/dev/null && \\\n  iptables -D INPUT\
+      \ -j REJECT --reject-with icmp-host-prohibited\niptables -C FORWARD -j REJECT\
+      \ --reject-with icmp-host-prohibited &>/dev/null && \\\n  iptables -D FORWARD\
+      \ -j REJECT --reject-with icmp-host-prohibited\n\nsed -i '/^-A INPUT -m state\
+      \ --state RELATED,ESTABLISHED -j ACCEPT$/d' /etc/sysconfig/iptables\nsed -i\
+      \ '/^-A INPUT -p icmp -j ACCEPT$/d' /etc/sysconfig/iptables\nsed -i '/^-A INPUT\
+      \ -i lo -j ACCEPT$/d' /etc/sysconfig/iptables\nsed -i '/^-A INPUT -p tcp -m\
+      \ state --state NEW -m tcp --dport 22 -j ACCEPT$/d' /etc/sysconfig/iptables\n\
+      sed -i '/^-A INPUT -j REJECT --reject-with icmp-host-prohibited$/d' /etc/sysconfig/iptables\n\
+      sed -i '/^-A FORWARD -j REJECT --reject-with icmp-host-prohibited$/d' /etc/sysconfig/iptables\n\
+      \nip6tables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT &>/dev/null\
+      \ && \\\n  ip6tables -D INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n\
+      ip6tables -C INPUT -p ipv6-icmp -j ACCEPT &>/dev/null && \\\n  ip6tables -D\
+      \ INPUT -p ipv6-icmp -j ACCEPT\nip6tables -C INPUT -i lo -j ACCEPT &>/dev/null\
+      \ && \\\n  ip6tables -D INPUT -i lo -j ACCEPT\nip6tables -C INPUT -p tcp -m\
+      \ state --state NEW -m tcp --dport 22 -j ACCEPT &>/dev/null && \\\n  ip6tables\
+      \ -D INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\nip6tables\
+      \ -C INPUT -d fe80::/64 -p udp -m udp --dport 546 -m state --state NEW -j ACCEPT\
+      \ &>/dev/null && \\\n  ip6tables -D INPUT -d fe80::/64 -p udp -m udp --dport\
+      \ 546 -m state --state NEW -j ACCEPT\nip6tables -C INPUT -j REJECT --reject-with\
+      \ icmp6-adm-prohibited &>/dev/null && \\\n  ip6tables -D INPUT -j REJECT --reject-with\
+      \ icmp6-adm-prohibited\nip6tables -C FORWARD -j REJECT --reject-with icmp6-adm-prohibited\
+      \ &>/dev/null && \\\n  ip6tables -D FORWARD -j REJECT --reject-with icmp6-adm-prohibited\n\
+      \nsed -i '/^-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT$/d' /etc/sysconfig/ip6tables\n\
+      sed -i '/^-A INPUT -p ipv6-icmp -j ACCEPT$/d' /etc/sysconfig/ip6tables\nsed\
+      \ -i '/^-A INPUT -i lo -j ACCEPT$/d' /etc/sysconfig/ip6tables\nsed -i '/^-A\
+      \ INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT$/d' /etc/sysconfig/ip6tables\n\
+      sed -i '/^-A INPUT -d fe80::\\/64 -p udp -m udp --dport 546 -m state --state\
+      \ NEW -j ACCEPT$/d' /etc/sysconfig/ip6tables\nsed -i '/^-A INPUT -j REJECT --reject-with\
+      \ icmp6-adm-prohibited$/d' /etc/sysconfig/ip6tables\nsed -i '/^-A FORWARD -j\
+      \ REJECT --reject-with icmp6-adm-prohibited$/d' /etc/sysconfig/ip6tables"
+  when:
+  - (step | int) == 3
+- name: Gather missing facts
+  setup:
+    gather_subset:
+    - '!all'
+    - '!min'
+    - distribution
+  tags:
+  - always
+  when: ansible_facts['distribution'] is not defined or ansible_facts['distribution_major_version']
+    is not defined
+- name: Set leapp facts
+  set_fact:
+    upgrade_leapp_command_options: ''
+    upgrade_leapp_debug: true
+    upgrade_leapp_devel_skip: ''
+    upgrade_leapp_enabled: "{{ _upgradeLeappEnabled | bool and\n   ansible_facts['distribution']\
+      \ == 'RedHat' and\n   ansible_facts['distribution_major_version'] is version('7',\
+      \ '==') }}"
+    upgrade_leapp_post_reboot_delay: 120
+    upgrade_leapp_reboot_timeout: 3600
+  tags:
+  - always
+  vars:
+    _upgradeLeappEnabled: false
+- block:
+  - name: remove all OpenStack packages
+    shell: "yum -y remove *el7ost* \\\n  mariadb-server* -- \\\n  -*openvswitch* \\\
+      \n  -python2-babel \\\n  -python2-dateutil \\\n  -python2-ipaddress \\\n  -python2-jinja2\
+      \ \\\n  -python2-markupsafe \\\n  -python2-six\n"
+  - name: install leapp
+    package:
+      name: leapp
+      state: latest
+  - lineinfile:
+      line: '{{ item }}'
+      path: /etc/leapp/transaction/to_remove
+    loop: '{{ pkg_to_remove }}'
+    name: add packages into Leapp's to_remove file
+    vars:
+      pkg_to_remove: []
+  - lineinfile:
+      line: '{{ item }}'
+      path: /etc/leapp/transaction/to_install
+    loop: '{{ pkg_to_install }}'
+    name: add packages into Leapp's to_install file
+    vars:
+      pkg_to_install: []
+  - name: check sshd_config file
+    register: sshd_config_result
+    stat:
+      path: /etc/ssh/sshd_config
+  - lineinfile:
+      line: PermitRootLogin without-password
+      path: /etc/ssh/sshd_config
+      regexp: ^(# *)?PermitRootLogin
+    name: add PermitRootLogin option for leapp
+  name: system_upgrade_prepare step 3
+  tags:
+  - never
+  - system_upgrade
+  - system_upgrade_prepare
+  when:
+  - step|int == 3
+  - upgrade_leapp_enabled
+- name: Check for os-net-config upgrade
+  register: os_net_config_need_upgrade
+  shell: yum check-upgrade | awk '/os-net-config/{print}'
+  when: step|int == 3
+- name: Check that os-net-config has configuration
+  register: stat_config_json
+  stat:
+    get_attributes: false
+    get_checksum: false
+    get_mime: false
+    path: /etc/os-net-config/config.json
+  when: step|int == 3
+- block:
+  - name: Upgrade os-net-config
+    package: name=os-net-config state=latest
+  - changed_when: os_net_config_upgrade.rc == 2
+    command: os-net-config --no-activate -c /etc/os-net-config/config.json -v --detailed-exit-codes
+    failed_when: os_net_config_upgrade.rc not in [0,2]
+    name: take new os-net-config parameters into account now
+    register: os_net_config_upgrade
+  when:
+  - step|int == 3
+  - os_net_config_need_upgrade.stdout
+  - stat_config_json.stat.exists
+- name: Update all packages
+  vars:
+    skip_package_update: false
+  when:
+  - step|int == 3
+  - not skip_package_update|bool
+  yum:
+    exclude: ansible
+    name: '*'
+    state: latest

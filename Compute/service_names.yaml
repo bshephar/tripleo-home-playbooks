@@ -1,1 +1,20 @@
-[]
+- boot_params_service
+- ca_certs
+- iscsid
+- kernel
+- mysql_client
+- nova_compute
+- nova_libvirt
+- nova_libvirt_guests
+- nova_migration_target
+- logrotate_crond
+- podman
+- snmp
+- sshd
+- chrony
+- timezone
+- tripleo_firewall
+- tripleo_packages
+- tuned
+- ovn_controller
+- ovn_metadata

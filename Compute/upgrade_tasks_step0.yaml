@@ -1,1 +1,95 @@
-[]
+- block:
+  - command: systemctl is-enabled --quiet snmpd
+    failed_when: false
+    name: Check if snmpd is enabled
+    register: snmpd_enabled_result
+  - name: Set fact snmpd_enabled
+    set_fact:
+      snmpd_enabled: '{{ snmpd_enabled_result.rc == 0 }}'
+  when: step|int == 0
+- name: Gather missing facts
+  setup:
+    gather_subset:
+    - '!all'
+    - '!min'
+    - distribution
+  tags:
+  - always
+  when: ansible_facts['distribution'] is not defined or ansible_facts['distribution_major_version']
+    is not defined
+- name: Set leapp facts
+  set_fact:
+    upgrade_leapp_command_options: ''
+    upgrade_leapp_debug: true
+    upgrade_leapp_devel_skip: ''
+    upgrade_leapp_enabled: "{{ _upgradeLeappEnabled | bool and\n   ansible_facts['distribution']\
+      \ == 'RedHat' and\n   ansible_facts['distribution_major_version'] is version('7',\
+      \ '==') }}"
+    upgrade_leapp_post_reboot_delay: 120
+    upgrade_leapp_reboot_timeout: 3600
+  tags:
+  - always
+  vars:
+    _upgradeLeappEnabled: false
+- block:
+  - name: Run UpgradeInitCommand
+    shell: '#!/bin/bash
+
+
+      if [[ -f /etc/resolv.conf.save ]] ; then rm /etc/resolv.conf.save; fi
+
+
+      '
+  - name: Run UpgradeInitCommonCommand
+    shell: '#!/bin/bash
+
+
+      '
+  - dnf:
+      name: '@{{ item.module }}:{{ item.stream }}/{{ item.profile|default(''common'')
+        }}'
+      state: present
+    loop: '{{ dnf_module_list|list }}'
+    name: Ensure DNF modules have the right stream
+    vars:
+      dnf_module_list: []
+    when:
+    - dnf_module_list|length > 0
+    - item.distribution_version is defined
+    - ansible_facts['distribution_major_version'] is version(item.distribution_version,
+      '==')
+  - name: Ensure TripleO prerequisite packages are installed
+    package:
+      name:
+      - jq
+      - lvm2
+      - net-snmp
+      - openstack-selinux
+      - os-net-config
+      - puppet-tripleo
+      - python3-heat-agent*
+      - python3-openstackclient
+      - rsync
+      state: present
+    when: ansible_facts['distribution_major_version'] is version('8', '==')
+  name: Package and repo update tasks
+  when: step|int == 0
+- check_mode: false
+  command: /usr/bin/rpm -q libvirt-daemon
+  failed_when: false
+  name: check if libvirt is installed
+  register: libvirt_installed
+  when: step|int == 0
+- loop:
+  - libvirtd.service
+  - virtlogd.socket
+  name: make sure libvirt services are disabled and masked
+  service:
+    daemon_reload: true
+    enabled: false
+    masked: true
+    name: '{{ item }}'
+    state: stopped
+  when:
+  - step|int == 0
+  - libvirt_installed.rc == 0

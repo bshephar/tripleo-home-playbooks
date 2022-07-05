@@ -22,6 +22,9 @@ ctlplane_mtu: 1500
 ctlplane_subnet_cidr: '24'
 default_route_networks: []
 deployed_server_port_map:
+  overcloud-compute-0-ctlplane:
+    fixed_ips:
+    - ip_address: 192.168.1.6
   overcloud-controller-0-ctlplane:
     fixed_ips:
     - ip_address: 192.168.1.7
@@ -1766,7 +1769,7 @@ tripleo_kernel_sysctl_extra_settings:
   net.bridge.bridge-nf-call-iptables:
     value: 1
   net.ipv4.conf.all.rp_filter:
-    value: 0
+    value: 2
   net.ipv4.ip_forward:
     value: 1
   net.ipv4.ip_local_reserved_ports:
@@ -1802,7 +1805,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1656995386'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1657006197'
 tripleo_keystone_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:

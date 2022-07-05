@@ -35,3 +35,16 @@
   name: redis_external_deploy_init
   when:
   - step|int == 0
+- block:
+  - name: create ovn mac address for Compute role nodes
+    tripleo_ovn_mac_addresses:
+      ovn_bridge_mappings:
+      - datacentre:br-ex
+      ovn_static_bridge_mac_mappings: {}
+      playbook_dir: '{{ playbook_dir }}'
+      role_name: Compute
+      server_resource_names: '{{ groups["Compute"] }}'
+      stack_name: overcloud
+  name: ovn_controller_external_deploy_init
+  when:
+  - step|int == 0

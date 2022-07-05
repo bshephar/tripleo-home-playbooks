@@ -10,7 +10,7 @@ container_cli: podman
 control_virtual_ip: 192.168.1.25
 deploy_artifact_files: []
 deploy_artifact_urls: []
-deploy_identifier: '1656995386'
+deploy_identifier: '1657006197'
 deploy_steps_max: 6
 enable_internal_tls: false
 enabled_networks:
@@ -77,6 +77,26 @@ enabled_services:
 - tripleo_firewall
 - tripleo_packages
 - tuned
+- boot_params_service
+- ca_certs
+- iscsid
+- kernel
+- mysql_client
+- nova_compute
+- nova_libvirt
+- nova_libvirt_guests
+- nova_migration_target
+- logrotate_crond
+- podman
+- snmp
+- sshd
+- chrony
+- timezone
+- tripleo_firewall
+- tripleo_packages
+- tuned
+- ovn_controller
+- ovn_metadata
 external_net_name: external
 extra_hosts_entries: []
 hide_sensitive_logs: false
@@ -94,6 +114,11 @@ hosts_entry:
 - 172.16.0.244 overcloud-controller-0.tenant.bne-home.net overcloud-controller-0.tenant
 - 172.20.12.80 overcloud-controller-0.external.bne-home.net overcloud-controller-0.external
 - 192.168.1.7 overcloud-controller-0.ctlplane.bne-home.net overcloud-controller-0.ctlplane
+- 172.16.2.84 overcloud-compute-0.bne-home.net overcloud-compute-0
+- 172.16.1.147 overcloud-compute-0.storage.bne-home.net overcloud-compute-0.storage
+- 172.16.2.84 overcloud-compute-0.internalapi.bne-home.net overcloud-compute-0.internalapi
+- 172.16.0.243 overcloud-compute-0.tenant.bne-home.net overcloud-compute-0.tenant
+- 192.168.1.6 overcloud-compute-0.ctlplane.bne-home.net overcloud-compute-0.ctlplane
 internal_api_net_name: internal_api
 keystone_resources:
   cinder:
@@ -317,7 +342,7 @@ ping_test_gateway_ips:
   - 192.168.1.254
   - 172.20.0.254
 ping_test_ips:
-  Compute: '   '
+  Compute: 192.168.1.6 172.16.1.147 172.16.2.84 172.16.0.243
   Standalone: 192.168.1.7 172.16.1.148 172.16.3.113 172.16.2.85 172.16.0.244 172.20.12.80
 primary_role_name: Standalone
 service_net_map:

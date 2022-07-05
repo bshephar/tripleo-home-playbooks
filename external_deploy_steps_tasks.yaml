@@ -43,8 +43,28 @@
     tripleo_container_image_prepare_content:
       parameter_defaults:
         AdditionalArchitectures: []
-        ComputeCount: 0
-        ComputeServices: []
+        ComputeCount: 1
+        ComputeServices:
+        - OS::TripleO::Services::BootParams
+        - OS::TripleO::Services::CACerts
+        - OS::TripleO::Services::Iscsid
+        - OS::TripleO::Services::Kernel
+        - OS::TripleO::Services::MySQLClient
+        - OS::TripleO::Services::NovaCompute
+        - OS::TripleO::Services::NovaLibvirt
+        - OS::TripleO::Services::NovaLibvirtGuests
+        - OS::TripleO::Services::NovaMigrationTarget
+        - OS::TripleO::Services::ContainersLogrotateCrond
+        - OS::TripleO::Services::Podman
+        - OS::TripleO::Services::Snmp
+        - OS::TripleO::Services::Sshd
+        - OS::TripleO::Services::Timesync
+        - OS::TripleO::Services::Timezone
+        - OS::TripleO::Services::TripleoFirewall
+        - OS::TripleO::Services::TripleoPackages
+        - OS::TripleO::Services::Tuned
+        - OS::TripleO::Services::OVNController
+        - OS::TripleO::Services::OVNMetadataAgent
         ContainerImagePrepare:
         - push_destination: true
           set:
@@ -517,5 +537,18 @@
       service_name: redis
       stack_name: overcloud
   name: redis_external_deploy_init
+  when:
+  - step|int == 0
+- block:
+  - name: create ovn mac address for Compute role nodes
+    tripleo_ovn_mac_addresses:
+      ovn_bridge_mappings:
+      - datacentre:br-ex
+      ovn_static_bridge_mac_mappings: {}
+      playbook_dir: '{{ playbook_dir }}'
+      role_name: Compute
+      server_resource_names: '{{ groups["Compute"] }}'
+      stack_name: overcloud
+  name: ovn_controller_external_deploy_init
   when:
   - step|int == 0
