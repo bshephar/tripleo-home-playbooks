@@ -1,0 +1,653 @@
+- block:
+  - name: Disable the cinder_volume cluster resource before container upgrade
+    pacemaker_resource:
+      resource: openstack-cinder-volume
+      state: disable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  - command: pcs resource bundle update openstack-cinder-volume container image={{cinder_volume_image_latest}}
+    name: pcs resource bundle update cinder_volume for new container image name
+  - name: Enable the cinder_volume cluster resource
+    pacemaker_resource:
+      resource: openstack-cinder-volume
+      state: enable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  name: Update cinder_volume pcs resource bundle for new container image
+  when:
+  - step|int == 1
+  - is_cinder_volume_bootstrap_node
+  - cinder_volume_pcs_res|bool
+  - cinder_volume_image_current != cinder_volume_image_latest
+- block:
+  - name: set cinder_volume upgrade node facts in a single-node environment
+    set_fact:
+      cacheable: false
+      cinder_volume_node_names_upgraded: '{{ cinder_volume_node_names | default([])
+        }}'
+      cinder_volume_short_node_names_upgraded: '{{ cinder_volume_short_node_names
+        }}'
+    when: groups['cinder_volume'] | length <= 1
+  - loop: '{{ cinder_volume_node_names | default([]) }}'
+    name: set cinder_volume upgrade node facts from the limit option
+    set_fact:
+      cacheable: false
+      cinder_volume_node_names_upgraded: '{{ cinder_volume_node_names_upgraded|default([])
+        + [item] }}'
+      cinder_volume_short_node_names_upgraded: '{{ cinder_volume_short_node_names_upgraded|default([])
+        + [item.split(''.'')[0]] }}'
+    when:
+    - groups['cinder_volume'] | length > 1
+    - item.split('.')[0] in ansible_limit.split(':')
+  - fail:
+      msg: 'You can''t upgrade cinder_volume without staged upgrade.  You need to
+        use the limit option in order to do so.
+
+        '
+    when: cinder_volume_short_node_names_upgraded is not defined or cinder_volume_short_node_names_upgraded
+      | length == 0 or cinder_volume_node_names_upgraded is not defined or cinder_volume_node_names_upgraded
+      | length == 0
+  - debug:
+      msg: Prepare cinder_volume upgrade for {{ cinder_volume_short_node_names_upgraded
+        }}
+  - include_role:
+      name: tripleo_container_rm
+    name: remove cinder_volume init container on upgrade-scaleup to force re-init
+    vars:
+      tripleo_containers_to_rm:
+      - cinder_volume_init_bundle
+    when:
+    - cinder_volume_short_node_names_upgraded | length > 1
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the cinder_volume short name to hiera data for the upgrade.
+    vars:
+      tripleo_upgrade_key: cinder_volume_short_node_names_override
+      tripleo_upgrade_value: '{{ cinder_volume_short_node_names_upgraded }}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the cinder_volume long name to hiera data for the upgrade
+    vars:
+      tripleo_upgrade_key: cinder_volume_node_names_override
+      tripleo_upgrade_value: '{{ cinder_volume_node_names_upgraded }}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: remove.yml
+    loop:
+    - cinder_volume_short_node_names_override
+    - cinder_volume_node_names_override
+    name: remove the extra hiera data needed for the upgrade.
+    vars:
+      tripleo_upgrade_key: '{{ item }}'
+    when: cinder_volume_short_node_names_upgraded | length == cinder_volume_node_names
+      | length
+  name: Create hiera data to upgrade cinder_volume in a stepwise manner.
+  when:
+  - step|int == 1
+  - cluster_recreate|bool
+- file:
+    path: /etc/cron.daily/containers-tmpwatch
+    state: absent
+  name: Ensure old cron.daily is absent
+  when: step|int == 1
+- block:
+  - name: Disable the haproxy cluster resource before container upgrade
+    pacemaker_resource:
+      resource: haproxy-bundle
+      state: disable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  - block:
+    - command: cibadmin --query --xpath "//storage-mapping[@id='haproxy-var-lib']"
+      failed_when: false
+      name: Check haproxy stats socket configuration in pacemaker
+      register: haproxy_stats_exposed
+    - command: cibadmin --query --xpath "//storage-mapping[@id='haproxy-cert']"
+      failed_when: false
+      name: Check haproxy public certificate configuration in pacemaker
+      register: haproxy_cert_mounted
+    - command: pcs resource bundle update haproxy-bundle storage-map add id=haproxy-var-lib
+        source-dir=/var/lib/haproxy target-dir=/var/lib/haproxy options=rw
+      name: Add a bind mount for stats socket in the haproxy bundle
+      when: haproxy_stats_exposed.rc == 6
+    - name: Set HAProxy public cert volume mount fact
+      set_fact:
+        haproxy_public_cert_path: /etc/pki/tls/private/overcloud_endpoint.pem
+        haproxy_public_tls_enabled: true
+    - command: pcs resource bundle update haproxy-bundle storage-map add id=haproxy-cert
+        source-dir={{ haproxy_public_cert_path }} target-dir=/var/lib/kolla/config_files/src-tls/{{
+        haproxy_public_cert_path }} options=ro
+      name: Add a bind mount for public certificate in the haproxy bundle
+      when:
+      - haproxy_cert_mounted.rc == 6
+      - haproxy_public_tls_enabled|bool
+    name: Expose HAProxy stats socket on the host and mount TLS cert if needed
+  - command: pcs resource bundle update haproxy-bundle container image={{haproxy_image_latest}}
+    name: Update the haproxy bundle to use the new container image name
+  - name: Enable the haproxy cluster resource
+    pacemaker_resource:
+      resource: haproxy-bundle
+      state: enable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  name: Update haproxy pcs resource bundle for new container image
+  when:
+  - step|int == 1
+  - is_haproxy_bootstrap_node|bool
+  - haproxy_pcs_res|bool
+  - haproxy_image_current != haproxy_image_latest
+- block:
+  - name: set haproxy upgrade node facts in a single-node environment
+    set_fact:
+      cacheable: false
+      haproxy_short_node_names_upgraded: '{{ haproxy_short_node_names }}'
+    when: groups['haproxy'] | length <= 1
+  - loop: '{{ haproxy_short_node_names | default([]) }}'
+    name: set haproxy upgrade node facts from the limit option
+    set_fact:
+      cacheable: false
+      haproxy_short_node_names_upgraded: '{{ haproxy_short_node_names_upgraded|default([])
+        + [item.split(''.'')[0]] }}'
+    when:
+    - groups['haproxy'] | length > 1
+    - item.split('.')[0] in ansible_limit.split(':')
+  - fail:
+      msg: 'You can''t upgrade haproxy without staged upgrade. You need to use the
+        limit option in order to do so.
+
+        '
+    when: haproxy_short_node_names_upgraded is not defined or haproxy_short_node_names_upgraded
+      | length == 0
+  - debug:
+      msg: Prepare haproxy upgrade for {{ haproxy_short_node_names_upgraded }}
+  - include_role:
+      name: tripleo_container_rm
+    name: remove haproxy init container on upgrade-scaleup to force re-init
+    vars:
+      tripleo_containers_to_rm:
+      - haproxy_init_bundle
+    when:
+    - haproxy_short_node_names_upgraded | length > 1
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the haproxy short name to hiera data for the upgrade.
+    vars:
+      tripleo_upgrade_key: haproxy_short_node_names_override
+      tripleo_upgrade_value: '{{haproxy_short_node_names_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: remove.yml
+    name: remove the extra hiera data needed for the upgrade.
+    vars:
+      tripleo_upgrade_key: haproxy_short_node_names_override
+    when: haproxy_short_node_names_upgraded | length == haproxy_short_node_names |
+      length
+  name: Create hiera data to upgrade haproxy in a stepwise manner.
+  when:
+  - step|int == 1
+  - cluster_recreate|bool
+- block:
+  - name: Disable the galera cluster resource before container upgrade
+    pacemaker_resource:
+      resource: galera
+      state: disable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  - block:
+    - command: cibadmin --query --xpath "//storage-mapping[@id='mysql-log']"
+      failed_when: false
+      name: Check Mysql logging configuration in pacemaker
+      register: mysql_logs_moved
+    - block:
+      - command: pcs resource bundle update galera-bundle storage-map add id=mysql-log
+          source-dir=/var/log/containers/mysql target-dir=/var/log/mysql options=rw
+        name: Add a bind mount for logging in the galera bundle
+      - command: pcs resource update galera log=/var/log/mysql/mysqld.log
+        name: Reconfigure Mysql log file in the galera resource agent
+      name: Change Mysql logging configuration in pacemaker
+      when: mysql_logs_moved.rc == 6
+    name: Move Mysql logging to /var/log/containers
+  - command: pcs resource bundle update galera-bundle container image={{galera_image_latest}}
+    name: Update the galera bundle to use the new container image name
+  - name: Enable the galera cluster resource
+    pacemaker_resource:
+      resource: galera
+      state: enable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  name: Update galera pcs resource bundle for new container image
+  when:
+  - step|int == 1
+  - is_mysql_bootstrap_node|bool
+  - galera_pcs_res|bool
+  - galera_image_current != galera_image_latest
+- block:
+  - name: set mysql upgrade node facts in a single-node environment
+    set_fact:
+      cacheable: false
+      mysql_node_names_upgraded: '{{ mysql_node_names }}'
+      mysql_short_node_names_upgraded: '{{ mysql_short_node_names }}'
+    when: groups['mysql'] | length <= 1
+  - loop: '{{ mysql_node_names | default([]) }}'
+    name: set mysql upgrade node facts from the limit option
+    set_fact:
+      cacheable: false
+      mysql_node_names_upgraded: '{{ mysql_node_names_upgraded|default([]) + [item]
+        }}'
+      mysql_short_node_names_upgraded: '{{ mysql_short_node_names_upgraded|default([])
+        + [item.split(''.'')[0]] }}'
+    when:
+    - groups['mysql'] | length > 1
+    - item.split('.')[0] in ansible_limit.split(':')
+  - fail:
+      msg: 'You can''t upgrade galera without staged upgrade. You need to use the
+        limit option in order to do so.
+
+        '
+    when: mysql_short_node_names_upgraded is not defined or mysql_short_node_names_upgraded
+      | length == 0 or mysql_node_names_upgraded is not defined or mysql_node_names_upgraded
+      | length == 0
+  - debug:
+      msg: Prepare galera upgrade for {{ mysql_short_node_names_upgraded }}
+  - include_role:
+      name: tripleo_container_rm
+    name: remove mysql init container on upgrade-scaleup to force re-init
+    vars:
+      tripleo_containers_to_rm:
+      - mysql_wait_bundle
+    when:
+    - mysql_short_node_names_upgraded | length > 1
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the mysql short name to hiera data for the upgrade.
+    vars:
+      tripleo_upgrade_key: mysql_short_node_names_override
+      tripleo_upgrade_value: '{{mysql_short_node_names_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the mysql long name to hiera data for the upgrade
+    vars:
+      tripleo_upgrade_key: mysql_node_names_override
+      tripleo_upgrade_value: '{{mysql_node_names_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: remove.yml
+    loop:
+    - mysql_short_node_names_override
+    - mysql_node_names_override
+    name: remove the extra hiera data needed for the upgrade.
+    vars:
+      tripleo_upgrade_key: '{{item}}'
+    when: mysql_short_node_names_upgraded | length == mysql_node_names | length
+  name: Create hiera data to upgrade mysql in a stepwise manner.
+  when:
+  - step|int == 1
+  - cluster_recreate|bool
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-libvirt.conf
+      state: absent
+    name: Remove old tmpfiles.d config
+  name: nova_libvirt_container_tmpfile_cleanup
+  when: step|int == 1
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-libvirt.conf
+      state: absent
+    name: Remove old tmpfiles.d config
+  name: nova_migration_target_tmpfile_cleanup
+  when: step|int == 1
+- block:
+  - name: Disable the ovn-dbs-bundle cluster resource before container upgrade
+    pacemaker_resource:
+      resource: ovn-dbs-bundle
+      state: disable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  - command: pcs resource bundle update ovn-dbs-bundle container image={{ovn_dbs_image_latest}}
+    name: pcs resource bundle update ovn-dbs for new container image name
+  - name: Enable the ovn-dbs-bundle cluster resource
+    pacemaker_resource:
+      resource: ovn-dbs-bundle
+      state: enable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+    when: null
+  name: Update ovn_dbs pcs resource bundle for new container image
+  when:
+  - step|int == 1
+  - ovn_dbs_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower
+  - ovn_dbs_pcs_res|bool
+  - ovn_dbs_image_current != ovn_dbs_image_latest
+- block:
+  - name: set ovn_dbs upgrade node facts in a single-node environment
+    set_fact:
+      cacheable: false
+      ovn_dbs_short_node_names_upgraded: '{{ ovn_dbs_short_node_names }}'
+    when: groups['ovn_dbs'] | length <= 1
+  - loop: '{{ ovn_dbs_short_node_names | default([]) }}'
+    name: set ovn_dbs upgrade node facts from the limit option
+    set_fact:
+      cacheable: false
+      ovn_dbs_short_node_names_upgraded: '{{ ovn_dbs_short_node_names_upgraded|default([])
+        + [item.split(''.'')[0]] }}'
+    when:
+    - groups['ovn_dbs'] | length > 1
+    - item.split('.')[0] in ansible_limit.split(':')
+  - fail:
+      msg: 'You can''t upgrade ovn_dbs without staged upgrade. You need to use the
+        limit option in order to do so.
+
+        '
+    when: ovn_dbs_short_node_names_upgraded is not defined or ovn_dbs_short_node_names_upgraded
+      | length == 0
+  - debug:
+      msg: Prepare ovn_dbs upgrade for {{ ovn_dbs_short_node_names_upgraded }}
+  - include_role:
+      name: tripleo_container_rm
+    name: remove ovn_dbs init container on upgrade-scaleup to force re-init
+    vars:
+      tripleo_containers_to_rm:
+      - ovn_dbs_init_bundle
+    when:
+    - ovn_dbs_short_node_names_upgraded | length > 1
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the ovn_dbs short name to hiera data for the upgrade.
+    vars:
+      tripleo_upgrade_key: ovn_dbs_short_node_names_override
+      tripleo_upgrade_value: '{{ovn_dbs_short_node_names_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: remove.yml
+    name: remove the extra hiera data needed for the upgrade.
+    vars:
+      tripleo_upgrade_key: ovn_dbs_short_node_names_override
+    when: ovn_dbs_short_node_names_upgraded | length == ovn_dbs_short_node_names |
+      length
+  name: Create hiera data to upgrade ovn_dbs in a stepwise manner.
+  when:
+  - step|int == 1
+  - cluster_recreate|bool
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-octavia.conf
+      state: absent
+    name: octavia_api_tmpfile_cleanup
+  name: octavia_api_tmpfile_cleanup
+  when: step|int == 1
+- block:
+  - name: Disable the rabbitmq cluster resource before container upgrade
+    pacemaker_resource:
+      resource: rabbitmq-bundle
+      state: disable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  - block:
+    - command: cibadmin --query --xpath "//storage-mapping[@id='rabbitmq-log']"
+      failed_when: false
+      name: Check rabbitmq logging configuration in pacemaker
+      register: rabbitmq_logs_moved
+    - command: pcs resource bundle update rabbitmq-bundle storage-map add id=rabbitmq-log
+        source-dir=/var/log/containers/rabbitmq target-dir=/var/log/rabbitmq options=rw
+      name: Add a bind mount for logging in the rabbitmq bundle
+      when: rabbitmq_logs_moved.rc == 6
+    name: Move rabbitmq logging to /var/log/containers
+  - command: pcs resource bundle update rabbitmq-bundle container image={{rabbitmq_image_latest}}
+    name: Update the rabbitmq bundle to use the new container image name
+  - name: Enable the rabbitmq cluster resource
+    pacemaker_resource:
+      resource: rabbitmq-bundle
+      state: enable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+  name: Update rabbitmq-bundle pcs resource bundle for new container image
+  when:
+  - step|int == 1
+  - is_rpc_rabbitmq_bootstrap_node|bool
+  - rabbitmq_pcs_res|bool
+  - rabbitmq_image_current != rabbitmq_image_latest
+- block:
+  - name: set oslo_messaging_rpc upgrade node facts in a single-node environment
+    set_fact:
+      cacheable: false
+      oslo_messaging_rpc_node_names_upgraded: '{{ oslo_messaging_rpc_node_names }}'
+      oslo_messaging_rpc_short_node_names_upgraded: '{{ oslo_messaging_rpc_short_node_names
+        }}'
+    when: groups['oslo_messaging_rpc'] | length <= 1
+  - loop: '{{ oslo_messaging_rpc_node_names | default([]) }}'
+    name: set oslo_messaging_rpc upgrade node facts from the limit option
+    set_fact:
+      cacheable: false
+      oslo_messaging_rpc_node_names_upgraded: '{{ oslo_messaging_rpc_node_names_upgraded|default([])
+        + [item] }}'
+      oslo_messaging_rpc_short_node_names_upgraded: '{{ oslo_messaging_rpc_short_node_names_upgraded|default([])
+        + [item.split(''.'')[0]] }}'
+    when:
+    - groups['oslo_messaging_rpc'] | length > 1
+    - item.split('.')[0] in ansible_limit.split(':')
+  - fail:
+      msg: 'You can''t upgrade oslo_messaging_rpc without staged upgrade.  You need
+        to use the limit option in order to do so.
+
+        '
+    when: oslo_messaging_rpc_short_node_names_upgraded is not defined or oslo_messaging_rpc_short_node_names_upgraded
+      | length == 0 or oslo_messaging_rpc_node_names_upgraded is not defined or oslo_messaging_rpc_node_names_upgraded
+      | length == 0
+  - debug:
+      msg: Prepare oslo_messaging_rpc upgrade for {{ oslo_messaging_rpc_short_node_names_upgraded
+        }}
+  - include_role:
+      name: tripleo_container_rm
+    name: remove rabbitmq init container on upgrade-scaleup to force re-init
+    vars:
+      tripleo_containers_to_rm:
+      - rabbitmq_wait_bundle
+    when:
+    - oslo_messaging_rpc_short_node_names_upgraded | length > 1
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the oslo_messaging_rpc short name to hiera data for the upgrade.
+    vars:
+      tripleo_upgrade_key: oslo_messaging_rpc_short_node_names_override
+      tripleo_upgrade_value: '{{oslo_messaging_rpc_short_node_names_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the oslo_messaging_rpc long name to hiera data for the upgrade
+    vars:
+      tripleo_upgrade_key: oslo_messaging_rpc_node_names_override
+      tripleo_upgrade_value: '{{oslo_messaging_rpc_node_names_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: remove.yml
+    loop:
+    - oslo_messaging_rpc_short_node_names_override
+    - oslo_messaging_rpc_node_names_override
+    name: remove the extra hiera data needed for the upgrade.
+    vars:
+      tripleo_upgrade_key: '{{item}}'
+    when: oslo_messaging_rpc_short_node_names_upgraded | length == oslo_messaging_rpc_node_names
+      | length
+  name: Create hiera data to upgrade oslo messaging rpc in a stepwise manner.
+  when:
+  - step|int == 1
+  - cluster_recreate|bool
+- block:
+  - name: set pacemaker upgrade node facts in a single-node environment
+    set_fact:
+      cacheable: false
+      pacemaker_short_node_names_upgraded: '{{ pacemaker_short_node_names }}'
+    when: groups['pacemaker'] | length <= 1
+  - loop: '{{ pacemaker_short_node_names | default([]) }}'
+    name: set pacemaker upgrade node facts from the limit option
+    set_fact:
+      cacheable: false
+      pacemaker_short_node_names_upgraded: '{{ pacemaker_short_node_names_upgraded|default([])
+        + [item.split(''.'')[0]] }}'
+    when:
+    - groups['pacemaker'] | length > 1
+    - item.split('.')[0] in ansible_limit.split(':')
+  - fail:
+      msg: 'You can''t upgrade pacemaker without staged upgrade. You need to use the
+        limit option in order to do so.
+
+        '
+    when: pacemaker_short_node_names_upgraded is not defined or pacemaker_short_node_names_upgraded
+      | length == 0
+  - debug:
+      msg: Prepare pacemaker upgrade for {{ pacemaker_short_node_names_upgraded }}
+  - name: set pacemaker node ips fact from the names fact
+    set_fact:
+      cacheable: false
+      pacemaker_node_ips_upgraded: '{{ dict(pacemaker_short_node_names|zip(pacemaker_node_ips))
+        | dict2items | selectattr(''key'', ''in'', pacemaker_short_node_names_upgraded)
+        | map(attribute=''value'') | list }}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the pacemaker short name to hiera data for the upgrade.
+    vars:
+      tripleo_upgrade_key: pacemaker_short_node_names_override
+      tripleo_upgrade_value: '{{pacemaker_short_node_names_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: set.yml
+    name: add the pacemaker ips to hiera data for the upgrade.
+    vars:
+      tripleo_upgrade_key: pacemaker_node_ips_override
+      tripleo_upgrade_value: '{{pacemaker_node_ips_upgraded}}'
+  - include_role:
+      name: tripleo_upgrade_hiera
+      tasks_from: remove.yml
+    loop:
+    - pacemaker_short_node_names_override
+    - pacemaker_node_ips_override
+    name: remove the extra hiera data needed for the upgrade.
+    vars:
+      tripleo_upgrade_key: '{{item}}'
+    when: pacemaker_short_node_names_upgraded | length == pacemaker_short_node_names
+      | length
+  name: Create hiera data to upgrade pacemaker in a stepwise manner.
+  when:
+  - step|int == 1
+  - cluster_recreate|bool
+- block:
+  - lineinfile:
+      dest: /etc/hosts
+      line: '{{ undercloud_hosts_entries | join('''') }}'
+      state: present
+    name: Make sure the Undercloud hostname is included in /etc/hosts
+    when:
+    - undercloud_hosts_entries is defined
+  - name: Set container_registry_insecure_registries fact.
+    set_fact:
+      tripleo_container_registry_insecure_registries:
+      - tripleo-director.ctlplane.localdomain:8787
+  - include_role:
+      name: tripleo_podman
+      tasks_from: tripleo_podman_install.yml
+  name: Run podman install
+  when:
+  - step|int == 1
+- block:
+  - name: Ensure redis is uninstalled on container host
+    package:
+      name: redis
+      state: absent
+  name: redis_container_puppet_redis_pkg_clean
+  when: step|int == 1
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-redis.conf
+      state: absent
+    name: remove old tmpfiles.d config
+  name: redis_container_puppet_tmpfile_cleanup
+  when: step|int == 1
+- name: Stop snmp service
+  service: name=snmpd state=stopped
+  when:
+  - step|int == 1
+  - snmpd_enabled|bool
+- block:
+  - failed_when: false
+    name: Disable tripleo-iptables.service
+    register: systemd_tripleo_iptables
+    systemd:
+      enabled: false
+      name: tripleo-iptables.service
+      state: stopped
+  - file:
+      path: /etc/systemd/system/tripleo-iptables.service
+      state: absent
+    name: Cleanup tripleo-iptables.services
+  - failed_when: false
+    name: Disable tripleo-ip6tables.service
+    register: systemd_tripleo_ip6tables
+    systemd:
+      enabled: false
+      name: tripleo-ip6tables.service
+      state: stopped
+  - file:
+      path: /etc/systemd/system/tripleo-ip6tables.service
+      state: absent
+    name: Cleanup tripleo-ip6tables.services
+  - name: Reload systemd
+    systemd:
+      daemon_reload: true
+    when:
+    - (systemd_tripleo_iptables is changed or systemd_tripleo_ip6tables is changed)
+  name: Cleanup tripleo-iptables services
+  when:
+  - (step | int) == 1
+- name: Gather missing facts
+  setup:
+    gather_subset:
+    - '!all'
+    - '!min'
+    - distribution
+  tags:
+  - always
+  when: ansible_facts['distribution'] is not defined or ansible_facts['distribution_major_version']
+    is not defined
+- name: Set leapp facts
+  set_fact:
+    upgrade_leapp_command_options: ''
+    upgrade_leapp_debug: true
+    upgrade_leapp_devel_skip: ''
+    upgrade_leapp_enabled: "{{ _upgradeLeappEnabled | bool and\n   ansible_facts['distribution']\
+      \ == 'RedHat' and\n   ansible_facts['distribution_major_version'] is version('7',\
+      \ '==') }}"
+    upgrade_leapp_post_reboot_delay: 120
+    upgrade_leapp_reboot_timeout: 3600
+  tags:
+  - always
+  vars:
+    _upgradeLeappEnabled: false

@@ -1,0 +1,53 @@
+- include_role:
+    name: tripleo_keystone
+    tasks_from: keystone-db-sync.yaml
+  name: Keystone DB sync
+  when:
+  - step|int == 3
+- import_role:
+    name: tripleo_keystone
+    tasks_from: keystone.yaml
+  name: Keystone containers
+  when:
+  - step|int == 3
+- import_role:
+    name: tripleo_keystone
+    tasks_from: keystone-bootstrap.yaml
+  name: Keystone bootstrap containers
+  vars:
+    tripleo_keystone_admin_password: 7i8YsihaRsvMJKyBxT2Z2RD3a
+    tripleo_keystone_admin_url: http://192.168.1.25:35357
+    tripleo_keystone_internal_url: http://192.168.1.25:5000
+    tripleo_keystone_public_url: https://openstack.bne-home.net:13000
+    tripleo_keystone_region: regionOne
+  when:
+  - step|int == 3
+- block:
+  - become: true
+    failed_when: false
+    name: Retrieve the galera container
+    register: galera_bundle_id
+    shell: '{{ container_cli }} ps -q --filter name=galera-bundle'
+  - become: true
+    name: Update credentials in the container
+    shell: '{{ container_cli }} exec -u root -t ''{{ galera_bundle_id.stdout_lines[0]
+      }}'' cp /var/lib/kolla/config_files/src/root/.my.cnf /root'
+    when: galera_bundle_id.rc == 0 and galera_bundle_id.stdout != ""
+  name: Sync MySQL credentials in the running container
+  when: step|int == 3
+- block:
+  - import_role:
+      name: tripleo_ha_wrapper
+    name: Ovn dbs puppet bundle
+    vars:
+      tripleo_ha_wrapper_bundle_name: ovn-dbs-bundle
+      tripleo_ha_wrapper_puppet_config_volume: ovn_dbs
+      tripleo_ha_wrapper_puppet_debug: false
+      tripleo_ha_wrapper_puppet_execute: include ::tripleo::profile::base::pacemaker;
+        include ::tripleo::profile::pacemaker::ovn_dbs_bundle
+      tripleo_ha_wrapper_puppet_tags: pacemaker::resource::bundle,pacemaker::property,pacemaker::resource::ip,pacemaker::resource::ocf,pacemaker::constraint::order,pacemaker::constraint::colocation
+      tripleo_ha_wrapper_resource_name: ovndb_servers
+      tripleo_ha_wrapper_resource_state: Slave Master
+      tripleo_ha_wrapper_service_name: ovn_dbs
+  name: OVNDbs HA Wrappers Step
+  when: step|int == 3

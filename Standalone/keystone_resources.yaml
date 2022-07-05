@@ -1,0 +1,139 @@
+cinder:
+  users:
+    cinder:
+      password: KutXQeLq3w0rqwJUy5MwOowdU
+      roles:
+      - admin
+      - service
+cinderv3:
+  endpoints:
+    admin: http://192.168.1.25:8776/v3
+    internal: http://192.168.1.25:8776/v3
+    public: https://openstack.bne-home.net:13776/v3
+  region: regionOne
+  service: volumev3
+  users:
+    cinderv3:
+      password: KutXQeLq3w0rqwJUy5MwOowdU
+      roles:
+      - admin
+      - service
+glance:
+  endpoints:
+    admin: http://192.168.1.25:9292
+    internal: http://192.168.1.25:9292
+    public: https://openstack.bne-home.net:13292
+  region: regionOne
+  service: image
+  users:
+    glance:
+      password: IEhguPUe6OnKOeRjGPsC45Kp6
+      roles:
+      - admin
+      - service
+heat:
+  domains:
+  - heat_stack
+  endpoints:
+    admin: http://192.168.1.25:8004/v1/%(tenant_id)s
+    internal: http://192.168.1.25:8004/v1/%(tenant_id)s
+    public: https://openstack.bne-home.net:13004/v1/%(tenant_id)s
+  region: regionOne
+  roles:
+  - heat_stack_user
+  service: orchestration
+  users:
+    heat:
+      password: 8mye5b2UMQupCdoY2D8bvvl2g
+      roles:
+      - admin
+      - service
+    heat_stack_domain_admin:
+      domain: heat_stack
+      password: VRquZW5HtSagsmRRB4A8t8mlX
+      roles:
+      - admin
+heat-cfn:
+  endpoints:
+    admin: http://192.168.1.25:8000/v1
+    internal: http://192.168.1.25:8000/v1
+    public: https://openstack.bne-home.net:13005/v1
+  region: regionOne
+  service: cloudformation
+  users:
+    heat-cfn:
+      password: 8mye5b2UMQupCdoY2D8bvvl2g
+      roles:
+      - admin
+      - service
+neutron:
+  endpoints:
+    admin: http://192.168.1.25:9696
+    internal: http://192.168.1.25:9696
+    public: https://openstack.bne-home.net:13696
+  region: regionOne
+  service: network
+  users:
+    neutron:
+      password: a1PIB0bVR8KCI5Nryq9ocVZeP
+      roles:
+      - admin
+      - service
+nova:
+  endpoints:
+    admin: http://192.168.1.25:8774/v2.1
+    internal: http://192.168.1.25:8774/v2.1
+    public: https://openstack.bne-home.net:13774/v2.1
+  region: regionOne
+  service: compute
+  users:
+    nova:
+      password: QgE5gYRM5zaHlZDihVfa0tiyC
+      roles:
+      - admin
+      - service
+octavia:
+  endpoints:
+    admin: http://192.168.1.25:9876
+    internal: http://192.168.1.25:9876
+    public: https://openstack.bne-home.net:13876
+  project: service
+  region: regionOne
+  service: load-balancer
+  users:
+    octavia:
+      name: octavia
+      password: peshpcOkRNosh44C3XNwUGxtw
+      project: service
+      roles:
+      - admin
+      - service
+placement:
+  endpoints:
+    admin: http://192.168.1.25:8778/placement
+    internal: http://192.168.1.25:8778/placement
+    public: https://openstack.bne-home.net:13778/placement
+  region: regionOne
+  service: placement
+  users:
+    placement:
+      password: vFwQ1AoetKNdWwCyrkEbcF6LS
+      roles:
+      - admin
+      - service
+swift:
+  endpoints:
+    admin: http://192.168.1.25:8080
+    internal: http://192.168.1.25:8080/v1/AUTH_%(tenant_id)s
+    public: https://openstack.bne-home.net:13808/v1/AUTH_%(tenant_id)s
+  region: regionOne
+  roles:
+  - swiftoperator
+  - ResellerAdmin
+  service: object-store
+  users:
+    swift:
+      password: EP52w9plg78yVmzrojICyiaa6
+      roles:
+      - admin
+      - service

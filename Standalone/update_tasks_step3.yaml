@@ -1,0 +1,71 @@
+- block:
+  - name: set is_haproxy_bootstrap_node fact
+    set_fact: is_haproxy_bootstrap_node={{haproxy_short_bootstrap_node_name|lower
+      == ansible_facts['hostname']|lower}}
+    tags: common
+    when:
+    - haproxy_short_bootstrap_node_name|default(false)
+  name: Set HAProxy upgrade facts
+- block:
+  - command: '{{container_cli}} pull {{ovn_dbs_image}}'
+    delay: 3
+    name: Pull latest ovn-dbs images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous ovn_dbs image id
+    register: old_ovn_dbs_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{ovn_dbs_image_latest}}'
+  - name: Get new ovn_dbs image id
+    register: new_ovn_dbs_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{ovn_dbs_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest ovn_dbs image
+    vars:
+      container_image: '{{ovn_dbs_image}}'
+      container_image_latest: '{{ovn_dbs_image_latest}}'
+    when:
+    - old_ovn_dbs_image_id.stdout != new_ovn_dbs_image_id.stdout
+  name: ovn-dbs fetch and retag container image for pacemaker
+  vars:
+    ovn_dbs_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:current-tripleo
+    ovn_dbs_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+  when:
+  - step|int == 3
+- name: Check swift containers log folder/symlink exists
+  register: swift_log_link
+  stat:
+    path: /var/log/containers/swift
+- file:
+    path: /var/log/containers/swift
+    state: absent
+  name: Delete if symlink
+  when: swift_log_link.stat.islnk is defined and swift_log_link.stat.islnk
+- name: Check for existing yum.pid
+  register: yum_pid_file
+  stat: path=/run/yum.pid
+  when: step|int == 0 or step|int == 3
+- fail: msg="ERROR existing yum.pid detected - can't continue! Please ensure there
+    is no other package update process for the duration of the minor update worfklow.
+    Exiting."
+  name: Exit if existing yum process
+  when: (step|int == 0 or step|int == 3) and yum_pid_file.stat.exists
+- name: Update all packages
+  vars:
+    skip_package_update: false
+  when:
+  - step|int == 3
+  - not skip_package_update|bool
+  yum:
+    exclude: ansible
+    name: '*'
+    state: latest
+- ignore_errors: true
+  name: Ensure openvswitch is running after update
+  service:
+    enabled: true
+    name: openvswitch
+    state: started
+  when: step|int == 3

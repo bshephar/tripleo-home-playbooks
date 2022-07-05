@@ -1,0 +1,8 @@
+- include_tasks: Standalone/pre_upgrade_rolling_tasks.yaml
+  when: tripleo_role_name == 'Standalone'
+  tags:
+    - always
+- include_tasks: Compute/pre_upgrade_rolling_tasks.yaml
+  when: tripleo_role_name == 'Compute'
+  tags:
+    - always

@@ -1,0 +1,61 @@
+- block:
+  - become: true
+    command: '{{ container_cli }} exec cinder_api cinder-manage db online_data_migrations'
+    delegate_to: '{{ groups[''cinder_api''][0] }}'
+    name: Online data migration for Cinder
+    tags:
+    - online_upgrade
+    - online_upgrade_cinder
+  when: step|int == 1
+- block:
+  - become: true
+    command: '{{ container_cli }} exec nova_conductor nova-manage db online_data_migrations'
+    delegate_to: '{{ groups[''nova_conductor''][0] }}'
+    name: Online data migration for Nova
+    tags:
+    - online_upgrade
+    - online_upgrade_nova
+  when: step|int == 1
+- debug:
+    msg: ovn container will be using {{ image }}
+  name: OVN Container image used
+  tags: ovn
+  vars:
+    image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  when: step|int == 1
+- async: 600
+  become: true
+  delegate_to: '{{ item }}'
+  ignore_errors: true
+  loop: '{{ groups[''ovn_controller''] }}'
+  name: Update ovn_controller.
+  poll: 0
+  register: ovn_controller_update
+  tags: ovn
+  tripleo_container_manage:
+    config_dir: /var/lib/tripleo-config/container-startup-config/step_4
+    config_id:
+    - tripleo_step4
+    config_overrides:
+      ovn_controller:
+        image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    config_patterns: ovn_controller.json
+    container_cli: '{{ container_cli }}'
+    debug: '{{ enable_debug | bool }}'
+    log_path: '{{ container_log_stdout_path }}'
+  when: step|int == 1
+- async_status:
+    jid: '{{ async_result_item.ansible_job_id }}'
+  become: true
+  delegate_to: '{{ async_result_item.item }}'
+  loop: '{{ovn_controller_update.results }}'
+  loop_control:
+    loop_var: async_result_item
+  name: Was the ovn_controller successful.
+  register: async_poll_results
+  retries: 600
+  tags: ovn
+  until: async_poll_results.finished
+  when:
+  - step|int == 1
+  - '''results'' in ovn_controller_update'

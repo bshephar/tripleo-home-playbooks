@@ -1,0 +1,24 @@
+- block:
+  - name: set is_haproxy_bootstrap_node fact
+    set_fact: is_haproxy_bootstrap_node={{haproxy_short_bootstrap_node_name|lower
+      == ansible_facts['hostname']|lower}}
+    tags: common
+    when:
+    - haproxy_short_bootstrap_node_name|default(false)
+  name: Set HAProxy upgrade facts
+- name: Start pacemaker cluster
+  pacemaker_cluster: state=online
+  when: step|int == 4
+- command: systemd-cat -t ha-shutdown /var/lib/container-config-scripts/pacemaker_mutex_shutdown.sh
+    --release
+  name: Release the cluster shutdown lock
+  when: step|int == 4
+- name: Check swift containers log folder/symlink exists
+  register: swift_log_link
+  stat:
+    path: /var/log/containers/swift
+- file:
+    path: /var/log/containers/swift
+    state: absent
+  name: Delete if symlink
+  when: swift_log_link.stat.islnk is defined and swift_log_link.stat.islnk

@@ -1,0 +1,1347 @@
+- include_role:
+    name: tripleo_firewall
+  name: Run firewall role
+  vars:
+    tripleo_firewall_engine: iptables
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/cinder
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/cinder-api
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/cinder
+    setype: container_file_t
+- name: enable virt_sandbox_use_netlink for healthcheck
+  seboolean:
+    name: virt_sandbox_use_netlink
+    persistent: true
+    state: true
+  when:
+  - ansible_facts.selinux is defined
+  - ansible_facts.selinux.status == "enabled"
+- community.general.sefcontext:
+    setype: container_file_t
+    state: present
+    target: /var/lib/cinder(/.*)?
+  name: create fcontext entry for cinder data
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/cinder
+    setype: container_file_t
+  - path: /var/lib/cinder
+    setype: container_file_t
+- file:
+    path: /var/lib/tripleo-config/ceph
+    state: directory
+  name: ensure ceph configurations exist
+- block:
+  - file:
+      path: /var/lib/cinder_image_conversion
+      state: directory
+    name: Create cinder image conversion directory
+  - mount:
+      fstype: nfs4
+      opts: '{{ image_conversion_nfs_options }}'
+      path: /var/lib/cinder_image_conversion
+      src: '{{ image_conversion_nfs_share }}'
+      state: mounted
+    name: Mount cinder's image conversion NFS share
+    vars:
+      image_conversion_nfs_options: _netdev,bg,intr,context=system_u:object_r:container_file_t:s0
+      image_conversion_nfs_share: ''
+  name: Support using an NFS share for cinder image conversion
+  vars:
+    image_conversion_nfs_enabled: false
+  when:
+  - image_conversion_nfs_enabled|bool
+- name: cinder_enable_iscsi_backend fact
+  set_fact:
+    cinder_enable_iscsi_backend: true
+- block:
+  - name: ensure LVM rpm dependencies are installed
+    package:
+      name: lvm2
+      state: latest
+  - args:
+      creates: /var/lib/cinder/cinder-volumes
+    command: dd if=/dev/zero of=/var/lib/cinder/cinder-volumes bs=1 count=0 seek=1500000M
+    name: cinder create LVM volume group dd
+  - args:
+      executable: /bin/bash
+    changed_when: _loopback_device.rc == 2
+    failed_when: _loopback_device.rc not in [0,2]
+    name: Get or create LVM loopback device
+    register: _loopback_device
+    shell: "exit_code=0\nexisting_device=$(losetup -j /var/lib/cinder/cinder-volumes\
+      \ -l -n -O NAME)\nif [[ -z \"${existing_device}\" ]]; then\n    losetup -f /var/lib/cinder/cinder-volumes\
+      \ --show\n    exit_code=2\nelse\n    echo ${existing_device%$'\\n'*}\nfi\nexit\
+      \ ${exit_code}"
+  - community.general.lvg:
+      pvs: '{{ _loopback_device.stdout }}'
+      state: present
+      vg: cinder-volumes
+    name: Create LVM volume group
+    when:
+    - not (ansible_check_mode | bool)
+  - copy:
+      content: '[Unit]
+
+        Description=Cinder LVM losetup
+
+        DefaultDependencies=no
+
+        Conflicts=umount.target
+
+        Requires=lvm2-monitor.service systemd-udev-settle.service
+
+        Before=local-fs.target umount.target
+
+        After=var.mount lvm2-monitor.service systemd-udev-settle.service
+
+
+        [Service]
+
+        Type=oneshot
+
+        ExecStart=/sbin/losetup {{ _loopback_device.stdout }} /var/lib/cinder/cinder-volumes
+
+        ExecStop=/sbin/losetup -d {{ _loopback_device.stdout }}
+
+        RemainAfterExit=yes
+
+
+        [Install]
+
+        WantedBy=local-fs-pre.target
+
+        '
+      dest: /etc/systemd/system/cinder-lvm-losetup.service
+    name: cinder create service to run losetup for LVM on startup
+    when:
+    - not (ansible_check_mode | bool)
+  - name: cinder enable the LVM losetup service
+    systemd:
+      daemon_reload: true
+      enabled: true
+      name: cinder-lvm-losetup
+  when: cinder_enable_iscsi_backend|bool
+- name: allow logrotate to read inside containers
+  seboolean:
+    name: logrotate_read_inside_containers
+    persistent: true
+    state: true
+  when:
+  - ansible_facts.selinux is defined
+  - ansible_facts.selinux.status == "enabled"
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent logs directory
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/glance
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/glance
+    setype: container_file_t
+- mount:
+    fstype: nfs
+    name: /var/lib/glance/images
+    opts: '{{nfs_options}}'
+    src: '{{nfs_share}}'
+    state: mounted
+  name: Mount NFS on host
+  vars:
+    glance_netapp_nfs_enabled: false
+    glance_nfs_share: ''
+    netapp_share_location: ''
+    nfs_backend_enabled: false
+    nfs_options: _netdev,bg,intr,context=system_u:object_r:container_file_t:s0
+    nfs_share: '{{ glance_nfs_share if (glance_nfs_share) else netapp_share_location
+      }}'
+  when: nfs_backend_enabled or glance_netapp_nfs_enabled
+- mount:
+    fstype: nfs
+    name: '{{glance_node_staging_uri[7:]}}'
+    opts: '{{glance_nfs_options}}'
+    src: '{{glance_staging_nfs_share}}'
+    state: mounted
+  name: Mount Node Staging Location
+  vars:
+    glance_nfs_options: _netdev,bg,intr,context=system_u:object_r:container_file_t:s0
+    glance_node_staging_uri: file:///var/lib/glance/staging
+    glance_staging_nfs_share: ''
+  when: glance_staging_nfs_share != ''
+- file:
+    path: /var/lib/glance
+    setype: container_file_t
+    state: directory
+  name: ensure /var/lib/glance exists
+- name: get parameters
+  no_log: '{{ hide_sensitive_logs | bool }}'
+  set_fact:
+    cert_content: "-----BEGIN CERTIFICATE-----\nMIIEBjCCAu6gAwIBAgIUD9dWy9NTo7VdQIVgWrskiCtqzxcwDQYJKoZIhvcNAQEL\n\
+      BQAwXTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClF1ZWVuc2xhbmQxETAPBgNVBAcM\nCEJyaXNiYW5lMREwDwYDVQQKDAhibmUtaG9tZTETMBEGA1UEAwwKVHJpcGxlTyBD\n\
+      QTAeFw0yMjAzMzAwNDIwNDVaFw0yMzA4MTIwNDIwNDVaMIGdMQswCQYDVQQGEwJB\nVTETMBEGA1UECAwKUXVlZW5zbGFuZDERMA8GA1UEBwwIQnJpc2JhbmUxETAPBgNV\n\
+      BAoMCHlvdXItb3JnMQ4wDAYDVQQLDAVhZG1pbjEiMCAGCSqGSIb3DQEJARYTYnNo\nZXBoYXJAcmVkaGF0LmNvbTEfMB0GA1UEAwwWb3BlbnN0YWNrLmJuZS1ob21lLm5l\n\
+      dDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMdykKsu74rVca3fc0uw\n/l9CtKjdQBtutnPFUgMqeqI70pP4ap/13BjqjKCo9teheyhZlkzDUfd6UAwIBFqW\n\
+      rZt+Dd2PfuS/MtUyw1kvdYmh7Lpaqi4XBcORFty/jBnO7NucpkyvszwNNs0W+H8g\nZ1JMUzdJ8UtNlMZT86cQ15YSTjye0S/ntZGOHbiMPoGeQOXzP+vz8hXKscY+w7uv\n\
+      Px9HsLgdmXFipZ1smbgGm5vubtlSI3fNoLFI92AMGiPLSdF48GS7ydVOGh6BMzdg\nGozrlyia/v7gnKEvDvmzIp/eAb6ZUv4ThMmwpi4mR7BqxXNZ/IitTd4ppm+0IRcC\n\
+      q70CAwEAAaN9MHswHwYDVR0jBBgwFoAUD99iTxSeV1pImIWdV/nBRD8jJ2EwCQYD\nVR0TBAIwADALBgNVHQ8EBAMCBPAwIQYDVR0RBBowGIIWb3BlbnN0YWNrLmJuZS1o\n\
+      b21lLm5ldDAdBgNVHQ4EFgQUq5b3jd2e+Nj5qWO/2lCOM9TZRb0wDQYJKoZIhvcN\nAQELBQADggEBAJzmJRDSEllG+2pA/QD73mbde79G6BcIhOxOLsCzG6bqYKWtEgEJ\n\
+      kGu6EsHlkN6TMFiwME8dZu5yGJZQ8hZxg6yXjJfgUQB23w6zxcLGE5W93h0bYrvI\ntHDiFELe+NtlOqJ38TYCfi6Or3l0Yh8ZzZSXrk39D0L619hcVPb8T6niM2f7pG76\n\
+      2DRsU0A+56iQIxZZhUPh7jbiDy/NePqf1dCRnoR3423qq8sEW/jnCKWs2dq0RWD6\n+i1ULnJfTAvSSpET1jd/FJ3VTaa2441j5MneOxrptEayx92UaZZ+gbwEyr62nq4M\n\
+      EHP8xqG4qn7lz0BpsFbBb+ZyCVcG6Zyt5xM=\n-----END CERTIFICATE-----  \n"
+    cert_path: /etc/pki/tls/private/overcloud_endpoint.pem
+    chain_content: ''
+    key_content: '-----BEGIN PRIVATE KEY-----
+
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDHcpCrLu+K1XGt
+
+      33NLsP5fQrSo3UAbbrZzxVIDKnqiO9KT+Gqf9dwY6oygqPbXoXsoWZZMw1H3elAM
+
+      CARalq2bfg3dj37kvzLVMsNZL3WJoey6WqouFwXDkRbcv4wZzuzbnKZMr7M8DTbN
+
+      Fvh/IGdSTFM3SfFLTZTGU/OnENeWEk48ntEv57WRjh24jD6BnkDl8z/r8/IVyrHG
+
+      PsO7rz8fR7C4HZlxYqWdbJm4Bpub7m7ZUiN3zaCxSPdgDBojy0nRePBku8nVThoe
+
+      gTM3YBqM65comv7+4JyhLw75syKf3gG+mVL+E4TJsKYuJkewasVzWfyIrU3eKaZv
+
+      tCEXAqu9AgMBAAECggEABFeNaDijnONkL+uZLDjsdMD0Q2fbrS02GiOd0zVRyaXh
+
+      Qfjqw1Q8KCu1B4teIlgg4QJASCgJaQiX5Qcopxs4KNYv8Zad5dd2wRbzk0W5+pbU
+
+      m0L9iPbV2InYVFJ0N5yeYfKRWUKK9Z/5BTJ+ku/u5+cC+cVplCDagA3UVFsEwn7W
+
+      L82ONLeQkvRmVqgp0+AkJ/zOanfeQRPS45qqFcWe6+JKpJgHkdgWp8qdx20w+jPl
+
+      BKK1oun2DCWimS1seQ15KuU1PeZ/z2PIaBMUxtJQac1Px0SuviwO13qTs7ecX2bI
+
+      VIvK+fU6bLvLKNQ/5I6/xmMidwcuSVhCA1axgQae0QKBgQDfAtmufSn5JbIlQlWa
+
+      w61fTNsW+sLPXLQUoc9rexKrBHalAenpHJb+LXbfX6QUCA3nlWerzVTIiqNmWbJ4
+
+      EhEOYdQl1qkU3NFSFq79jVHJ+RmUl8clALjtEphR9HBIqzkroSCBqC6oApji4mph
+
+      MUuU29IERFOsA2eIqFL5/oUSrQKBgQDk82P5KAn8YlqvMybOzEGHXfq0wfOBvYPk
+
+      V/dc1tinCJx34gqR/E8KdW21UEVjwXmWG4xl4VwZCjgpH9M2xmwBrwEgqU2RD1kR
+
+      FWpB4gV7CU5LfTthQ2fIwpfIUQ769+P/o4crAUGxaFwwdMttDtGd7eW/ctdEAjmB
+
+      v4mNa6IvUQKBgBeDd2w8ajaI0PW4vsnoo9kOg3My0WOHxL0AKpyMh3VcrR3My9r2
+
+      Vr1KEeSPcv9hsgWe7SViKvRSGdRq1LRwQzge/H1Y2s8GUVO0bJLzWZJQH3BZaHfw
+
+      UY89jK3ndgdTdl2xSXoiP3kbfP8/HDRPPEbfvo8QnTnfygTQqp8NRP6pAoGABBD+
+
+      mZJIex8UFUCHU+z0zP6yUTuQo6FGEmwtjIyUVIMmpEpzfZxJmxny1OGUGe15x1y9
+
+      5aFXDWrNDI3wJmznxi/hiT74jbcEEfWbaYgmKMVFirmysEuOMFakc35dEcANYKD6
+
+      6ZygGhKMcJ/ibRFyT6fGCNx1TlPryY4pV0WuH8ECgYEAjGlRx2EkYhcMVrtSSwba
+
+      C/EYO/aU3QYUNKV0N1330oVnPlJwJvXmwdcBdBxCFXq3BCNdr5qUBCwHD6K7acvK
+
+      qeVaMnG+UmADbectBR5VxyJhyS6xSjofSaUg4lXBs8zuBWGkq/vPBMWOzat8pfog
+
+      JcsVDs58hxzEirWQL3+gA4k=
+
+      -----END PRIVATE KEY-----
+
+      '
+- block:
+  - name: get DeployedSSLCertificatePath attributes
+    register: attr_cert_path
+    stat:
+      path: '{{cert_path}}'
+  - name: set is_haproxy_bootstrap_node fact
+    set_fact: is_haproxy_bootstrap_node={{haproxy_short_bootstrap_node_name | lower
+      == ansible_facts['hostname'] | lower}}
+    when:
+    - haproxy_short_bootstrap_node_name|default(false)
+  - name: get haproxy status
+    register: haproxy_state
+    systemd:
+      name: haproxy
+  - name: get pacemaker status
+    register: pacemaker_state
+    systemd:
+      name: pacemaker
+  - name: get docker status
+    register: docker_state
+    systemd:
+      name: docker
+  - command: '{{ container_cli }} ps -q -f name=haproxy'
+    name: get container_id
+    register: container_id
+    when:
+    - docker_state.status.ActiveState == 'active'
+    - attr_cert_path.stat.exists
+    - attr_cert_path.stat.isdir == False
+  - name: get pcs resource name for haproxy container
+    register: pacemaker_resource
+    shell: 'pcs status resources | sed -n ''s/^.*container.*: \(haproxy.*\) .*/\1/p''
+
+      '
+    when:
+    - bootstrap_node is defined
+    - is_haproxy_bootstrap_node
+    - pacemaker_state.status.ActiveState == 'active'
+    - attr_cert_path.stat.exists
+    - attr_cert_path.stat.isdir
+  - file:
+      path: '{{cert_path}}'
+      state: absent
+    name: remove DeployedSSLCertificatePath if is dir
+    when: attr_cert_path.stat.isdir is defined and attr_cert_path.stat.isdir
+  - copy:
+      content: '{{cert_content}}
+
+        {{chain_content}}
+
+        {{key_content}}
+
+        '
+      dest: '{{cert_path}}'
+      mode: 288
+      owner: root
+    name: push certificate content
+    no_log: '{{ hide_sensitive_logs | bool }}'
+  - block:
+    - file:
+        group: haproxy
+        path: '{{cert_path}}'
+      name: set certificate ownership
+    - name: reload haproxy if enabled
+      service:
+        name: haproxy
+        state: reloaded
+    name: BM haproxy non-pacemaker context
+    when: haproxy_state.status.ActiveState == 'active'
+  - command: pcs resource restart "{{pacemaker_resource.stdout}}"
+    name: restart pacemaker resource for haproxy
+    when:
+    - pacemaker_resource is defined
+    - pacemaker_resource.stdout is defined
+    - pacemaker_resource.stdout != ''
+  - block:
+    - failed_when:
+      - container_kill_result.rc != 0
+      - ("no such container" not in container_kill_result.stderr)
+      - ("container state improper" not in container_kill_result.stderr)
+      name: copy certificate, chgrp, restart haproxy
+      register: container_kill_result
+      shell: "set -e\nif {{ container_cli }} ps -f \"id={{ item }}\" --format \"{{\
+        \ '{{' }}.Names{{ '}}' }}\" | grep -q \"^haproxy-bundle\"; then\n  tar -c\
+        \ {{ cert_path }} | {{container_cli}} exec -i {{ item }} tar -C / -xv\nelse\n\
+        \  {{ container_cli }} cp {{ cert_path }} {{ item }}:{{ cert_path }}\nfi\n\
+        {{ container_cli }} exec --user root {{ item }} chgrp haproxy {{ cert_path\
+        \ }}\n{{ container_cli }} kill --signal=HUP {{ item }}\n"
+      with_items: '{{ container_id.stdout.split(''
+
+        '') }}'
+    name: dedicated part for containers
+    when:
+    - container_id is defined
+    - container_id.stdout is defined
+    - container_id.stdout != ''
+  name: manage certificate
+  when:
+  - cert_content is defined
+  - cert_content != ''
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/haproxy
+    setype: var_log_t
+  - path: /var/lib/haproxy
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/heat
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/heat-api
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/heat
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/heat-api-cfn
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/heat
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/horizon
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/horizon
+    setype: container_file_t
+  - path: /var/www
+    setype: container_file_t
+  - mode: '1777'
+    path: /var/tmp/horizon
+    setype: container_file_t
+- copy:
+    content: 'd /var/tmp/horizon 1777 root root - -
+
+      '
+    dest: /etc/tmpfiles.d/var-tmp-horizon.conf
+  name: ensure /var/tmp/horizon exists on boot
+- community.general.sefcontext:
+    setype: '{{ item.setype }}'
+    state: present
+    target: '{{ item.path }}(/.*)?'
+  name: create fcontext entry for iscsi
+  with_items:
+  - path: /etc/iscsi
+    setype: container_file_t
+  - path: /etc/target
+    setype: container_file_t
+  - path: /var/lib/iscsi
+    setype: container_file_t
+- file:
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - path: /etc/iscsi
+    setype: container_file_t
+  - path: /etc/target
+    setype: container_file_t
+  - path: /var/lib/iscsi
+    setype: container_file_t
+- name: stat /lib/systemd/system/iscsid.socket
+  register: stat_iscsid_socket
+  stat: path=/lib/systemd/system/iscsid.socket
+- name: Stop and disable iscsid.socket service
+  service: name=iscsid.socket state=stopped enabled=no
+  when: stat_iscsid_socket.stat.exists
+- command: systemctl is-enabled --quiet iscsi.service
+  failed_when: false
+  name: Check if iscsi.service is enabled
+  register: iscsi_service_enabled_result
+- name: Stop iscsi.service
+  service: name=iscsi.service state=stopped enabled=no
+  when:
+  - iscsi_service_enabled_result is changed
+  - iscsi_service_enabled_result.rc == 0
+- include_role:
+    name: tripleo_kernel
+- include_role:
+    name: tripleo_keystone
+    tasks_from: keystone-logging-install.yaml
+- include_role:
+    name: tripleo_keystone
+    tasks_from: keystone-install.yaml
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/memcached
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/mysql
+    setype: container_file_t
+  - path: /var/lib/mysql
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/mariadb
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/neutron
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/neutron-api
+    setype: container_file_t
+- copy:
+    content: 'admin:{{''7i8YsihaRsvMJKyBxT2Z2RD3a'' | password_hash(''bcrypt'')}}
+
+      neutron:{{''a1PIB0bVR8KCI5Nryq9ocVZeP'' | password_hash(''bcrypt'')}}
+
+      ironic:{{''5ZCL3YccFl0xbj50BJVJxZCRd'' | password_hash(''bcrypt'')}}
+
+      '
+    dest: /etc/neutron_passwd
+  name: create password file when auth_stragy is 'http_basic'
+  vars:
+    is_http_basic: false
+  when: is_http_basic | bool
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/nova
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/nova-api
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/nova
+    setype: container_file_t
+- file:
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - path: /var/lib/nova
+    setype: container_file_t
+  - path: /var/lib/_nova_secontext
+    setype: container_file_t
+  - path: /var/lib/nova/instances
+    setype: container_file_t
+  - path: /var/lib/libvirt
+    setype: container_file_t
+- mount:
+    fstype: nfs4
+    name: /var/lib/nova/instances
+    opts: _netdev,bg,{{nfs_options}},nfsvers={{nfs_vers}}
+    src: '{{nfs_share}}'
+    state: mounted
+  name: Mount Nova NFS Share
+  vars:
+    nfs_backend_enable: false
+    nfs_options: context=system_u:object_r:nfs_t:s0
+    nfs_share: ''
+    nfs_vers: '4.2'
+  when: nfs_backend_enable|bool
+- name: is Nova Resume Guests State On Host Boot enabled
+  set_fact:
+    resume_guests_state_on_host_boot_enabled: false
+- block:
+  - copy:
+      content: '[Unit]
+
+        Description=Suspend libvirt Guests in tripleo
+
+        Requires=virt-guest-shutdown.target
+
+        After=systemd-machined.service
+
+        After=network-online.target
+
+        After=tripleo_nova_libvirt.target
+
+        Before=tripleo_nova_compute.service
+
+        Documentation=man:libvirtd(8)
+
+        Documentation=https://libvirt.org
+
+
+        [Service]
+
+        EnvironmentFile=-/etc/sysconfig/libvirt-guests
+
+        ExecStart=/bin/{{container_cli}} exec nova_libvirt /bin/rm -f /var/lib/libvirt/libvirt-guests
+
+        ExecStop=/bin/{{container_cli}} exec nova_libvirt /bin/sh -x /usr/libexec/libvirt-guests.sh
+        shutdown
+
+        Type=oneshot
+
+        RemainAfterExit=yes
+
+        StandardOutput=journal+console
+
+        TimeoutStopSec=0
+
+
+        [Install]
+
+        WantedBy=multi-user.target
+
+        '
+      dest: /etc/systemd/system/tripleo_nova_libvirt_guests.service
+    name: libvirt-guests unit to stop nova_compute container before shutdown VMs
+  - copy:
+      content: '[Unit]
+
+        Description=Libvirt guests shutdown
+
+        Documentation=https://libvirt.org
+
+        '
+      dest: /etc/systemd/system/virt-guest-shutdown.target
+    name: Making sure virt-guest-shutdown.target is present
+  - name: tripleo_nova_libvirt_guests enable VM shutdown on compute reboot/shutdown
+    systemd:
+      daemon_reload: true
+      enabled: true
+      name: tripleo_nova_libvirt_guests
+  name: install tripleo_nova_libvirt_guests systemd unit file
+  when:
+  - resume_guests_state_on_host_boot_enabled|bool
+- name: is Instance HA enabled
+  set_fact:
+    instance_ha_enabled: false
+- block:
+  - file:
+      path: /var/lib/nova/instanceha
+      state: directory
+    name: prepare Instance HA script directory
+  - copy:
+      content: "#!/usr/bin/python3\n\nimport os\nimport sys\nimport time\nimport inspect\n\
+        import logging\nimport argparse\nimport oslo_config.cfg\nimport requests.exceptions\n\
+        \ndef is_forced_down(connection, hostname):\n    services = connection.services.list(host=hostname,\
+        \ binary=\"nova-compute\")\n    for service in services:\n        if service.forced_down:\n\
+        \            return True\n    return False\n\ndef evacuations_done(connection,\
+        \ hostname):\n    # Get a list of migrations.\n    #  :param host: (optional)\
+        \ filter migrations by host name.\n    #  :param status: (optional) filter\
+        \ migrations by status.\n    #  :param cell_name: (optional) filter migrations\
+        \ for a cell.\n    #\n    migrations = connection.migrations.list(host=hostname)\n\
+        \n    print(\"Checking %d migrations\" % len(migrations))\n    for migration\
+        \ in migrations:\n        # print migration.to_dict()\n        #\n       \
+        \ # {\n        # 'status': 'error',\n        # 'dest_host': None,\n      \
+        \  # 'new_instance_type_id': 2,\n        # 'old_instance_type_id': 2,\n  \
+        \      # 'updated_at': '2018-04-22T20:55:29.000000',\n        # 'dest_compute':\n\
+        \        #   'overcloud-novacompute-2.localdomain',\n        # 'migration_type':\
+        \ 'live-migration',\n        # 'source_node':\n        #   'overcloud-novacompute-0.localdomain',\n\
+        \        # 'id': 8,\n        # 'created_at': '2018-04-22T20:52:58.000000',\n\
+        \        # 'instance_uuid':\n        #   'd1c82ce8-3dc5-48db-b59f-854b3b984ef1',\n\
+        \        # 'dest_node':\n        #   'overcloud-novacompute-2.localdomain',\n\
+        \        # 'source_compute':\n        #   'overcloud-novacompute-0.localdomain'\n\
+        \        # }\n        # Acceptable: done, completed, failed\n        if migration.status\
+        \ in [\"running\", \"accepted\", \"pre-migrating\"]:\n            return False\n\
+        \    return True\n\ndef safe_to_start(connection, hostname):\n    if is_forced_down(connection,\
+        \ hostname):\n        print(\"Waiting for fence-down flag to be cleared\"\
+        )\n        return False\n    if not evacuations_done(connection, hostname):\n\
+        \        print(\"Waiting for evacuations to complete or fail\")\n        return\
+        \ False\n    return True\n\ndef create_nova_connection(options):\n    try:\n\
+        \        from novaclient import client\n        from novaclient.exceptions\
+        \ import NotAcceptable\n    except ImportError:\n        print(\"Nova not\
+        \ found or not accessible\")\n        sys.exit(1)\n\n    from keystoneauth1\
+        \ import loading\n    from keystoneauth1 import session\n\n    # Prefer the\
+        \ oldest and strip the leading 'v'\n    kwargs = dict(\n        auth_url=options[\"\
+        auth_url\"][0],\n        username=options[\"username\"][0],\n        password=options[\"\
+        password\"][0],\n        project_name=options[\"project_name\"][0],\n    \
+        \    user_domain_name=options[\"user_domain_name\"][0],\n        project_domain_name=options[\"\
+        project_domain_name\"][0],\n        )\n\n    loader = loading.get_plugin_loader('password')\n\
+        \    keystone_auth = loader.load_from_options(**kwargs)\n    keystone_session\
+        \ = session.Session(auth=keystone_auth, verify=(not options[\"insecure\"]))\n\
+        \n    nova_endpoint_type = 'internalURL'\n    # We default to internalURL\
+        \ but we allow this to be overridden via\n    # the [placement]/os_interface\
+        \ key.\n    if 'os_interface' in options and len(options[\"os_interface\"\
+        ]) == 1:\n        nova_endpoint_type = options[\"os_interface\"][0]\n    #\
+        \ Via https://review.opendev.org/#/c/492247/ os_interface has been deprecated\
+        \ in queens\n    # and we need to use 'valid_interfaces' which is a:\n   \
+        \ # \"List of interfaces, in order of preference, for endpoint URL. (list\
+        \ value)\"\n    # Since it is not explicitely set in nova.conf we still keep\
+        \ the check for os_interface\n    elif 'valid_interfaces' in options and len(options[\"\
+        valid_interfaces\"]) >= 1:\n        nova_endpoint_type = options[\"valid_interfaces\"\
+        ][0]\n\n    # This mimicks the code in novaclient/shell.py\n    if nova_endpoint_type\
+        \ in ['internal', 'public', 'admin']:\n        nova_endpoint_type += 'URL'\n\
+        \n    if 'region_name' in options:\n        region = options['region_name'][0]\n\
+        \    elif 'os_region_name' in options:\n        region = options['os_region_name'][0]\n\
+        \    else: # We actually try to make a client call even with an empty region\n\
+        \        region = None\n    nova_versions = [ \"2.23\", \"2\" ]\n    for version\
+        \ in nova_versions:\n        nova = client.Client(version,\n             \
+        \                region_name=region,\n                             session=keystone_session,\
+        \ auth=keystone_auth,\n                             http_log_debug=\"verbose\"\
+        \ in options,\n                             endpoint_type=nova_endpoint_type)\n\
+        \n        try:\n            nova.hypervisors.list()\n            return nova\n\
+        \n        except NotAcceptable as e:\n            logging.warning(e)\n\n \
+        \       except Exception as e:\n            logging.warning(\"Nova connection\
+        \ failed. %s: %s\" % (e.__class__.__name__, e))\n\n    print(\"Couldn't obtain\
+        \ a supported connection to nova, tried: %s\\n\" % repr(nova_versions))\n\
+        \    return None\n\n\nparser = argparse.ArgumentParser(description='Process\
+        \ some integers.')\nparser.add_argument('--config-file', dest='nova_config',\
+        \ action='store',\n                    default=\"/etc/nova/nova.conf\",\n\
+        \                    help='path to nova configuration (default: /etc/nova/nova.conf)')\n\
+        parser.add_argument('--nova-binary', dest='nova_binary', action='store',\n\
+        \                    default=\"/usr/bin/nova-compute\",\n                \
+        \    help='path to nova compute binary (default: /usr/bin/nova-compute)')\n\
+        parser.add_argument('--enable-file', dest='enable_file', action='store',\n\
+        \                    default=\"/var/lib/nova/instanceha/enabled\",\n     \
+        \               help='file exists if instance HA is enabled on this host '\\\
+        \n                    '(default: /var/lib/nova/instanceha/enabled)')\n\n\n\
+        sections = {}\n(args, remaining) = parser.parse_known_args(sys.argv)\n\nconfig\
+        \ = oslo_config.cfg.ConfigParser(args.nova_config, sections)\nconfig.parse()\n\
+        config.sections[\"placement\"][\"insecure\"] = 0\nconfig.sections[\"placement\"\
+        ][\"verbose\"] = 1\n\nif os.path.isfile(args.enable_file):\n    connection\
+        \ = None\n    while not connection:\n        # Loop in case the control plane\
+        \ is recovering when we run\n        connection = create_nova_connection(config.sections[\"\
+        placement\"])\n        if not connection:\n            time.sleep(10)\n\n\
+        \    while not safe_to_start(connection, config.sections[\"DEFAULT\"][\"host\"\
+        ][0]):\n        time.sleep(10)\n\nreal_args = [args.nova_binary, '--config-file',\
+        \ args.nova_config]\nreal_args.extend(remaining[1:])\nos.execv(args.nova_binary,\
+        \ real_args)\n"
+      dest: /var/lib/nova/instanceha/check-run-nova-compute
+      mode: 493
+    name: install Instance HA script that runs nova-compute
+  - command: hiera -c /etc/puppet/hiera.yaml compute_instanceha_short_node_names
+    name: Get list of instance HA compute nodes
+    register: iha_nodes
+  - file: path=/var/lib/nova/instanceha/enabled state=touch
+    name: If instance HA is enabled on the node activate the evacuation completed
+      check
+    when: iha_nodes.stdout|lower is search('"'+ansible_facts['hostname']|lower+'"')
+  name: install Instance HA recovery script
+  when: instance_ha_enabled|bool
+- name: Do we prepend nova startup with a delay
+  set_fact:
+    nova_compute_delay: 0
+- copy:
+    content: "#!/usr/libexec/platform-python\n\"\"\"\nThis wrapper was created to\
+      \ add an optional delay to the startup of nova-compute.\nWe know that instances\
+      \ will fail to boot, after a compute reboot, if ceph is not\nhealthy.\n\nIdeally,\
+      \ we would poll ceph to get its health, but it's not guaranteed that the\ncompute\
+      \ node will have access to the keys.\n\"\"\"\n\nimport os\nimport sys\nimport\
+      \ time\nimport logging\nimport argparse\n\nparser = argparse.ArgumentParser(description='Process\
+      \ some integers.')\nparser.add_argument('--config-file', dest='nova_config',\
+      \ action='store',\n                    default=\"/etc/nova/nova.conf\",\n  \
+      \                  help='path to nova configuration (default: /etc/nova/nova.conf)')\n\
+      parser.add_argument('--nova-binary', dest='nova_binary', action='store',\n \
+      \                   default=\"/usr/bin/nova-compute\",\n                   \
+      \ help='path to nova compute binary (default: /usr/bin/nova-compute)')\nparser.add_argument('--delay',\
+      \ dest='delay', action='store',\n                    default=120, type=int,\n\
+      \                    help='Number of seconds to wait until nova-compute is started')\n\
+      parser.add_argument('--state-file', dest='state_file', action='store',\n   \
+      \                 default=\"/run/nova-compute-delayed\",\n                 \
+      \   help='file exists if we already delayed nova-compute startup'\\\n      \
+      \              '(default: /run/nova-compute-delayed)')\n\n\nsections = {}\n\
+      (args, remaining) = parser.parse_known_args(sys.argv)\n\nreal_args = [args.nova_binary,\
+      \ '--config-file', args.nova_config]\nreal_args.extend(remaining[1:])\n\nif\
+      \ not os.path.isfile(args.state_file):\n    logging.info(\"Delaying nova-compute\
+      \ startup by %s seconds\" % args.delay)\n    time.sleep(args.delay)\n    open(args.state_file,\
+      \ 'a').close()\n\nlogging.info(\"Executing %s\" % real_args)\nos.execv(args.nova_binary,\
+      \ real_args)\n"
+    dest: /var/lib/nova/delay-nova-compute
+    mode: 493
+  name: install nova-compute delay wrapper script
+  when: nova_compute_delay|int > 0
+- name: Is irqbalance enabled
+  set_fact:
+    compute_irqbalance_disabled: false
+- name: disable irqbalance service on compute
+  service:
+    enabled: false
+    name: irqbalance.service
+    state: stopped
+  when: compute_irqbalance_disabled|bool
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/libvirt
+    setype: container_file_t
+- file:
+    path: '{{ item.path }}'
+    setype: '{{ item.setype | default(omit) }}'
+    state: directory
+  name: create libvirt persistent data directories
+  with_items:
+  - path: /etc/libvirt
+    setype: container_file_t
+  - path: /etc/libvirt/secrets
+    setype: container_file_t
+  - path: /etc/libvirt/qemu
+    setype: container_file_t
+  - path: /var/lib/libvirt
+    setype: container_file_t
+  - path: /var/cache/libvirt
+  - path: /var/lib/nova
+    setype: container_file_t
+  - path: /run/libvirt
+    setype: virt_var_run_t
+  - path: /var/log/libvirt
+    setype: container_file_t
+  - path: /var/log/libvirt/qemu
+    setype: container_file_t
+- group:
+    gid: 107
+    name: qemu
+    state: present
+  name: ensure qemu group is present on the host
+- name: ensure qemu user is present on the host
+  user:
+    comment: qemu user
+    group: qemu
+    name: qemu
+    shell: /sbin/nologin
+    state: present
+    uid: 107
+- file:
+    group: qemu
+    owner: qemu
+    path: /var/lib/vhost_sockets
+    setype: virt_cache_t
+    seuser: system_u
+    state: directory
+  name: create directory for vhost-user sockets with qemu ownership
+- check_mode: false
+  command: /usr/bin/rpm -q libvirt-daemon
+  failed_when: false
+  name: check if libvirt is installed
+  register: libvirt_installed
+- name: make sure libvirt services are disabled and masked
+  service:
+    daemon_reload: true
+    enabled: false
+    masked: true
+    name: '{{ item }}'
+    state: stopped
+  when: libvirt_installed.rc == 0
+  with_items:
+  - libvirtd.service
+  - virtlogd.socket
+- copy:
+    content: 'd /run/libvirt 0755 root root - -
+
+      '
+    dest: /etc/tmpfiles.d/run-libvirt.conf
+  name: ensure /run/libvirt is present upon reboot
+- name: Enable os_enable_vtpm SELinux boolean for vTPM
+  seboolean:
+    name: os_enable_vtpm
+    persistent: true
+    state: true
+  when:
+  - ansible_facts.selinux is defined
+  - ansible_facts.selinux.status == "enabled"
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/nova
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/nova-metadata
+    setype: container_file_t
+- file:
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  loop:
+  - path: /run/libvirt
+    setype: virt_var_run_t
+  name: Create libvirt persistent data directories
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/openvswitch
+    setype: container_file_t
+  - path: /var/lib/openvswitch/ovn
+    setype: container_file_t
+- copy:
+    content: "#!/usr/bin/bash\n# Cleanup neutron OVS bridges. To be called on startup\
+      \ to avoid\n# \"difficult-to-debug\" issues with partially configured resources.\n\
+      \nNEUTRON_OVS_CONF=/var/lib/config-data/puppet-generated/neutron/etc/neutron/plugins/ml2/openvswitch_agent.ini\n\
+      \nif [ -e ${NEUTRON_OVS_CONF} ];\nthen\n    INT_BRIDGE=`crudini --get ${NEUTRON_OVS_CONF}\
+      \ ovs integration_bridge`\n    TUN_BRIDGE=`crudini --get ${NEUTRON_OVS_CONF}\
+      \ ovs tunnel_bridge`\nfi\n\nfor port in `ovs-vsctl list-ports ${INT_BRIDGE:-\"\
+      br-int\"}`;\ndo\n    skip_cleanup=`ovs-vsctl --if-exists get Interface $port\
+      \ external_ids:skip_cleanup`\n    if ! [[ \"x$skip_cleanup\" == \"x\\\"true\\\
+      \"\" ]];\n    then\n        ovs-vsctl del-port ${INT_BRIDGE:-\"br-int\"} $port\n\
+      \    fi\ndone\n\novs-vsctl --if-exists del-br ${TUN_BRIDGE:-\"br-tun\"}\n\n\
+      # Clean up trunk port bridges\nfor br in $(ovs-vsctl list-br | egrep 'tbr-[0-9a-f\\\
+      -]+'); do\n    ovs-vsctl --if-exists del-br $br\ndone\n"
+    dest: /usr/libexec/neutron-cleanup
+    force: true
+    mode: '0755'
+  name: Copy in cleanup script
+- copy:
+    content: '[Unit]
+
+      Description=Neutron cleanup on startup
+
+      After=openvswitch.service network.target
+
+      Before=tripleo_neutron_ovs_agent.service tripleo_neutron_dhcp.service tripleo_neutron_l3_agent.service
+      tripleo_nova_compute.service
+
+      RefuseManualStop=yes
+
+
+      [Service]
+
+      Type=oneshot
+
+      ExecStart=/usr/libexec/neutron-cleanup
+
+
+      [Install]
+
+      WantedBy=multi-user.target
+
+      '
+    dest: /usr/lib/systemd/system/neutron-cleanup.service
+    force: true
+  name: Copy in cleanup service
+- name: Enabling the cleanup service
+  service:
+    enabled: true
+    name: neutron-cleanup
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/neutron
+    setype: container_file_t
+- command: ip netns add ns_temp
+  failed_when: false
+  name: create /run/netns with temp namespace
+  register: ipnetns_add_result
+- command: ip netns delete ns_temp
+  failed_when: false
+  name: remove temp namespace
+  when:
+  - ipnetns_add_result.rc is defined
+  - ipnetns_add_result.rc == 0
+- file:
+    path: /var/lib/neutron
+    setype: container_file_t
+    state: directory
+  name: create /var/lib/neutron
+- name: set conditions
+  set_fact:
+    debug_enabled: false
+    haproxy_wrapper_enabled: true
+- file:
+    path: /var/lib/neutron/kill_scripts
+    state: directory
+  name: create kill_scripts directory within /var/lib/neutron
+- copy:
+    content: "#!/bin/bash\n{% if debug_enabled|bool -%}\nset -x\n{% endif -%}\nadd_date()\
+      \ {\n  echo \"$(date) $@\"\n}\n\n# Set up script logging for debugging purpose.\n\
+      # It will be taken care of by logrotate since there is the .log\n# suffix.\n\
+      exec 3>&1 4>&2\ntrap 'exec 2>&4 1>&3' 0 1 2 3\nexec 1>>/var/log/neutron/kill-script.log\
+      \ 2>&1\n\nSIG=$1\nPID=$2\nNETNS=$(ip netns identify ${PID})\n\nif [ \"x${NETNS}\"\
+      \ == \"x\" ]; then\n  CLI=\"nsenter --all --preserve-credentials -t 1 podman\"\
+      \n  SIG=9\nelse\n  CLI=\"nsenter --net=/run/netns/${NETNS} --preserve-credentials\
+      \ -m -t 1 podman\"\nfi\n\nkill_container() {\n  add_date \"Stopping container\
+      \ $1 ($2)\"\n  $CLI stop $2\n  delete_container $1 $2\n}\n\nsignal_container()\
+      \ {\n  SIGNAL=$3\n  if [ -z \"$SIGNAL\" ]; then\n      SIGNAL=\"HUP\"\n  fi\n\
+      \  add_date \"Sending signal '$SIGNAL' to $1 ($2)\"\n  $CLI kill --signal $SIGNAL\
+      \ $2\n}\n\ndelete_container() {\n  add_date \"Deleting container $1 ($2)\"\n\
+      \  $CLI rm $2 || echo \"Deleting container $1 ($2) failed\"\n}\n\n\n{% raw -%}\n\
+      if [ -f /proc/$PID/cgroup ]; then\n  # Get container ID based on process cgroups\n\
+      \  CT_ID=$(awk 'BEGIN {FS=\".scope|-\"} /0::|:pids:/ {if ($(NF-1)) print $(NF-1);exit}'\
+      \ /proc/$PID/cgroup)\n  CT_NAME=$($CLI inspect -f '{{.Name}}' $CT_ID)\n\n  case\
+      \ $SIG in\n    HUP)\n      signal_container $CT_NAME $CT_ID\n      ;;\n    9)\n\
+      \      kill_container $CT_NAME $CT_ID\n      ;;\n    15)\n      signal_container\
+      \ $CT_NAME $CT_ID 15\n      delete_container $CT_NAME $CT_ID\n      ;;\n   \
+      \ *)\n      add_date \"Unknown action ${SIG} for ${CT_NAME} ${CT_ID}\"\n   \
+      \   exit 1\n      ;;\n  esac\n\nelse\n  add_date \"No such PID: ${PID}\"\n \
+      \ exit 1\nfi\n{% endraw %}\n"
+    dest: /var/lib/neutron/kill_scripts/haproxy-kill
+    mode: 493
+  name: create haproxy kill script
+  when: haproxy_wrapper_enabled|bool
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/octavia
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/octavia-api
+    setype: container_file_t
+  - mode: '0755'
+    path: /run/octavia
+    setype: container_file_t
+- copy:
+    content: 'd /run/octavia 0755 root root - -
+
+      '
+    dest: /etc/tmpfiles.d/run-octavia.conf
+  name: ensure /run/octavia is present upon reboot
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/octavia
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/octavia-amphorae
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/octavia
+    setype: container_file_t
+- name: Ensure package required for configuring octavia are present
+  package:
+    name:
+    - openssl
+    - python3-openstackclient
+    state: present
+  when: true
+- community.general.sefcontext:
+    setype: container_file_t
+    state: present
+    target: /var/lib/rabbitmq(/.*)?
+  name: create fcontext for rabbitmq data
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - path: /var/lib/rabbitmq
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/rabbitmq
+    setype: container_file_t
+- name: stop the Erlang port mapper on the host and make sure it cannot bind to the
+    port used by container
+  shell: 'echo ''export ERL_EPMD_ADDRESS=127.0.0.1'' > /etc/rabbitmq/rabbitmq-env.conf
+
+    echo ''export ERL_EPMD_PORT=4370'' >> /etc/rabbitmq/rabbitmq-env.conf
+
+    for pid in $(pgrep epmd --ns 1 --nslist pid); do kill $pid; done
+
+    '
+- name: Make sure python3-novaclient is installed when IHA is enabled
+  package:
+    name: python3-novaclient
+    state: present
+  when: false
+- file:
+    mode: '{{ item.mode }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent logs directory
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/placement
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/httpd/placement
+    setype: container_file_t
+- block:
+  - file:
+      dest: /etc/rhsm-host
+      src: /etc/rhsm
+      state: link
+    name: Ensure subscription-manager is not detecting container
+    when:
+    - ansible_facts['distribution'] == 'RedHat'
+  - name: Set login facts
+    no_log: true
+    set_fact:
+      tripleo_container_default_pids_limit: 4096
+      tripleo_container_events_logger_mechanism: journald
+      tripleo_container_registry_insecure_registries:
+      - tripleo-director.ctlplane.localdomain:8787
+      tripleo_container_registry_login: false
+      tripleo_container_registry_logins: {}
+      tripleo_container_registry_logins_json: {}
+  - name: Convert logins json to dict
+    no_log: true
+    set_fact:
+      tripleo_container_registry_logins: '{{ tripleo_container_registry_logins_json
+        | from_json }}'
+    when:
+    - tripleo_container_registry_logins_json is string
+    - tripleo_container_registry_login | bool
+    - (tripleo_container_registry_logins_json | length) > 0
+  - name: Set registry logins
+    no_log: true
+    set_fact:
+      tripleo_container_registry_logins: '{{ tripleo_container_registry_logins_json
+        }}'
+    when:
+    - tripleo_container_registry_logins_json is mapping
+    - tripleo_container_registry_login | bool
+    - (tripleo_container_registry_logins_json | length) > 0
+  - include_role:
+      name: tripleo_podman
+      tasks_from: tripleo_podman_install.yml
+    name: Run podman install
+  - include_role:
+      name: tripleo_podman
+      tasks_from: tripleo_podman_login.yml
+    name: Run podman login
+  name: Install and configure Podman
+- copy:
+    content: 'This file makes tripleo_container_manage generate additional systemd
+
+      dependencies for containers that have special
+
+      start/stop ordering constraints. It ensures that
+
+      those constraints are enforced on reboot/shutdown.
+
+      '
+    dest: /etc/sysconfig/podman_drop_in
+  name: Configure tripleo_container_manage to generate systemd drop-in dependencies
+- community.general.sefcontext:
+    setype: container_file_t
+    state: present
+    target: /var/run/redis(/.*)?
+  name: create fcontext entry for redis data
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - mode: '0750'
+    path: /var/log/containers/redis
+    setype: container_file_t
+  - path: /run/redis
+    setype: container_file_t
+- copy:
+    content: 'd /run/redis 0755 root root - -
+
+      '
+    dest: /etc/tmpfiles.d/run-redis.conf
+  name: ensure /run/redis is present upon reboot
+- include_role:
+    name: tripleo_sshd
+  vars:
+    tripleo_sshd_banner_enabled: false
+    tripleo_sshd_banner_text: ''
+    tripleo_sshd_message_of_the_day: ''
+    tripleo_sshd_motd_enabled: false
+    tripleo_sshd_password_authentication: 'no'
+    tripleo_sshd_server_options:
+      AcceptEnv:
+      - LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+      - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+      - LC_IDENTIFICATION LC_ALL LANGUAGE
+      - XMODIFIERS
+      AuthorizedKeysFile: .ssh/authorized_keys
+      ChallengeResponseAuthentication: 'no'
+      GSSAPIAuthentication: 'no'
+      GSSAPICleanupCredentials: 'no'
+      HostKey:
+      - /etc/ssh/ssh_host_rsa_key
+      - /etc/ssh/ssh_host_ecdsa_key
+      - /etc/ssh/ssh_host_ed25519_key
+      Subsystem: sftp  /usr/libexec/openssh/sftp-server
+      SyslogFacility: AUTHPRIV
+      UseDNS: 'no'
+      UsePAM: 'yes'
+      X11Forwarding: 'yes'
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - path: /srv/node
+    setype: container_file_t
+  - path: /var/log/swift
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/swift
+    setype: container_file_t
+- file:
+    mode: '{{ item.mode|default(omit) }}'
+    path: '{{ item.path }}'
+    setype: '{{ item.setype }}'
+    state: directory
+  name: create persistent directories
+  with_items:
+  - path: /srv/node
+    setype: container_file_t
+  - path: /var/cache/swift
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/swift
+    setype: container_file_t
+- name: Set swift_use_local_disks fact
+  set_fact:
+    swift_use_local_disks: true
+- name: Set use_node_data_lookup fact
+  set_fact:
+    use_node_data_lookup: false
+- file:
+    path: /srv/node/d1
+    state: directory
+  name: Create Swift d1 directory if needed
+  when: swift_use_local_disks
+- name: Set fact for SwiftRawDisks
+  set_fact:
+    swift_raw_disks: {}
+  when: not use_node_data_lookup|bool
+- name: Get hiera swift::storage::disks::args
+  register: hiera_output
+  shell: hiera -c /etc/puppet/hiera.yaml swift::storage::disks::args | sed =e 's/=>/:/g'
+  when: use_node_data_lookup|bool
+- name: Set fact for swift_raw_disks
+  set_fact:
+    swift_raw_disks: '{{ hiera_output.stdout | from_json }}'
+  when: use_node_data_lookup|bool
+- community.general.filesystem:
+    dev: '{{ swift_raw_disks[item][''base_dir'']|default(''/dev'') }}/{{ item }}'
+    fstype: xfs
+    opts: -f -i size=1024
+  name: Format SwiftRawDisks
+  when: swift_raw_disks|length > 0
+  with_items: '{{ swift_raw_disks }}'
+- name: Refresh facts if SwiftRawDisks is set to get uuids if newly created partitions
+  setup:
+    filter: ansible_device_links
+    gather_subset:
+    - '!all'
+    - '!min'
+    - hardware
+  when: swift_raw_disks|length > 0
+- mount:
+    fstype: xfs
+    name: /srv/node/{{ item }}
+    opts: noatime
+    src: '{% if lsblk.results[''uuids''][item] is defined %}UUID={{ ansible_facts[''device_links''][''uuids''][item][0]
+      }}{% else %}{{ swift_raw_disks[item][''base_dir'']|default(''/dev'') }}/{{ item
+      }}{% endif %}'
+    state: mounted
+  name: Mount devices defined in SwiftRawDisks
+  when: swift_raw_disks|length > 0
+  with_items: '{{ swift_raw_disks }}'
+- become: true
+  failed_when: false
+  name: Check for NTP service
+  register: ntp_service_check
+  shell: systemctl is-active ntpd.service || systemctl is-enabled ntpd.service
+- name: Disable NTP before configuring Chrony
+  service:
+    enabled: false
+    name: ntpd
+    state: stopped
+  when:
+  - ntp_service_check.rc is defined
+  - ntp_service_check.rc == 0
+- include_role:
+    name: chrony
+  name: Install, Configure and Run Chrony
+- command: chronyc makestep
+  name: Force NTP sync
+- command: chronyc waitsync 30
+  name: Ensure system is NTP time synced
+- include_role:
+    name: tripleo_timezone
+  name: Run timezone role
+  vars:
+    tripleo_timezone: UTC
+- name: install tmpwatch on the host
+  package:
+    name: tmpwatch
+    state: installed
+- include_role:
+    name: tuned

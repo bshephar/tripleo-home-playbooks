@@ -1,0 +1,74 @@
+- failed_when: false
+  name: Remove openstack-nova-compute and python-nova package during upgrade
+  package:
+    name:
+    - openstack-nova-compute
+    - python-nova
+    state: removed
+  when: step|int == 2
+- block:
+  - name: Stop pacemaker cluster
+    pacemaker_cluster: state=offline
+    when: not cluster_recreate|bool
+  name: upgrade step 2
+  when: step|int == 2
+- block:
+  - name: Check if pcs is present
+    register: pcs_stat
+    stat:
+      path: /usr/sbin/pcs
+  - name: Stop pacemaker cluster before stopping all docker containers
+    pacemaker_cluster: state=offline
+    when: pcs_stat.stat.exists
+  - command: /usr/sbin/pcs cluster destroy
+    name: Destroy pacemaker cluster
+    when: pcs_stat.stat.exists
+  name: system_upgrade_prepare step 2
+  tags:
+  - never
+  - system_upgrade
+  - system_upgrade_prepare
+  when:
+  - step|int == 2
+- name: Gather missing facts
+  setup:
+    gather_subset:
+    - '!all'
+    - '!min'
+    - distribution
+  tags:
+  - always
+  when: ansible_facts['distribution'] is not defined or ansible_facts['distribution_major_version']
+    is not defined
+- name: Set leapp facts
+  set_fact:
+    upgrade_leapp_command_options: ''
+    upgrade_leapp_debug: true
+    upgrade_leapp_devel_skip: ''
+    upgrade_leapp_enabled: "{{ _upgradeLeappEnabled | bool and\n   ansible_facts['distribution']\
+      \ == 'RedHat' and\n   ansible_facts['distribution_major_version'] is version('7',\
+      \ '==') }}"
+    upgrade_leapp_post_reboot_delay: 120
+    upgrade_leapp_reboot_timeout: 3600
+  tags:
+  - always
+  vars:
+    _upgradeLeappEnabled: false
+- name: Special treatment for OpenvSwitch
+  register: ovs_upgrade
+  tripleo_ovs_upgrade: null
+  when:
+  - step|int == 2
+- name: Always ensure the openvswitch service is enabled and running after upgrades
+  service:
+    enabled: true
+    name: openvswitch
+    state: started
+  when:
+  - step|int == 2
+  - ovs_upgrade.changed|bool
+- name: Install libibverbs (https://bugs.launchpad.net/tripleo/+bug/1817743)
+  package:
+    name: libibverbs
+    state: installed
+  when: step|int == 2

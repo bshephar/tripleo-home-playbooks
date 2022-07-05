@@ -1,0 +1,56 @@
+- block:
+  - include_role:
+      name: tripleo_persist
+      tasks_from: restore.yml
+    name: Restore mysql data
+    vars:
+      tripleo_persist_dir: /var/lib/mysql
+  tags:
+  - never
+  - system_upgrade
+  - system_upgrade_run
+  vars:
+    mysql_upgrade_persist: false
+  when:
+  - step|int == 5
+  - mysql_upgrade_persist
+- block:
+  - name: check for octavia post-deploy.conf file
+    register: octavia_post_deploy_stat
+    stat:
+      path: /var/lib/config-data/puppet-generated/octavia/etc/octavia/post-deploy.conf
+  - file:
+      mode: '0755'
+      path: /var/lib/config-data/puppet-generated/octavia/etc/octavia/post-deploy.conf
+      setype: container_file_t
+      state: touch
+    name: create an empty post-deploy.conf file if it does not exist
+    when:
+    - octavia_post_deploy_stat.exists is defined and not octavia_post_deploy_stat.exists
+  name: make sure that post-deploy.conf exists before restarting containers on update
+    or upgrade
+  when: step|int == 5
+- name: Gather missing facts
+  setup:
+    gather_subset:
+    - '!all'
+    - '!min'
+    - distribution
+  tags:
+  - always
+  when: ansible_facts['distribution'] is not defined or ansible_facts['distribution_major_version']
+    is not defined
+- name: Set leapp facts
+  set_fact:
+    upgrade_leapp_command_options: ''
+    upgrade_leapp_debug: true
+    upgrade_leapp_devel_skip: ''
+    upgrade_leapp_enabled: "{{ _upgradeLeappEnabled | bool and\n   ansible_facts['distribution']\
+      \ == 'RedHat' and\n   ansible_facts['distribution_major_version'] is version('7',\
+      \ '==') }}"
+    upgrade_leapp_post_reboot_delay: 120
+    upgrade_leapp_reboot_timeout: 3600
+  tags:
+  - always
+  vars:
+    _upgradeLeappEnabled: false

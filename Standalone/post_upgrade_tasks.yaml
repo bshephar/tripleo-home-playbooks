@@ -1,0 +1,43 @@
+- name: Start cinder_volume service (pacemaker)
+  pacemaker_resource:
+    resource: openstack-cinder-volume
+    state: enable
+  when: step|int == 1
+- become: true
+  block:
+  - changed_when: false
+    check_mode: false
+    command: openstack compute service list --service nova-consoleauth --column ID  --column
+      Host --format yaml
+    delegate_to: '{{ groups[''Undercloud''] | first }}'
+    failed_when: false
+    name: Get nova-consoleauth service ID
+    register: nova_compute_service_result
+    run_once: true
+  - command: openstack compute service delete {{ item.ID }}
+    delegate_to: '{{ groups[''Undercloud''] | first }}'
+    failed_when: false
+    loop: '{{ nova_compute_service_result.stdout | from_yaml | default([]) }}'
+    name: Deleting nova-consoleauth
+    run_once: true
+  environment:
+    OS_CLOUD: overcloud
+  when:
+  - step|int == 3
+- name: Restart ovn-dbs service (pacemaker)
+  pacemaker_resource:
+    resource: ovn-dbs-bundle
+    state: restart
+    wait_for_resource: true
+  when:
+  - step|int == 1
+  - ovn_dbs_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower
+- include_role:
+    name: tripleo_podman
+    tasks_from: tripleo_podman_purge.yml
+  name: Purge Podman
+  vars:
+    deployment_source_hosts: Undercloud
+  when:
+  - (step | int) == 3
+  - deployment_source_hosts not in group_names

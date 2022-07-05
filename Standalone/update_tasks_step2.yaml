@@ -1,0 +1,156 @@
+- block:
+  - name: Get container cinder_volume image
+    set_fact:
+      cinder_volume_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+      cinder_volume_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+  - command: '{{container_cli}} pull {{cinder_volume_image}}'
+    delay: 3
+    name: Pull latest cinder_volume images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous cinder_volume image id
+    register: old_cinder_volume_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{cinder_volume_image_latest}}'
+  - name: Get new cinder_volume image id
+    register: new_cinder_volume_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{cinder_volume_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest cinder_volume image
+    vars:
+      container_image: '{{cinder_volume_image}}'
+      container_image_latest: '{{cinder_volume_image_latest}}'
+    when:
+    - old_cinder_volume_image_id.stdout != new_cinder_volume_image_id.stdout
+  name: cinder_volume fetch and retag container image for pacemaker
+  when: step|int == 2
+- block:
+  - name: set is_haproxy_bootstrap_node fact
+    set_fact: is_haproxy_bootstrap_node={{haproxy_short_bootstrap_node_name|lower
+      == ansible_facts['hostname']|lower}}
+    tags: common
+    when:
+    - haproxy_short_bootstrap_node_name|default(false)
+  name: Set HAProxy upgrade facts
+- block:
+  - name: Get container haproxy image
+    set_fact:
+      haproxy_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:current-tripleo
+      haproxy_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:pcmklatest
+  - command: '{{container_cli}} pull {{haproxy_image}}'
+    delay: 3
+    name: Pull latest haproxy images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous haproxy image id
+    register: old_haproxy_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{haproxy_image_latest}}'
+  - name: Get new haproxy image id
+    register: new_haproxy_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{haproxy_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest haproxy image
+    vars:
+      container_image: '{{haproxy_image}}'
+      container_image_latest: '{{haproxy_image_latest}}'
+    when:
+    - old_haproxy_image_id.stdout != new_haproxy_image_id.stdout
+  name: Haproxy fetch and retag container image for pacemaker
+  when:
+  - step|int == 2
+- block:
+  - name: Get container galera image
+    set_fact:
+      galera_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:current-tripleo
+      galera_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:pcmklatest
+  - command: '{{container_cli}} pull {{galera_image}}'
+    delay: 3
+    name: Pull latest galera images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous galera image id
+    register: old_galera_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{galera_image_latest}}'
+  - name: Get new galera image id
+    register: new_galera_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{galera_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest galera image
+    vars:
+      container_image: '{{galera_image}}'
+      container_image_latest: '{{galera_image_latest}}'
+    when:
+    - old_galera_image_id.stdout != new_galera_image_id.stdout
+  name: Mariadb fetch and retag container image for pacemaker
+  when: step|int == 2
+- name: Ensure mariadb-server is not installed on the host
+  when: step|int == 2
+  yum:
+    name: mariadb-server*
+    state: absent
+- failed_when: false
+  name: Remove openstack-nova-compute and python-nova package during upgrade
+  package:
+    name:
+    - openstack-nova-compute
+    - python-nova
+    state: removed
+  when: step|int == 2
+- block:
+  - name: Get container rabbitmq image
+    set_fact:
+      rabbitmq_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+      rabbitmq_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+  - command: '{{container_cli}} pull {{rabbitmq_image}}'
+    delay: 3
+    name: Pull latest rabbitmq images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous rabbitmq image id
+    register: old_rabbitmq_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{rabbitmq_image_latest}}'
+  - name: Get new rabbitmq image id
+    register: new_rabbitmq_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{rabbitmq_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest rabbitmq image
+    vars:
+      container_image: '{{rabbitmq_image}}'
+      container_image_latest: '{{rabbitmq_image_latest}}'
+    when:
+    - old_rabbitmq_image_id.stdout != new_rabbitmq_image_id.stdout
+  name: Rabbit fetch and retag container image for pacemaker
+  when: step|int == 2
+- name: Check swift containers log folder/symlink exists
+  register: swift_log_link
+  stat:
+    path: /var/log/containers/swift
+- file:
+    path: /var/log/containers/swift
+    state: absent
+  name: Delete if symlink
+  when: swift_log_link.stat.islnk is defined and swift_log_link.stat.islnk
+- name: Special treatment for OpenvSwitch
+  register: ovs_upgrade
+  tripleo_ovs_upgrade: null
+  when:
+  - step|int == 2
+- name: Always ensure the openvswitch service is enabled and running after upgrades
+  service:
+    enabled: true
+    name: openvswitch
+    state: started
+  when:
+  - step|int == 2
+  - ovs_upgrade.changed|bool

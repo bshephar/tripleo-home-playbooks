@@ -1,0 +1,415 @@
+- block:
+  - name: Get container cinder_volume image
+    set_fact:
+      cinder_volume_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+      cinder_volume_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+  - command: '{{container_cli}} pull {{cinder_volume_image}}'
+    delay: 3
+    name: Pull latest cinder_volume images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous cinder_volume image id
+    register: old_cinder_volume_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{cinder_volume_image_latest}}'
+  - name: Get new cinder_volume image id
+    register: new_cinder_volume_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{cinder_volume_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest cinder_volume image
+    vars:
+      container_image: '{{cinder_volume_image}}'
+      container_image_latest: '{{cinder_volume_image_latest}}'
+    when:
+    - old_cinder_volume_image_id.stdout != new_cinder_volume_image_id.stdout
+  name: cinder_volume fetch and retag container image for pacemaker
+  when: step|int == 2
+- file:
+    path: /etc/cron.daily/containers-tmpwatch
+    state: absent
+  name: Ensure old cron.daily is absent
+  when: step|int == 1
+- block:
+  - name: set is_haproxy_bootstrap_node fact
+    set_fact: is_haproxy_bootstrap_node={{haproxy_short_bootstrap_node_name|lower
+      == ansible_facts['hostname']|lower}}
+    tags: common
+    when:
+    - haproxy_short_bootstrap_node_name|default(false)
+  name: Set HAProxy upgrade facts
+- block:
+  - command: cibadmin --query --xpath "//storage-mapping[@id='haproxy-cert']"
+    failed_when: false
+    name: Check haproxy public certificate configuration in pacemaker
+    register: haproxy_cert_mounted
+  - name: Disable the haproxy cluster resource
+    pacemaker_resource:
+      resource: haproxy-bundle
+      state: disable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+    when: haproxy_cert_mounted.rc == 6
+  - name: Set HAProxy public cert volume mount fact
+    set_fact:
+      haproxy_public_cert_path: /etc/pki/tls/private/overcloud_endpoint.pem
+      haproxy_public_tls_enabled: true
+  - command: pcs resource bundle update haproxy-bundle storage-map add id=haproxy-cert
+      source-dir={{ haproxy_public_cert_path }} target-dir=/var/lib/kolla/config_files/src-tls/{{
+      haproxy_public_cert_path }} options=ro
+    name: Add a bind mount for public certificate in the haproxy bundle
+    when: haproxy_cert_mounted.rc == 6 and haproxy_public_tls_enabled|bool
+  - name: Enable the haproxy cluster resource
+    pacemaker_resource:
+      resource: haproxy-bundle
+      state: enable
+      wait_for_resource: true
+    register: output
+    retries: 5
+    until: output.rc == 0
+    when: haproxy_cert_mounted.rc == 6
+  name: Mount TLS cert if needed
+  when:
+  - step|int == 1
+  - is_haproxy_bootstrap_node
+- block:
+  - name: Get container haproxy image
+    set_fact:
+      haproxy_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:current-tripleo
+      haproxy_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:pcmklatest
+  - command: '{{container_cli}} pull {{haproxy_image}}'
+    delay: 3
+    name: Pull latest haproxy images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous haproxy image id
+    register: old_haproxy_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{haproxy_image_latest}}'
+  - name: Get new haproxy image id
+    register: new_haproxy_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{haproxy_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest haproxy image
+    vars:
+      container_image: '{{haproxy_image}}'
+      container_image_latest: '{{haproxy_image_latest}}'
+    when:
+    - old_haproxy_image_id.stdout != new_haproxy_image_id.stdout
+  name: Haproxy fetch and retag container image for pacemaker
+  when:
+  - step|int == 2
+- block:
+  - file:
+      mode: 1777
+      path: /var/tmp
+      setype: tmp_t
+      state: directory
+    name: Reset selinux label on /var/tmp
+  name: Anchor for upgrade and update tasks
+  when: step|int == 0
+- block:
+  - name: Get container galera image
+    set_fact:
+      galera_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:current-tripleo
+      galera_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:pcmklatest
+  - command: '{{container_cli}} pull {{galera_image}}'
+    delay: 3
+    name: Pull latest galera images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous galera image id
+    register: old_galera_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{galera_image_latest}}'
+  - name: Get new galera image id
+    register: new_galera_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{galera_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest galera image
+    vars:
+      container_image: '{{galera_image}}'
+      container_image_latest: '{{galera_image_latest}}'
+    when:
+    - old_galera_image_id.stdout != new_galera_image_id.stdout
+  name: Mariadb fetch and retag container image for pacemaker
+  when: step|int == 2
+- name: Ensure mariadb-server is not installed on the host
+  when: step|int == 2
+  yum:
+    name: mariadb-server*
+    state: absent
+- failed_when: false
+  name: Remove openstack-nova-compute and python-nova package during upgrade
+  package:
+    name:
+    - openstack-nova-compute
+    - python-nova
+    state: removed
+  when: step|int == 2
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-libvirt.conf
+      state: absent
+    name: Remove old tmpfiles.d config
+  name: nova_libvirt_container_tmpfile_cleanup
+  when: step|int == 1
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-libvirt.conf
+      state: absent
+    name: Remove old tmpfiles.d config
+  name: nova_migration_target_tmpfile_cleanup
+  when: step|int == 1
+- block:
+  - command: '{{container_cli}} pull {{ovn_dbs_image}}'
+    delay: 3
+    name: Pull latest ovn-dbs images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous ovn_dbs image id
+    register: old_ovn_dbs_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{ovn_dbs_image_latest}}'
+  - name: Get new ovn_dbs image id
+    register: new_ovn_dbs_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{ovn_dbs_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest ovn_dbs image
+    vars:
+      container_image: '{{ovn_dbs_image}}'
+      container_image_latest: '{{ovn_dbs_image_latest}}'
+    when:
+    - old_ovn_dbs_image_id.stdout != new_ovn_dbs_image_id.stdout
+  name: ovn-dbs fetch and retag container image for pacemaker
+  vars:
+    ovn_dbs_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:current-tripleo
+    ovn_dbs_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+  when:
+  - step|int == 3
+- block:
+  - name: Get the present image used by ovn-dbs-bundle
+    register: ovn_dbs_current_image
+    shell: pcs resource config ovn-dbs-bundle | grep -Eo 'image=[^ ]+' | awk -F= '{print
+      $2;}'
+  - block:
+    - command: pcs resource bundle update ovn-dbs-bundle container image={{ovn_dbs_image_latest}}
+      name: Update the ovn-dbs-bundle to use the new container image name
+    when:
+    - ovn_dbs_current_image.stdout != ovn_dbs_image_latest
+  name: Update ovn-dbs-bundle resource to use pcmklatest tag image if not used
+  vars:
+    ovn_dbs_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+  when:
+  - step|int == 5
+  - ovn_dbs_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower
+- block:
+  - name: check for octavia post-deploy.conf file
+    register: octavia_post_deploy_stat
+    stat:
+      path: /var/lib/config-data/puppet-generated/octavia/etc/octavia/post-deploy.conf
+  - file:
+      mode: '0755'
+      path: /var/lib/config-data/puppet-generated/octavia/etc/octavia/post-deploy.conf
+      setype: container_file_t
+      state: touch
+    name: create an empty post-deploy.conf file if it does not exist
+    when:
+    - octavia_post_deploy_stat.exists is defined and not octavia_post_deploy_stat.exists
+  name: make sure that post-deploy.conf exists before restarting containers on update
+    or upgrade
+  when: step|int == 5
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-octavia.conf
+      state: absent
+    name: octavia_api_tmpfile_cleanup
+  name: octavia_api_tmpfile_cleanup
+  when: step|int == 1
+- block:
+  - name: Get container rabbitmq image
+    set_fact:
+      rabbitmq_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+      rabbitmq_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+  - command: '{{container_cli}} pull {{rabbitmq_image}}'
+    delay: 3
+    name: Pull latest rabbitmq images
+    register: result
+    retries: 3
+    until: result.rc == 0
+  - failed_when: false
+    name: Get previous rabbitmq image id
+    register: old_rabbitmq_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{rabbitmq_image_latest}}'
+  - name: Get new rabbitmq image id
+    register: new_rabbitmq_image_id
+    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{rabbitmq_image}}'
+  - include_role:
+      name: tripleo_container_tag
+    name: Retag pcmklatest to latest rabbitmq image
+    vars:
+      container_image: '{{rabbitmq_image}}'
+      container_image_latest: '{{rabbitmq_image_latest}}'
+    when:
+    - old_rabbitmq_image_id.stdout != new_rabbitmq_image_id.stdout
+  name: Rabbit fetch and retag container image for pacemaker
+  when: step|int == 2
+- async: 30
+  name: Check pacemaker cluster running before the minor update
+  pacemaker_cluster: state=online check_and_fail=true
+  poll: 4
+  when: step|int == 0
+- name: Move virtual IPs to another node before stopping pacemaker
+  shell: "CLUSTER_NODE=$(crm_node -n)\necho \"Retrieving all the VIPs which are hosted\
+    \ on this node\"\nVIPS_TO_MOVE=$(crm_mon --as-xml | xmllint --xpath '//resource[@resource_agent\
+    \ = \"ocf::heartbeat:IPaddr2\" and @role = \"Started\" and @managed = \"true\"\
+    \ and ./node[@name = \"'${CLUSTER_NODE}'\"]]/@id' - | sed -e 's/id=//g' -e 's/\"\
+    //g')\nfor v in ${VIPS_TO_MOVE}; do\n    echo \"Moving VIP $v on another node\"\
+    \n    pcs resource ban $v ${CLUSTER_NODE} --wait=300\ndone\necho \"Removing the\
+    \ location constraints that were created to move the VIPs\"\nfor v in ${VIPS_TO_MOVE};\
+    \ do\n    echo \"Removing location ban for VIP $v\"\n    ban_id=$(cibadmin --query\
+    \ | xmllint --xpath 'string(//rsc_location[@rsc=\"'${v}'\" and @node=\"'${CLUSTER_NODE}'\"\
+    \ and @score=\"-INFINITY\"]/@id)' -)\n    if [ -n \"$ban_id\" ]; then\n      \
+    \  pcs constraint remove ${ban_id}\n    else\n        echo \"Could not retrieve\
+    \ and clear location constraint for VIP $v\" 2>&1\n    fi\ndone\n"
+  when:
+  - step|int == 1
+  - hostvars[inventory_hostname]["haproxy_node_names"]|default([])|length > 1
+- command: systemd-cat -t ha-shutdown /var/lib/container-config-scripts/pacemaker_mutex_shutdown.sh
+    --acquire
+  name: Acquire the cluster shutdown lock to stop pacemaker cluster
+  when: step|int == 1
+- name: Stop pacemaker cluster
+  pacemaker_cluster: state=offline
+  when: step|int == 1
+- name: Start pacemaker cluster
+  pacemaker_cluster: state=online
+  when: step|int == 4
+- command: systemd-cat -t ha-shutdown /var/lib/container-config-scripts/pacemaker_mutex_shutdown.sh
+    --release
+  name: Release the cluster shutdown lock
+  when: step|int == 4
+- block:
+  - name: Ensure redis is uninstalled on container host
+    package:
+      name: redis
+      state: absent
+  name: redis_container_puppet_redis_pkg_clean
+  when: step|int == 1
+- block:
+  - file:
+      path: /etc/tmpfiles.d/var-run-redis.conf
+      state: absent
+    name: remove old tmpfiles.d config
+  name: redis_container_puppet_tmpfile_cleanup
+  when: step|int == 1
+- name: Check swift containers log folder/symlink exists
+  register: swift_log_link
+  stat:
+    path: /var/log/containers/swift
+- file:
+    path: /var/log/containers/swift
+    state: absent
+  name: Delete if symlink
+  when: swift_log_link.stat.islnk is defined and swift_log_link.stat.islnk
+- block:
+  - failed_when: false
+    name: Disable tripleo-iptables.service
+    register: systemd_tripleo_iptables
+    systemd:
+      enabled: false
+      name: tripleo-iptables.service
+      state: stopped
+  - file:
+      path: /etc/systemd/system/tripleo-iptables.service
+      state: absent
+    name: Cleanup tripleo-iptables.services
+  - failed_when: false
+    name: Disable tripleo-ip6tables.service
+    register: systemd_tripleo_ip6tables
+    systemd:
+      enabled: false
+      name: tripleo-ip6tables.service
+      state: stopped
+  - file:
+      path: /etc/systemd/system/tripleo-ip6tables.service
+      state: absent
+    name: Cleanup tripleo-ip6tables.services
+  - name: Reload systemd
+    systemd:
+      daemon_reload: true
+    when:
+    - (systemd_tripleo_iptables is changed or systemd_tripleo_ip6tables is changed)
+  name: Cleanup tripleo-iptables services
+  when:
+  - (step | int) == 1
+- include_role:
+    name: tripleo_redhat_enforce
+  name: Enforce RHOSP rules regarding subscription.
+  vars:
+    skip_rhel_enforcement: false
+  when:
+  - step|int == 0
+  - ansible_facts['distribution'] == 'RedHat'
+  - not (skip_rhel_enforcement | bool)
+- loop: '{{ dnf_module_list|list }}'
+  name: Ensure DNF modules have the right stream enabled
+  tripleo_dnf_stream:
+    name: '{{ item.module }}:{{ item.stream }}'
+    state: enabled
+  vars:
+    dnf_module_list: []
+  when:
+  - step|int == 0
+  - dnf_module_list|length > 0
+  - item.distribution_version is defined
+  - ansible_facts['distribution_major_version'] is version(item.distribution_version,
+    '==')
+- name: Check for existing yum.pid
+  register: yum_pid_file
+  stat: path=/run/yum.pid
+  when: step|int == 0 or step|int == 3
+- fail: msg="ERROR existing yum.pid detected - can't continue! Please ensure there
+    is no other package update process for the duration of the minor update worfklow.
+    Exiting."
+  name: Exit if existing yum process
+  when: (step|int == 0 or step|int == 3) and yum_pid_file.stat.exists
+- name: Special treatment for OpenvSwitch
+  register: ovs_upgrade
+  tripleo_ovs_upgrade: null
+  when:
+  - step|int == 2
+- name: Always ensure the openvswitch service is enabled and running after upgrades
+  service:
+    enabled: true
+    name: openvswitch
+    state: started
+  when:
+  - step|int == 2
+  - ovs_upgrade.changed|bool
+- name: Update all packages
+  vars:
+    skip_package_update: false
+  when:
+  - step|int == 3
+  - not skip_package_update|bool
+  yum:
+    exclude: ansible
+    name: '*'
+    state: latest
+- ignore_errors: true
+  name: Ensure openvswitch is running after update
+  service:
+    enabled: true
+    name: openvswitch
+    state: started
+  when: step|int == 3

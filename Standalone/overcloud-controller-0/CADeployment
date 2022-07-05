@@ -1,0 +1,84 @@
+CADeployment:
+  config: |
+    #!/bin/sh
+    cat > ${cacert_path} << EOF
+    ${cacert_content}
+    EOF
+    chmod 0444 ${cacert_path}
+    chown root:root ${cacert_path}
+    ${update_anchor_command}
+    md5sum ${cacert_path} > ${heat_outputs_path}.root_cert_md5sum
+
+  creation_time: "2022-07-05T03:51:09Z"
+  deployment_name: CADeployment
+  group: script
+  id: 6f8752d5-c5f3-452c-b1a6-ecf93f186ce5
+  inputs:
+    - name: cacert_path
+      description: 
+      type: String
+      value: |-
+        /etc/pki/ca-trust/source/anchors/ca.crt.pem
+    - name: cacert_content
+      description: 
+      type: String
+      value: |-
+        -----BEGIN CERTIFICATE-----
+        MIIDmzCCAoOgAwIBAgIUPxuSCaqGPfuM48Ldl7QGYONzpMMwDQYJKoZIhvcNAQEL
+        BQAwXTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClF1ZWVuc2xhbmQxETAPBgNVBAcM
+        CEJyaXNiYW5lMREwDwYDVQQKDAhibmUtaG9tZTETMBEGA1UEAwwKVHJpcGxlTyBD
+        QTAeFw0yMjAzMzAwNDE5MzhaFw0yMzAzMzAwNDE5MzhaMF0xCzAJBgNVBAYTAkFV
+        MRMwEQYDVQQIDApRdWVlbnNsYW5kMREwDwYDVQQHDAhCcmlzYmFuZTERMA8GA1UE
+        CgwIYm5lLWhvbWUxEzARBgNVBAMMClRyaXBsZU8gQ0EwggEiMA0GCSqGSIb3DQEB
+        AQUAA4IBDwAwggEKAoIBAQCsr8hHqyoweBRo4QuveMUNZcXuhuKGTMJxgh8rs+El
+        nVAdQxFtDCSQeKJ03e/lHc+uM8NxTSjzV7uWXzDi8Tf4IBSsZemzYyUNTh9qqZsH
+        /IODDk1io7M89smmDlI5bMS/7dhEytNFY5URbqf2Y1O7OAXSPigXb41P3ojE1VA+
+        qXOjfjd8bK4ew6OoUL6kEcIuvtksA3l5MEcUpQ9pcUV8QNlommrDUOZsJi/GGHBp
+        B9D5JiyJZtyKGY+y0w2ywd2toc9njkbHVfJYmNBWexvKMQ89Sghirxj5jQf53SIJ
+        GtEzOX3deWaahwaah4vvy2cpx+FnO6rK0lCGrB3sXP9lAgMBAAGjUzBRMB0GA1Ud
+        DgQWBBQP32JPFJ5XWkiYhZ1X+cFEPyMnYTAfBgNVHSMEGDAWgBQP32JPFJ5XWkiY
+        hZ1X+cFEPyMnYTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQB9
+        ti8i4PQ8xGgFDxkbT93y9iExlpDZt0ES3O7lSn2jLaOdog2Es1Qsm9ozUEFqLiya
+        tUOMuhlFN07hN+zOPaQjVMxyfg1LiE1mwchi+EFrlWkTvutmxXAPzSUIHtfC97n3
+        qKMEZZORwWzBmWSw5t+D6fB27wJgujM09E5vfy/WEssQsiOtgSSR+24ZuAPrQvJL
+        JgB/rw64KuTyzw39gmcO2zjopYFpKvxbYyhH4R1cHFMG5ztK43dET/AtdPQP/8Ax
+        QHu2uaT2NcJ+o9WzotGWP2k/dT0ymll3bQ0J2OTbsXGzqBtchI/d3dqieJZbBaSG
+        fSRTXSrxFvVslzK5U+1+
+        -----END CERTIFICATE----- 
+
+    - name: update_anchor_command
+      description: 
+      type: String
+      value: |-
+        update-ca-trust extract
+    - name: deploy_server_id
+      description: ID of the server being deployed to
+      type: String
+      value: |-
+        19c76f85-239b-4c87-8578-9b95a525c8ac
+    - name: deploy_action
+      description: Name of the current action being deployed
+      type: String
+      value: |-
+        CREATE
+    - name: deploy_stack_id
+      description: ID of the stack this deployment belongs to
+      type: String
+      value: |-
+        overcloud-Standalone-kjpjvbjojggm-0-z5p2k5ctf56s-NodeTLSCAData-pq45rllnd66q-CADeployment-slw2okrsrfrb/2ed4830c-a008-4c26-a6dd-9fc56cc0ec4f
+    - name: deploy_resource_name
+      description: Name of this deployment resource in the stack
+      type: String
+      value: |-
+        TripleOSoftwareDeployment
+    - name: deploy_signal_transport
+      description: How the server should signal to heat with the deployment output values.
+      type: String
+      value: |-
+        NO_SIGNAL
+  name: deployment_resource
+  options: {}
+  outputs:
+    - name: root_cert_md5sum
+      description: 
+      type: String

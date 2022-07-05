@@ -1,0 +1,49 @@
+- block:
+  - name: set is_haproxy_bootstrap_node fact
+    set_fact: is_haproxy_bootstrap_node={{haproxy_short_bootstrap_node_name|lower
+      == ansible_facts['hostname']|lower}}
+    tags: common
+    when:
+    - haproxy_short_bootstrap_node_name|default(false)
+  name: Set HAProxy upgrade facts
+- block:
+  - name: Get the present image used by ovn-dbs-bundle
+    register: ovn_dbs_current_image
+    shell: pcs resource config ovn-dbs-bundle | grep -Eo 'image=[^ ]+' | awk -F= '{print
+      $2;}'
+  - block:
+    - command: pcs resource bundle update ovn-dbs-bundle container image={{ovn_dbs_image_latest}}
+      name: Update the ovn-dbs-bundle to use the new container image name
+    when:
+    - ovn_dbs_current_image.stdout != ovn_dbs_image_latest
+  name: Update ovn-dbs-bundle resource to use pcmklatest tag image if not used
+  vars:
+    ovn_dbs_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+  when:
+  - step|int == 5
+  - ovn_dbs_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower
+- block:
+  - name: check for octavia post-deploy.conf file
+    register: octavia_post_deploy_stat
+    stat:
+      path: /var/lib/config-data/puppet-generated/octavia/etc/octavia/post-deploy.conf
+  - file:
+      mode: '0755'
+      path: /var/lib/config-data/puppet-generated/octavia/etc/octavia/post-deploy.conf
+      setype: container_file_t
+      state: touch
+    name: create an empty post-deploy.conf file if it does not exist
+    when:
+    - octavia_post_deploy_stat.exists is defined and not octavia_post_deploy_stat.exists
+  name: make sure that post-deploy.conf exists before restarting containers on update
+    or upgrade
+  when: step|int == 5
+- name: Check swift containers log folder/symlink exists
+  register: swift_log_link
+  stat:
+    path: /var/log/containers/swift
+- file:
+    path: /var/log/containers/swift
+    state: absent
+  name: Delete if symlink
+  when: swift_log_link.stat.islnk is defined and swift_log_link.stat.islnk

@@ -1,0 +1,399 @@
+all_nodes_extra_map_data: {}
+cloud_domain: bne-home.net
+cloud_names:
+  cloud_name_ctlplane: overcloud.ctlplane.localdomain
+  cloud_name_external: openstack.bne-home.net
+  cloud_name_internal_api: overcloud.internalapi.localdomain
+  cloud_name_storage: overcloud.storage.localdomain
+  cloud_name_storage_mgmt: overcloud.storagemgmt.localdomain
+container_cli: podman
+control_virtual_ip: 192.168.1.25
+deploy_artifact_files: []
+deploy_artifact_urls: []
+deploy_identifier: '1656992725'
+deploy_steps_max: 6
+enable_internal_tls: false
+enabled_networks:
+- Storage
+- StorageMgmt
+- InternalApi
+- Tenant
+- External
+- Management
+enabled_services:
+- keystone_admin_api
+- keystone_public_api
+- ca_certs
+- cinder_api
+- cinder_scheduler
+- cinder_volume
+- clustercheck
+- container_image_prepare
+- logrotate_crond
+- glance_api
+- haproxy
+- heat_api
+- heat_api_cfn
+- heat_engine
+- horizon
+- iscsid
+- kernel
+- keystone
+- memcached
+- mysql
+- mysql_client
+- neutron_api
+- neutron_plugin_ml2_ovn
+- nova_api
+- nova_compute
+- nova_conductor
+- nova_libvirt
+- nova_metadata
+- nova_migration_target
+- nova_scheduler
+- nova_vnc_proxy
+- ovn_controller
+- ovn_dbs
+- ovn_metadata
+- octavia_api
+- octavia_deployment_config
+- octavia_health_manager
+- octavia_housekeeping
+- octavia_worker
+- oslo_messaging_notify
+- oslo_messaging_rpc
+- pacemaker
+- placement
+- podman
+- redis
+- snmp
+- sshd
+- swift_proxy
+- swift_ringbuilder
+- swift_storage
+- chrony
+- timezone
+- logrotate_tmpwatch
+- tripleo_firewall
+- tripleo_packages
+- tuned
+external_net_name: external
+extra_hosts_entries: []
+hide_sensitive_logs: false
+hosts_entry:
+- 192.168.1.101 tripleo-director.ctlplane.localdomain tripleo-director.ctlplane
+- 192.168.1.25  overcloud.ctlplane.localdomain
+- 192.168.1.25  overcloud.storage.localdomain
+- 192.168.1.25  overcloud.storagemgmt.localdomain
+- 192.168.1.25  overcloud.internalapi.localdomain
+- 172.20.10.25  openstack.bne-home.net
+- 172.16.2.85 overcloud-controller-0.bne-home.net overcloud-controller-0
+- 172.16.1.148 overcloud-controller-0.storage.bne-home.net overcloud-controller-0.storage
+- 172.16.3.113 overcloud-controller-0.storagemgmt.bne-home.net overcloud-controller-0.storagemgmt
+- 172.16.2.85 overcloud-controller-0.internalapi.bne-home.net overcloud-controller-0.internalapi
+- 172.16.0.244 overcloud-controller-0.tenant.bne-home.net overcloud-controller-0.tenant
+- 172.20.12.80 overcloud-controller-0.external.bne-home.net overcloud-controller-0.external
+- 192.168.1.7 overcloud-controller-0.ctlplane.bne-home.net overcloud-controller-0.ctlplane
+internal_api_net_name: internal_api
+keystone_resources:
+  cinder:
+    users:
+      cinder:
+        password: KutXQeLq3w0rqwJUy5MwOowdU
+        roles:
+        - admin
+        - service
+  cinderv3:
+    endpoints:
+      admin: http://192.168.1.25:8776/v3
+      internal: http://192.168.1.25:8776/v3
+      public: https://openstack.bne-home.net:13776/v3
+    region: regionOne
+    service: volumev3
+    users:
+      cinderv3:
+        password: KutXQeLq3w0rqwJUy5MwOowdU
+        roles:
+        - admin
+        - service
+  glance:
+    endpoints:
+      admin: http://192.168.1.25:9292
+      internal: http://192.168.1.25:9292
+      public: https://openstack.bne-home.net:13292
+    region: regionOne
+    service: image
+    users:
+      glance:
+        password: IEhguPUe6OnKOeRjGPsC45Kp6
+        roles:
+        - admin
+        - service
+  heat:
+    domains:
+    - heat_stack
+    endpoints:
+      admin: http://192.168.1.25:8004/v1/%(tenant_id)s
+      internal: http://192.168.1.25:8004/v1/%(tenant_id)s
+      public: https://openstack.bne-home.net:13004/v1/%(tenant_id)s
+    region: regionOne
+    roles:
+    - heat_stack_user
+    service: orchestration
+    users:
+      heat:
+        password: 8mye5b2UMQupCdoY2D8bvvl2g
+        roles:
+        - admin
+        - service
+      heat_stack_domain_admin:
+        domain: heat_stack
+        password: VRquZW5HtSagsmRRB4A8t8mlX
+        roles:
+        - admin
+  heat-cfn:
+    endpoints:
+      admin: http://192.168.1.25:8000/v1
+      internal: http://192.168.1.25:8000/v1
+      public: https://openstack.bne-home.net:13005/v1
+    region: regionOne
+    service: cloudformation
+    users:
+      heat-cfn:
+        password: 8mye5b2UMQupCdoY2D8bvvl2g
+        roles:
+        - admin
+        - service
+  neutron:
+    endpoints:
+      admin: http://192.168.1.25:9696
+      internal: http://192.168.1.25:9696
+      public: https://openstack.bne-home.net:13696
+    region: regionOne
+    service: network
+    users:
+      neutron:
+        password: a1PIB0bVR8KCI5Nryq9ocVZeP
+        roles:
+        - admin
+        - service
+  nova:
+    endpoints:
+      admin: http://192.168.1.25:8774/v2.1
+      internal: http://192.168.1.25:8774/v2.1
+      public: https://openstack.bne-home.net:13774/v2.1
+    region: regionOne
+    service: compute
+    users:
+      nova:
+        password: QgE5gYRM5zaHlZDihVfa0tiyC
+        roles:
+        - admin
+        - service
+  octavia:
+    endpoints:
+      admin: http://192.168.1.25:9876
+      internal: http://192.168.1.25:9876
+      public: https://openstack.bne-home.net:13876
+    project: service
+    region: regionOne
+    service: load-balancer
+    users:
+      octavia:
+        name: octavia
+        password: peshpcOkRNosh44C3XNwUGxtw
+        project: service
+        roles:
+        - admin
+        - service
+  placement:
+    endpoints:
+      admin: http://192.168.1.25:8778/placement
+      internal: http://192.168.1.25:8778/placement
+      public: https://openstack.bne-home.net:13778/placement
+    region: regionOne
+    service: placement
+    users:
+      placement:
+        password: vFwQ1AoetKNdWwCyrkEbcF6LS
+        roles:
+        - admin
+        - service
+  swift:
+    endpoints:
+      admin: http://192.168.1.25:8080
+      internal: http://192.168.1.25:8080/v1/AUTH_%(tenant_id)s
+      public: https://openstack.bne-home.net:13808/v1/AUTH_%(tenant_id)s
+    region: regionOne
+    roles:
+    - swiftoperator
+    - ResellerAdmin
+    service: object-store
+    users:
+      swift:
+        password: EP52w9plg78yVmzrojICyiaa6
+        roles:
+        - admin
+        - service
+management_net_name: management
+net_cidr_map:
+  ctlplane:
+  - 192.168.1.0/24
+  external:
+  - 172.20.0.0/16
+  internal_api:
+  - 172.16.2.0/24
+  management:
+  - 10.0.1.0/24
+  storage:
+  - 172.16.1.0/24
+  storage_mgmt:
+  - 172.16.3.0/24
+  tenant:
+  - 172.16.0.0/24
+net_vip_map:
+  ctlplane: 192.168.1.25
+  ctlplane_subnet: 192.168.1.25/24
+  ctlplane_uri: 192.168.1.25
+  external: 172.20.10.25
+  external_subnet: ''
+  external_uri: 172.20.10.25
+  internal_api: 192.168.1.25
+  internal_api_subnet: ''
+  internal_api_uri: 192.168.1.25
+  management: ''
+  management_subnet: ''
+  management_uri: ''
+  storage: 192.168.1.25
+  storage_mgmt: 192.168.1.25
+  storage_mgmt_subnet: ''
+  storage_mgmt_uri: 192.168.1.25
+  storage_subnet: ''
+  storage_uri: 192.168.1.25
+  tenant: ''
+  tenant_subnet: ''
+  tenant_uri: ''
+network_safe_defaults: true
+network_virtual_ips:
+  ctlplane:
+    index: 1
+    ip_address: 192.168.1.25
+  external:
+    index: 5
+    ip_address: 172.20.10.25
+  internal_api:
+    index: 4
+    ip_address: 192.168.1.25
+  storage:
+    index: 2
+    ip_address: 192.168.1.25
+  storage_mgmt:
+    index: 3
+    ip_address: 192.168.1.25
+networks:
+  External:
+    name: external
+    name_lower: external
+  InternalApi:
+    name: internal_api
+    name_lower: internal_api
+  Management:
+    name: management
+    name_lower: management
+  Storage:
+    name: storage
+    name_lower: storage
+  StorageMgmt:
+    name: storage_mgmt
+    name_lower: storage_mgmt
+  Tenant:
+    name: tenant
+    name_lower: tenant
+nova_additional_cell: false
+ping_test_gateway_ips:
+  Compute:
+  - 192.168.1.254
+  Standalone:
+  - 192.168.1.254
+  - 172.20.0.254
+ping_test_ips:
+  Compute: '   '
+  Standalone: 192.168.1.7 172.16.1.148 172.16.3.113 172.16.2.85 172.16.0.244 172.20.12.80
+primary_role_name: Standalone
+service_net_map:
+  aodh_api_network: internal_api
+  apache_network: internal_api
+  barbican_api_network: internal_api
+  bindnetwork: external
+  ceph_cluster_network: storage_mgmt
+  ceph_dashboard_network: ctlplane
+  ceph_grafana_network: storage
+  ceph_ingress_network: storage
+  ceph_mon_network: storage
+  ceph_rgw_network: storage
+  cinder_api_network: internal_api
+  cinder_iscsi_network: storage
+  compute_hostname_resolve_network: internal_api
+  compute_metrics_qdr_network: internal_api
+  designate_api_network: internal_api
+  designate_bind_network: external
+  designate_mdns_network: internal_api
+  docker_registry_network: ctlplane
+  etcd_network: internal_api
+  ganesha_network: external
+  glance_api_edge_network: internal_api
+  glance_api_network: internal_api
+  gnocchi_api_network: internal_api
+  haproxy_network: ctlplane
+  heat_api_cfn_network: internal_api
+  heat_api_network: internal_api
+  horizon_network: internal_api
+  internal_api_network: internal_api
+  ironic_api_network: ctlplane
+  ironic_inspector_network: ctlplane
+  ironic_network: ctlplane
+  keystone_admin_api_network: internal_api
+  keystone_public_api_network: internal_api
+  manila_api_network: internal_api
+  memcached_network: internal_api
+  mongodb_network: internal_api
+  mysql_network: internal_api
+  neutron_api_network: internal_api
+  neutron_tenant_network: tenant
+  nova_api_network: internal_api
+  nova_libvirt_network: internal_api
+  nova_metadata_network: internal_api
+  nova_vnc_proxy_network: internal_api
+  octavia_api_network: internal_api
+  opendaylight_api_network: internal_api
+  oslo_messaging_notify_network: internal_api
+  oslo_messaging_rpc_network: internal_api
+  ovn_dbs_network: internal_api
+  pacemaker_network: internal_api
+  pacemaker_remote_network: internal_api
+  placement_network: internal_api
+  public_network: external
+  qdr_network: internal_api
+  rabbitmq_management_network: internal_api
+  rabbitmq_network: internal_api
+  redis_network: internal_api
+  snmpd_network: ctlplane
+  standalone_hostname_resolve_network: internal_api
+  standalone_metrics_qdr_network: internal_api
+  swift_proxy_network: storage
+  swift_storage_network: storage_mgmt
+  unbound_network: external
+storage_mgmt_net_name: storage_mgmt
+storage_net_name: storage
+tenant_net_name: tenant
+undercloud_hosts_entries:
+- 192.168.1.101 tripleo-director.ctlplane.localdomain tripleo-director.ctlplane
+validate_controllers_icmp: true
+validate_fqdn: false
+validate_gateways_icmp: true
+vip_hosts_entries:
+- 192.168.1.25  overcloud.ctlplane.localdomain
+- 192.168.1.25  overcloud.storage.localdomain
+- 192.168.1.25  overcloud.storagemgmt.localdomain
+- 192.168.1.25  overcloud.internalapi.localdomain
+- 172.20.10.25  openstack.bne-home.net

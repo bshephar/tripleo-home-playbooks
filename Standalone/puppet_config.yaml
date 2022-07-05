@@ -1,0 +1,258 @@
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-api:current-tripleo
+  config_volume: cinder
+  puppet_tags: cinder_config,file,concat,file_line,cinder_api_paste_ini
+  step_config: 'include tripleo::profile::base::cinder::api
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-api:current-tripleo
+  config_volume: cinder
+  puppet_tags: cinder_config,file,concat,file_line
+  step_config: 'include tripleo::profile::base::cinder::scheduler
+
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-api:current-tripleo
+  config_volume: cinder
+  puppet_tags: cinder_config,file,concat,file_line
+  step_config: 'include tripleo::profile::base::lvm
+
+    include tripleo::profile::pacemaker::cinder::volume_bundle
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:current-tripleo
+  config_volume: clustercheck
+  puppet_tags: file
+  step_config: include tripleo::profile::pacemaker::clustercheck
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cron:current-tripleo
+  config_volume: crond
+  step_config: include tripleo::profile::base::logging::logrotate
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-glance-api:current-tripleo
+  config_volume: glance_api
+  puppet_tags: glance_api_config,glance_api_paste_ini,glance_swift_config,glance_cache_config,glance_image_import_config
+  step_config: 'include tripleo::profile::base::glance::api
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:current-tripleo
+  config_volume: haproxy
+  puppet_tags: haproxy_config
+  step_config: 'exec {''wait-for-settle'': command => ''/bin/true'' }
+
+    [''pcmk_bundle'', ''pcmk_resource'', ''pcmk_property'', ''pcmk_constraint'', ''pcmk_resource_default''].each
+    |String $val| { noop_resource($val) }
+
+    include tripleo::profile::pacemaker::haproxy_bundle'
+  volumes:
+  - /etc/pki/tls/private/overcloud_endpoint.pem:/etc/pki/tls/private/overcloud_endpoint.pem:ro
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-heat-api:current-tripleo
+  config_volume: heat_api
+  puppet_tags: heat_config,file,concat,file_line,heat_api_paste_ini
+  step_config: 'include tripleo::profile::base::heat::api
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-heat-api-cfn:current-tripleo
+  config_volume: heat_api_cfn
+  puppet_tags: heat_config,file,concat,file_line
+  step_config: 'include tripleo::profile::base::heat::api_cfn
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-heat-api:current-tripleo
+  config_volume: heat
+  puppet_tags: heat_config,file,concat,file_line
+  step_config: 'include tripleo::profile::base::heat::engine
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-horizon:current-tripleo
+  config_volume: horizon
+  puppet_tags: horizon_config
+  step_config: 'include tripleo::profile::base::horizon
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-iscsid:current-tripleo
+  config_volume: iscsid
+  puppet_tags: iscsid_config
+  step_config: 'include tripleo::profile::base::iscsid
+
+    '
+  volumes:
+  - /etc/iscsi:/tmp/iscsi.host:z
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
+  config_volume: keystone
+  puppet_tags: keystone_config,keystone_domain_config
+  step_config: '[''Keystone_user'', ''Keystone_endpoint'', ''Keystone_domain'', ''Keystone_tenant'',
+    ''Keystone_user_role'', ''Keystone_role'', ''Keystone_service''].each |String
+    $val| { noop_resource($val) }
+
+    include tripleo::profile::base::keystone
+
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-memcached:current-tripleo
+  config_volume: memcached
+  puppet_tags: file
+  step_config: 'include tripleo::profile::base::memcached
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:current-tripleo
+  config_volume: mysql
+  puppet_tags: file
+  step_config: '[''Mysql_datadir'', ''Mysql_user'', ''Mysql_database'', ''Mysql_grant'',
+    ''Mysql_plugin''].each |String $val| { noop_resource($val) }
+
+    exec {''wait-for-settle'': command => ''/bin/true'' }
+
+    include tripleo::profile::pacemaker::database::mysql_bundle'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-server:current-tripleo
+  config_volume: neutron
+  puppet_tags: neutron_config,neutron_api_paste_ini
+  step_config: 'include tripleo::profile::base::neutron::server
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-server:current-tripleo
+  config_volume: neutron
+  puppet_tags: neutron_plugin_ml2
+  step_config: 'include tripleo::profile::base::neutron::plugins::ml2
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-api:current-tripleo
+  config_volume: nova
+  puppet_tags: nova_config,nova_api_paste_ini
+  step_config: '[''Nova_cell_v2''].each |String $val| { noop_resource($val) }
+
+    include tripleo::profile::base::nova::api
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+  config_volume: nova_libvirt
+  puppet_tags: nova_config
+  step_config: '# TODO(emilien): figure how to deal with libvirt profile.
+
+    # We''ll probably treat it like we do with Neutron plugins.
+
+    # Until then, just include it in the default nova-compute role.
+
+    include tripleo::profile::base::nova::compute::libvirt
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-api:current-tripleo
+  config_volume: nova
+  puppet_tags: nova_config
+  step_config: 'include tripleo::profile::base::nova::conductor
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+  config_volume: nova_libvirt
+  puppet_tags: libvirtd_config,virtlogd_config,virtproxyd_config,virtqemud_config,virtnodedevd_config,virtsecretd_config,virtstoraged_config,nova_config,file,libvirt_tls_password
+  step_config: 'include tripleo::profile::base::nova::libvirt
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-api:current-tripleo
+  config_volume: nova_metadata
+  puppet_tags: nova_config,nova_api_paste_ini
+  step_config: 'include tripleo::profile::base::nova::metadata
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+  config_volume: nova_libvirt
+  step_config: 'include tripleo::profile::base::sshd
+
+    include tripleo::profile::base::nova::migration::target'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-api:current-tripleo
+  config_volume: nova
+  puppet_tags: nova_config
+  step_config: 'include tripleo::profile::base::nova::scheduler
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-api:current-tripleo
+  config_volume: nova
+  puppet_tags: nova_config
+  step_config: 'include tripleo::profile::base::nova::vncproxy
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  config_volume: ovn_controller
+  puppet_tags: vs_config,exec
+  step_config: 'include tripleo::profile::base::neutron::agents::ovn
+
+    '
+  volumes:
+  - /lib/modules:/lib/modules:ro
+  - /run/openvswitch:/run/openvswitch:shared,z
+  - /etc/sysconfig/modules:/etc/sysconfig/modules
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-server:current-tripleo
+  config_volume: neutron
+  puppet_tags: neutron_config,ovn_metadata_agent_config
+  step_config: 'include tripleo::profile::base::neutron::ovn_metadata
+
+    '
+  volumes:
+  - /lib/modules:/lib/modules:ro
+  - /run/openvswitch:/run/openvswitch:shared,z
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-octavia-api:current-tripleo
+  config_volume: octavia
+  puppet_tags: octavia_config,octavia_ovn_provider_config
+  step_config: 'include tripleo::profile::base::octavia::api
+
+    include tripleo::profile::base::octavia::provider::ovn
+
+    include tripleo::profile::base::database::mysql::client'
+- {}
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-octavia-api:current-tripleo
+  config_volume: octavia
+  puppet_tags: octavia_config
+  step_config: 'include tripleo::profile::base::octavia::health_manager
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-octavia-api:current-tripleo
+  config_volume: octavia
+  puppet_tags: octavia_config
+  step_config: 'include tripleo::profile::base::octavia::housekeeping
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-octavia-api:current-tripleo
+  config_volume: octavia
+  puppet_tags: octavia_config
+  step_config: '[''nova_flavor''].each |String $val| { noop_resource($val) }
+
+    include tripleo::profile::base::octavia::worker
+
+    include tripleo::profile::base::database::mysql::client'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+  config_volume: rabbitmq
+  puppet_tags: file,file_line
+  step_config: '[''Rabbitmq_policy'', ''Rabbitmq_user''].each |String $val| { noop_resource($val)
+    }
+
+    include tripleo::profile::pacemaker::rabbitmq_bundle'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-placement-api:current-tripleo
+  config_volume: placement
+  puppet_tags: placement_config
+  step_config: 'include tripleo::profile::base::database::mysql::client
+
+    include tripleo::profile::base::placement::api'
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-redis:current-tripleo
+  config_volume: redis
+  puppet_tags: exec
+  step_config: 'Exec <| title == ''systemd-reload-redis'' |> { unless => ''true''
+    }
+
+    include tripleo::profile::base::database::redis
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
+  config_volume: swift
+  puppet_tags: swift_config,swift_proxy_config,swift_keymaster_config
+  step_config: 'include tripleo::profile::base::swift::proxy
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
+  config_volume: swift_ringbuilder
+  puppet_tags: swift_config,exec,fetch_swift_ring_tarball,extract_swift_ring_tarball,ring_object_device,swift::ringbuilder::create,tripleo::profile::base::swift::add_devices,swift::ringbuilder::rebalance,create_swift_ring_tarball,upload_swift_ring_tarball
+  step_config: 'include tripleo::profile::base::swift::ringbuilder
+
+    '
+- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
+  config_volume: swift
+  puppet_tags: swift_config,swift_container_config,swift_container_sync_realms_config,swift_account_config,swift_object_config,swift_object_expirer_config
+  step_config: 'include tripleo::profile::base::swift::storage
+
+    '

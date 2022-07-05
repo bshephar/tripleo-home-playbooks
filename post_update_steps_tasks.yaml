@@ -1,0 +1,8 @@
+- include_tasks: Standalone/post_update_tasks.yaml
+  when: tripleo_role_name == 'Standalone'
+  tags:
+    - always
+- include_tasks: Compute/post_update_tasks.yaml
+  when: tripleo_role_name == 'Compute'
+  tags:
+    - always

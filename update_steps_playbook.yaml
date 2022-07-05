@@ -1,0 +1,156 @@
+- import_playbook: common_deploy_steps_playbooks.yaml
+  vars:
+    deploy_source_host: "Undercloud"
+    deploy_target_host: "overcloud"
+- hosts: Standalone
+  name: Run update
+  become: true
+  serial: "{{ update_serial | default(1)}}"
+  gather_facts: "{{ gather_facts | default(false) }}"
+  any_errors_fatal: true
+  vars:
+    bootstrap_server_id: 19c76f85-239b-4c87-8578-9b95a525c8ac
+    deploy_identifier: 1656992725
+    enable_debug: False
+    enable_puppet: True
+    container_cli: podman
+    container_log_stdout_path: /var/log/containers/stdouts
+    container_healthcheck_disabled: False
+    docker_puppet_debug: False
+    docker_puppet_process_count: 6
+    docker_puppet_mount_host_puppet: True
+    tripleo_minor_update: true
+    tripleo_redhat_enforce: true
+  tasks:
+    - import_tasks: hiera_steps_tasks.yaml
+    - import_tasks: common_container_config_scripts.yaml
+    - import_tasks: "Standalone/update_tasks_step0.yaml"
+      vars:
+        step: "0"
+    - import_tasks: "Standalone/update_tasks_step1.yaml"
+      vars:
+        step: "1"
+    - import_tasks: "Standalone/update_tasks_step2.yaml"
+      vars:
+        step: "2"
+    - import_tasks: "Standalone/update_tasks_step3.yaml"
+      vars:
+        step: "3"
+    - import_tasks: "Standalone/update_tasks_step4.yaml"
+      vars:
+        step: "4"
+    - import_tasks: "Standalone/update_tasks_step5.yaml"
+      vars:
+        step: "5"
+    - import_tasks: "Standalone/host_prep_tasks.yaml"
+      when: tripleo_role_name == 'Standalone'
+    - import_tasks: deploy_steps_tasks_step_0.yaml
+      vars:
+        step: 0
+    - name: Make sure container configuration is refreshed
+      import_tasks: common_container_setup_tasks.yaml
+    - name: Write config data at the start of step 1
+      import_tasks: common_deploy_steps_tasks_step_1.yaml
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "1"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "2"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "3"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "4"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "5"
+    - import_tasks: "Standalone/post_update_tasks_step0.yaml"
+      vars:
+        step: "0"
+    - import_tasks: "Standalone/post_update_tasks_step1.yaml"
+      vars:
+        step: "1"
+    - import_tasks: "Standalone/post_update_tasks_step2.yaml"
+      vars:
+        step: "2"
+    - import_tasks: "Standalone/post_update_tasks_step3.yaml"
+      vars:
+        step: "3"
+- hosts: Compute
+  name: Run update
+  become: true
+  serial: "{{ update_serial | default(25)}}"
+  gather_facts: "{{ gather_facts | default(false) }}"
+  any_errors_fatal: true
+  vars:
+    bootstrap_server_id: 19c76f85-239b-4c87-8578-9b95a525c8ac
+    deploy_identifier: 1656992725
+    enable_debug: False
+    enable_puppet: True
+    container_cli: podman
+    container_log_stdout_path: /var/log/containers/stdouts
+    container_healthcheck_disabled: False
+    docker_puppet_debug: False
+    docker_puppet_process_count: 6
+    docker_puppet_mount_host_puppet: True
+    tripleo_minor_update: true
+    tripleo_redhat_enforce: true
+  tasks:
+    - import_tasks: hiera_steps_tasks.yaml
+    - import_tasks: common_container_config_scripts.yaml
+    - import_tasks: "Compute/update_tasks_step0.yaml"
+      vars:
+        step: "0"
+    - import_tasks: "Compute/update_tasks_step1.yaml"
+      vars:
+        step: "1"
+    - import_tasks: "Compute/update_tasks_step2.yaml"
+      vars:
+        step: "2"
+    - import_tasks: "Compute/update_tasks_step3.yaml"
+      vars:
+        step: "3"
+    - import_tasks: "Compute/update_tasks_step4.yaml"
+      vars:
+        step: "4"
+    - import_tasks: "Compute/update_tasks_step5.yaml"
+      vars:
+        step: "5"
+    - import_tasks: "Compute/host_prep_tasks.yaml"
+      when: tripleo_role_name == 'Compute'
+    - import_tasks: deploy_steps_tasks_step_0.yaml
+      vars:
+        step: 0
+    - name: Make sure container configuration is refreshed
+      import_tasks: common_container_setup_tasks.yaml
+    - name: Write config data at the start of step 1
+      import_tasks: common_deploy_steps_tasks_step_1.yaml
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "1"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "2"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "3"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "4"
+    - import_tasks: common_deploy_steps_tasks.yaml
+      vars:
+        step: "5"
+    - import_tasks: "Compute/post_update_tasks_step0.yaml"
+      vars:
+        step: "0"
+    - import_tasks: "Compute/post_update_tasks_step1.yaml"
+      vars:
+        step: "1"
+    - import_tasks: "Compute/post_update_tasks_step2.yaml"
+      vars:
+        step: "2"
+    - import_tasks: "Compute/post_update_tasks_step3.yaml"
+      vars:
+        step: "3"

@@ -1,0 +1,17 @@
+pre_network_Standalone:  [] 
+
+pre_deployments_Standalone: 
+  - CADeployment
+
+post_deployments_Standalone:  [] 
+
+# ansible_host_vars managed by TripleO Heat Templates in puppet/role.role.j2.yaml:
+fqdn_canonical: overcloud-controller-0.bne-home.net
+fqdn_ctlplane: overcloud-controller-0.ctlplane.bne-home.net
+fqdn_external: overcloud-controller-0.external.bne-home.net
+fqdn_internal_api: overcloud-controller-0.internalapi.bne-home.net
+fqdn_storage: overcloud-controller-0.storage.bne-home.net
+fqdn_storage_mgmt: overcloud-controller-0.storagemgmt.bne-home.net
+fqdn_tenant: overcloud-controller-0.tenant.bne-home.net
+hostname_resolve_network: internal_api
+
