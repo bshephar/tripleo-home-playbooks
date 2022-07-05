@@ -200,7 +200,7 @@ service_configs:
   cinder::keystone::authtoken::project_name: service
   cinder::keystone::authtoken::region_name: regionOne
   cinder::keystone::authtoken::user_domain_name: Default
-  cinder::keystone::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  cinder::keystone::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   cinder::keystone::service_user::auth_type: password
   cinder::keystone::service_user::auth_url: http://192.168.1.25:5000/
   cinder::keystone::service_user::password: KutXQeLq3w0rqwJUy5MwOowdU
@@ -249,7 +249,7 @@ service_configs:
   glance::api::authtoken::project_name: service
   glance::api::authtoken::region_name: regionOne
   glance::api::authtoken::user_domain_name: Default
-  glance::api::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  glance::api::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   glance::api::bind_host: '%{lookup(''internal_api'')}'
   glance::api::bind_port: '9292'
   glance::api::db::database_connection: mysql+pymysql://glance:IEhguPUe6OnKOeRjGPsC45Kp6@192.168.1.25/glance?read_default_file=/etc/my.cnf.d/tripleo.cnf&read_default_group=tripleo
@@ -343,8 +343,8 @@ service_configs:
   heat::engine::client_retry_limit: 2
   heat::engine::configure_delegated_roles: false
   heat::engine::convergence_engine: true
-  heat::engine::heat_metadata_server_url: https://openstack.bne-home.net:13005
-  heat::engine::heat_waitcondition_server_url: https://openstack.bne-home.net:13005/v1/waitcondition
+  heat::engine::heat_metadata_server_url: http://172.20.10.25:8000
+  heat::engine::heat_waitcondition_server_url: http://172.20.10.25:8000/v1/waitcondition
   heat::engine::max_nested_stack_depth: 6
   heat::engine::max_resources_per_stack: 1000
   heat::engine::num_engine_workers: 8
@@ -359,7 +359,7 @@ service_configs:
   heat::keystone::authtoken::project_name: service
   heat::keystone::authtoken::region_name: regionOne
   heat::keystone::authtoken::user_domain_name: Default
-  heat::keystone::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  heat::keystone::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   heat::keystone::domain::domain_admin: heat_stack_domain_admin
   heat::keystone::domain::domain_admin_email: heat_stack_domain_admin@localhost
   heat::keystone::domain::domain_name: heat_stack
@@ -404,7 +404,7 @@ service_configs:
   horizon::enforce_password_check: true
   horizon::file_upload_temp_dir: /var/tmp
   horizon::help_url: http://docs.openstack.org
-  horizon::keystone_url: https://openstack.bne-home.net:13000/v3
+  horizon::keystone_url: http://172.20.10.25:5000/v3
   horizon::listen_ssl: false
   horizon::password_validator: ''
   horizon::password_validator_help: ''
@@ -413,7 +413,7 @@ service_configs:
   horizon::policy::keystone_policies: {}
   horizon::policy::neutron_policies: {}
   horizon::secret_key: 6nuojcvIer
-  horizon::secure_cookies: true
+  horizon::secure_cookies: false
   horizon::secure_proxy_addr_header: HTTP_X_FORWARDED_FOR
   horizon::servername: '%{lookup(''fqdn_internal_api'')}'
   horizon::session_timeout: 1800
@@ -467,7 +467,7 @@ service_configs:
   keystone::enable_ssl: false
   keystone::endpoint::admin_url: http://192.168.1.25:35357
   keystone::endpoint::internal_url: http://192.168.1.25:5000
-  keystone::endpoint::public_url: https://openstack.bne-home.net:13000
+  keystone::endpoint::public_url: http://172.20.10.25:5000
   keystone::endpoint::region: regionOne
   keystone::fernet_keys:
     /etc/keystone/fernet-keys/0:
@@ -546,7 +546,7 @@ service_configs:
   neutron::keystone::authtoken::project_name: service
   neutron::keystone::authtoken::region_name: regionOne
   neutron::keystone::authtoken::user_domain_name: Default
-  neutron::keystone::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  neutron::keystone::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   neutron::logging::debug: false
   neutron::notification_driver:
   - noop
@@ -733,7 +733,7 @@ service_configs:
   nova::compute::vcpu_pin_set: []
   nova::compute::verify_glance_signatures: false
   nova::compute::vgpu::vgpu_types_device_addresses_mapping: {}
-  nova::compute::vncproxy_host: openstack.bne-home.net
+  nova::compute::vncproxy_host: 172.20.10.25
   nova::compute::vncserver_proxyclient_address: '%{lookup(''internal_api'')}'
   nova::conductor::workers: 8
   nova::cpu_allocation_ratio: 4.0
@@ -786,7 +786,7 @@ service_configs:
   nova::keystone::authtoken::project_name: service
   nova::keystone::authtoken::region_name: regionOne
   nova::keystone::authtoken::user_domain_name: Default
-  nova::keystone::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  nova::keystone::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   nova::keystone::password: QgE5gYRM5zaHlZDihVfa0tiyC
   nova::keystone::project_domain_name: Default
   nova::keystone::project_name: service
@@ -851,9 +851,9 @@ service_configs:
   nova::scheduler::query_placement_for_image_type_support: true
   nova::scheduler::query_placement_for_routed_network_aggregates: false
   nova::scheduler::workers: 8
-  nova::vncproxy::common::vncproxy_host: openstack.bne-home.net
-  nova::vncproxy::common::vncproxy_port: '13080'
-  nova::vncproxy::common::vncproxy_protocol: https
+  nova::vncproxy::common::vncproxy_host: 172.20.10.25
+  nova::vncproxy::common::vncproxy_port: '6080'
+  nova::vncproxy::common::vncproxy_protocol: http
   nova::vncproxy::enabled: true
   nova::vncproxy::host: '%{lookup(''internal_api'')}'
   nova::workarounds::disable_compute_service_check_for_ffu: false
@@ -936,7 +936,7 @@ service_configs:
   octavia::keystone::authtoken::project_name: service
   octavia::keystone::authtoken::region_name: regionOne
   octavia::keystone::authtoken::user_domain_name: Default
-  octavia::keystone::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  octavia::keystone::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   octavia::logging::debug: false
   octavia::networking::port_detach_timeout: 300
   octavia::neutron::endpoint_type: internalURL
@@ -1006,7 +1006,7 @@ service_configs:
   placement::keystone::authtoken::password: vFwQ1AoetKNdWwCyrkEbcF6LS
   placement::keystone::authtoken::project_name: service
   placement::keystone::authtoken::region_name: regionOne
-  placement::keystone::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  placement::keystone::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   placement::logging::debug: false
   placement::policy::enforce_new_defaults: false
   placement::policy::enforce_scope: false
@@ -1095,7 +1095,7 @@ service_configs:
   swift::proxy::authtoken::password: EP52w9plg78yVmzrojICyiaa6
   swift::proxy::authtoken::project_name: service
   swift::proxy::authtoken::region_name: regionOne
-  swift::proxy::authtoken::www_authenticate_uri: https://openstack.bne-home.net:13000
+  swift::proxy::authtoken::www_authenticate_uri: http://172.20.10.25:5000
   swift::proxy::cache::tls_enabled: false
   swift::proxy::keystone::operator_roles:
   - admin
@@ -1132,7 +1132,7 @@ service_configs:
   swift::proxy::proxy_local_net_ip: '%{lookup(''storage'')}'
   swift::proxy::recoverable_node_timeout: 30
   swift::proxy::s3token::auth_uri: http://192.168.1.25:5000/v3
-  swift::proxy::staticweb::url_base: https://openstack.bne-home.net:13808
+  swift::proxy::staticweb::url_base: http://172.20.10.25:8080
   swift::proxy::versioned_writes::allow_versioned_writes: true
   swift::proxy::workers: '1'
   swift::storage::all::account_pipeline:
@@ -1174,7 +1174,6 @@ service_configs:
   tripleo::haproxy::mysql_clustercheck: true
   tripleo::haproxy::ovn_dbs_manage_lb: false
   tripleo::haproxy::redis_password: c2rUeXMF4caeCT2jLBwJxLADE
-  tripleo::haproxy::service_certificate: /etc/pki/tls/private/overcloud_endpoint.pem
   tripleo::packages::enable_install: true
   tripleo::profile::base::cinder::cinder_enable_db_purge: true
   tripleo::profile::base::cinder::volume::cinder_enable_iscsi_backend: true
@@ -1407,10 +1406,8 @@ service_configs:
   tripleo::profile::pacemaker::haproxy_bundle::haproxy_docker_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:pcmklatest
   tripleo::profile::pacemaker::haproxy_bundle::internal_certs_directory: /etc/pki/tls/certs/haproxy
   tripleo::profile::pacemaker::haproxy_bundle::internal_keys_directory: /etc/pki/tls/private/haproxy
-  tripleo::profile::pacemaker::haproxy_bundle::tls_mapping:
-  - /etc/pki/tls/private/overcloud_endpoint.pem
-  tripleo::profile::pacemaker::haproxy_bundle::tls_mapping_init_bundle:
-  - /etc/pki/tls/private/overcloud_endpoint.pem
+  tripleo::profile::pacemaker::haproxy_bundle::tls_mapping: []
+  tripleo::profile::pacemaker::haproxy_bundle::tls_mapping_init_bundle: []
   tripleo::profile::pacemaker::ovn_dbs_bundle::container_backend: podman
   tripleo::profile::pacemaker::ovn_dbs_bundle::dbs_timeout: 60
   tripleo::profile::pacemaker::ovn_dbs_bundle::force_ocf: true
@@ -1715,7 +1712,6 @@ tripleo_firewall_rules:
     dport: 9100
     proto: tcp
     source: 172.20.0.0/16
-tripleo_firewall_ssl_frontend_enabled: true
 tripleo_firewall_ssl_frontend_rules:
   100 cinder_haproxy_frontend_ssl:
     dport:
@@ -1806,7 +1802,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1656992725'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1656995386'
 tripleo_keystone_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:

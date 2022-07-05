@@ -5,8 +5,8 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 19c76f85-239b-4c87-8578-9b95a525c8ac
-    deploy_identifier: 1656992725
+    bootstrap_server_id: f5d7053c-08fc-4a23-82b8-45209dd2b4e6
+    deploy_identifier: 1656995386
     enable_debug: False
     enable_puppet: True
     container_cli: podman

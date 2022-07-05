@@ -1,7 +1,6 @@
 pre_network_Standalone:  [] 
 
-pre_deployments_Standalone: 
-  - CADeployment
+pre_deployments_Standalone:  [] 
 
 post_deployments_Standalone:  [] 
 

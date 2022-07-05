@@ -376,13 +376,13 @@
     vars:
       tripleo_keystone_resources_cloud_config:
         auth:
-          auth_url: https://openstack.bne-home.net:13000
+          auth_url: http://172.20.10.25:5000
           password: 7i8YsihaRsvMJKyBxT2Z2RD3a
           project_domain_name: Default
           project_name: admin
           user_domain_name: Default
           username: admin
-        cacert: /etc/pki/ca-trust/source/anchors/overcloud-cacert.pem
+        cacert: ''
         identity_api_version: '3'
         region_name: regionOne
         volume_api_version: '3'
@@ -394,12 +394,12 @@
     vars:
       tripleo_keystone_resources_cloud_config:
         auth:
-          auth_url: https://openstack.bne-home.net:13000
+          auth_url: http://172.20.10.25:5000
           password: 7i8YsihaRsvMJKyBxT2Z2RD3a
           system_scope: all
           user_domain_name: Default
           username: admin
-        cacert: /etc/pki/ca-trust/source/anchors/overcloud-cacert.pem
+        cacert: ''
         identity_api_version: '3'
         region_name: regionOne
         volume_api_version: '3'

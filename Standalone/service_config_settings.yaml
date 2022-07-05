@@ -64,7 +64,7 @@ pacemaker:
   keystone::admin_password: 7i8YsihaRsvMJKyBxT2Z2RD3a
   keystone::endpoint::admin_url: http://192.168.1.25:35357
   keystone::endpoint::internal_url: http://192.168.1.25:5000
-  keystone::endpoint::public_url: https://openstack.bne-home.net:13000
+  keystone::endpoint::public_url: http://172.20.10.25:5000
   keystone::endpoint::region: regionOne
 rabbitmq:
   get_attr:

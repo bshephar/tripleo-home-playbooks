@@ -2,7 +2,7 @@ all_nodes_extra_map_data: {}
 cloud_domain: bne-home.net
 cloud_names:
   cloud_name_ctlplane: overcloud.ctlplane.localdomain
-  cloud_name_external: openstack.bne-home.net
+  cloud_name_external: overcloud.localdomain
   cloud_name_internal_api: overcloud.internalapi.localdomain
   cloud_name_storage: overcloud.storage.localdomain
   cloud_name_storage_mgmt: overcloud.storagemgmt.localdomain
@@ -10,7 +10,7 @@ container_cli: podman
 control_virtual_ip: 192.168.1.25
 deploy_artifact_files: []
 deploy_artifact_urls: []
-deploy_identifier: '1656992725'
+deploy_identifier: '1656995386'
 deploy_steps_max: 6
 enable_internal_tls: false
 enabled_networks:
@@ -86,7 +86,7 @@ hosts_entry:
 - 192.168.1.25  overcloud.storage.localdomain
 - 192.168.1.25  overcloud.storagemgmt.localdomain
 - 192.168.1.25  overcloud.internalapi.localdomain
-- 172.20.10.25  openstack.bne-home.net
+- 172.20.10.25  overcloud.localdomain
 - 172.16.2.85 overcloud-controller-0.bne-home.net overcloud-controller-0
 - 172.16.1.148 overcloud-controller-0.storage.bne-home.net overcloud-controller-0.storage
 - 172.16.3.113 overcloud-controller-0.storagemgmt.bne-home.net overcloud-controller-0.storagemgmt
@@ -107,7 +107,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:8776/v3
       internal: http://192.168.1.25:8776/v3
-      public: https://openstack.bne-home.net:13776/v3
+      public: http://172.20.10.25:8776/v3
     region: regionOne
     service: volumev3
     users:
@@ -120,7 +120,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:9292
       internal: http://192.168.1.25:9292
-      public: https://openstack.bne-home.net:13292
+      public: http://172.20.10.25:9292
     region: regionOne
     service: image
     users:
@@ -135,7 +135,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:8004/v1/%(tenant_id)s
       internal: http://192.168.1.25:8004/v1/%(tenant_id)s
-      public: https://openstack.bne-home.net:13004/v1/%(tenant_id)s
+      public: http://172.20.10.25:8004/v1/%(tenant_id)s
     region: regionOne
     roles:
     - heat_stack_user
@@ -155,7 +155,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:8000/v1
       internal: http://192.168.1.25:8000/v1
-      public: https://openstack.bne-home.net:13005/v1
+      public: http://172.20.10.25:8000/v1
     region: regionOne
     service: cloudformation
     users:
@@ -168,7 +168,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:9696
       internal: http://192.168.1.25:9696
-      public: https://openstack.bne-home.net:13696
+      public: http://172.20.10.25:9696
     region: regionOne
     service: network
     users:
@@ -181,7 +181,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:8774/v2.1
       internal: http://192.168.1.25:8774/v2.1
-      public: https://openstack.bne-home.net:13774/v2.1
+      public: http://172.20.10.25:8774/v2.1
     region: regionOne
     service: compute
     users:
@@ -194,7 +194,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:9876
       internal: http://192.168.1.25:9876
-      public: https://openstack.bne-home.net:13876
+      public: http://172.20.10.25:9876
     project: service
     region: regionOne
     service: load-balancer
@@ -210,7 +210,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:8778/placement
       internal: http://192.168.1.25:8778/placement
-      public: https://openstack.bne-home.net:13778/placement
+      public: http://172.20.10.25:8778/placement
     region: regionOne
     service: placement
     users:
@@ -223,7 +223,7 @@ keystone_resources:
     endpoints:
       admin: http://192.168.1.25:8080
       internal: http://192.168.1.25:8080/v1/AUTH_%(tenant_id)s
-      public: https://openstack.bne-home.net:13808/v1/AUTH_%(tenant_id)s
+      public: http://172.20.10.25:8080/v1/AUTH_%(tenant_id)s
     region: regionOne
     roles:
     - swiftoperator
@@ -396,4 +396,4 @@ vip_hosts_entries:
 - 192.168.1.25  overcloud.storage.localdomain
 - 192.168.1.25  overcloud.storagemgmt.localdomain
 - 192.168.1.25  overcloud.internalapi.localdomain
-- 172.20.10.25  openstack.bne-home.net
+- 172.20.10.25  overcloud.localdomain

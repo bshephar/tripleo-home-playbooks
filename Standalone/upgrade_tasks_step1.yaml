@@ -121,7 +121,7 @@
     - name: Set HAProxy public cert volume mount fact
       set_fact:
         haproxy_public_cert_path: /etc/pki/tls/private/overcloud_endpoint.pem
-        haproxy_public_tls_enabled: true
+        haproxy_public_tls_enabled: false
     - command: pcs resource bundle update haproxy-bundle storage-map add id=haproxy-cert
         source-dir={{ haproxy_public_cert_path }} target-dir=/var/lib/kolla/config_files/src-tls/{{
         haproxy_public_cert_path }} options=ro

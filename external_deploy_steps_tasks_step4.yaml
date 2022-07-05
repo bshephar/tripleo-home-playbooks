@@ -27,7 +27,7 @@
       tripleo_keystone_resources_cloud_name: overcloud-system-admin
       tripleo_keystone_resources_internal_endpoint: http://192.168.1.25:5000
       tripleo_keystone_resources_member_role_enabled: false
-      tripleo_keystone_resources_public_endpoint: https://openstack.bne-home.net:13000
+      tripleo_keystone_resources_public_endpoint: http://172.20.10.25:5000
       tripleo_keystone_resources_region: regionOne
       tripleo_keystone_resources_service_project: service
   - name: is Keystone LDAP enabled
