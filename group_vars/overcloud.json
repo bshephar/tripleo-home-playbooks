@@ -3,16 +3,31 @@
     "apache_network": "internal_api",
     "barbican_api_network": "internal_api",
     "bindnetwork": "external",
-    "ca_certs_bootstrap_node_ip": "192.168.1.7",
+    "boot_params_service_bootstrap_node_ip": "192.168.1.6",
+    "boot_params_service_enabled": true,
+    "boot_params_service_node_ips": [
+        "192.168.1.6"
+    ],
+    "boot_params_service_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain"
+    ],
+    "boot_params_service_short_bootstrap_node_name": "overcloud-compute-0",
+    "boot_params_service_short_node_names": [
+        "overcloud-compute-0"
+    ],
+    "ca_certs_bootstrap_node_ip": "192.168.1.6",
     "ca_certs_enabled": true,
     "ca_certs_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "ca_certs_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "ca_certs_short_bootstrap_node_name": "overcloud-controller-0",
+    "ca_certs_short_bootstrap_node_name": "overcloud-compute-0",
     "ca_certs_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "ceph_cluster_network": "storage_mgmt",
@@ -21,16 +36,19 @@
     "ceph_ingress_network": "storage",
     "ceph_mon_network": "storage",
     "ceph_rgw_network": "storage",
-    "chrony_bootstrap_node_ip": "192.168.1.7",
+    "chrony_bootstrap_node_ip": "192.168.1.6",
     "chrony_enabled": true,
     "chrony_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "chrony_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "chrony_short_bootstrap_node_name": "overcloud-controller-0",
+    "chrony_short_bootstrap_node_name": "overcloud-compute-0",
     "chrony_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "cinder_api_bootstrap_node_ip": "172.16.2.85",
@@ -100,12 +118,13 @@
     ],
     "controller_node_ips": "192.168.1.7",
     "controller_node_names": "overcloud-controller-0",
-    "deploy_identifier": "1656995386",
+    "deploy_identifier": "1657008430",
     "designate_api_network": "internal_api",
     "designate_bind_network": "external",
     "designate_mdns_network": "internal_api",
     "docker_registry_network": "ctlplane",
     "enabled_services": [
+        "boot_params_service",
         "ca_certs",
         "chrony",
         "cinder_api",
@@ -135,6 +154,7 @@
         "nova_compute",
         "nova_conductor",
         "nova_libvirt",
+        "nova_libvirt_guests",
         "nova_metadata",
         "nova_migration_target",
         "nova_scheduler",
@@ -248,28 +268,34 @@
     "ironic_api_network": "ctlplane",
     "ironic_inspector_network": "ctlplane",
     "ironic_network": "ctlplane",
-    "iscsid_bootstrap_node_ip": "192.168.1.7",
+    "iscsid_bootstrap_node_ip": "192.168.1.6",
     "iscsid_enabled": true,
     "iscsid_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "iscsid_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "iscsid_short_bootstrap_node_name": "overcloud-controller-0",
+    "iscsid_short_bootstrap_node_name": "overcloud-compute-0",
     "iscsid_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
-    "kernel_bootstrap_node_ip": "192.168.1.7",
+    "kernel_bootstrap_node_ip": "192.168.1.6",
     "kernel_enabled": true,
     "kernel_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "kernel_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "kernel_short_bootstrap_node_name": "overcloud-controller-0",
+    "kernel_short_bootstrap_node_name": "overcloud-compute-0",
     "kernel_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "keystone_admin_api_bootstrap_node_ip": "172.16.2.85",
@@ -310,16 +336,19 @@
     "keystone_short_node_names": [
         "overcloud-controller-0"
     ],
-    "logrotate_crond_bootstrap_node_ip": "192.168.1.7",
+    "logrotate_crond_bootstrap_node_ip": "192.168.1.6",
     "logrotate_crond_enabled": true,
     "logrotate_crond_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "logrotate_crond_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "logrotate_crond_short_bootstrap_node_name": "overcloud-controller-0",
+    "logrotate_crond_short_bootstrap_node_name": "overcloud-compute-0",
     "logrotate_crond_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "logrotate_tmpwatch_bootstrap_node_ip": "192.168.1.7",
@@ -350,16 +379,19 @@
     ],
     "mongodb_network": "internal_api",
     "mysql_bootstrap_node_ip": "172.16.2.85",
-    "mysql_client_bootstrap_node_ip": "192.168.1.7",
+    "mysql_client_bootstrap_node_ip": "192.168.1.6",
     "mysql_client_enabled": true,
     "mysql_client_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "mysql_client_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "mysql_client_short_bootstrap_node_name": "overcloud-controller-0",
+    "mysql_client_short_bootstrap_node_name": "overcloud-compute-0",
     "mysql_client_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "mysql_enabled": true,
@@ -413,16 +445,19 @@
     "nova_api_short_node_names": [
         "overcloud-controller-0"
     ],
-    "nova_compute_bootstrap_node_ip": "192.168.1.7",
+    "nova_compute_bootstrap_node_ip": "192.168.1.6",
     "nova_compute_enabled": true,
     "nova_compute_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "nova_compute_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "nova_compute_short_bootstrap_node_name": "overcloud-controller-0",
+    "nova_compute_short_bootstrap_node_name": "overcloud-compute-0",
     "nova_compute_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "nova_conductor_bootstrap_node_ip": "192.168.1.7",
@@ -437,17 +472,32 @@
     "nova_conductor_short_node_names": [
         "overcloud-controller-0"
     ],
-    "nova_libvirt_bootstrap_node_ip": "172.16.2.85",
+    "nova_libvirt_bootstrap_node_ip": "172.16.2.84",
     "nova_libvirt_enabled": true,
+    "nova_libvirt_guests_bootstrap_node_ip": "192.168.1.6",
+    "nova_libvirt_guests_enabled": true,
+    "nova_libvirt_guests_node_ips": [
+        "192.168.1.6"
+    ],
+    "nova_libvirt_guests_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain"
+    ],
+    "nova_libvirt_guests_short_bootstrap_node_name": "overcloud-compute-0",
+    "nova_libvirt_guests_short_node_names": [
+        "overcloud-compute-0"
+    ],
     "nova_libvirt_network": "internal_api",
     "nova_libvirt_node_ips": [
+        "172.16.2.84",
         "172.16.2.85"
     ],
     "nova_libvirt_node_names": [
+        "overcloud-compute-0.internalapi.localdomain",
         "overcloud-controller-0.internalapi.localdomain"
     ],
-    "nova_libvirt_short_bootstrap_node_name": "overcloud-controller-0",
+    "nova_libvirt_short_bootstrap_node_name": "overcloud-compute-0",
     "nova_libvirt_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "nova_metadata_bootstrap_node_ip": "172.16.2.85",
@@ -463,16 +513,19 @@
     "nova_metadata_short_node_names": [
         "overcloud-controller-0"
     ],
-    "nova_migration_target_bootstrap_node_ip": "192.168.1.7",
+    "nova_migration_target_bootstrap_node_ip": "192.168.1.6",
     "nova_migration_target_enabled": true,
     "nova_migration_target_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "nova_migration_target_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "nova_migration_target_short_bootstrap_node_name": "overcloud-controller-0",
+    "nova_migration_target_short_bootstrap_node_name": "overcloud-compute-0",
     "nova_migration_target_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "nova_scheduler_bootstrap_node_ip": "192.168.1.7",
@@ -588,16 +641,19 @@
     "oslo_messaging_rpc_short_node_names": [
         "overcloud-controller-0"
     ],
-    "ovn_controller_bootstrap_node_ip": "192.168.1.7",
+    "ovn_controller_bootstrap_node_ip": "192.168.1.6",
     "ovn_controller_enabled": true,
     "ovn_controller_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "ovn_controller_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "ovn_controller_short_bootstrap_node_name": "overcloud-controller-0",
+    "ovn_controller_short_bootstrap_node_name": "overcloud-compute-0",
     "ovn_controller_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "ovn_dbs_bootstrap_node_ip": "172.16.2.85",
@@ -614,16 +670,19 @@
         "overcloud-controller-0"
     ],
     "ovn_dbs_vip": "172.16.2.204",
-    "ovn_metadata_bootstrap_node_ip": "192.168.1.7",
+    "ovn_metadata_bootstrap_node_ip": "192.168.1.6",
     "ovn_metadata_enabled": true,
     "ovn_metadata_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "ovn_metadata_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "ovn_metadata_short_bootstrap_node_name": "overcloud-controller-0",
+    "ovn_metadata_short_bootstrap_node_name": "overcloud-compute-0",
     "ovn_metadata_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "pacemaker_bootstrap_node_ip": "172.16.2.85",
@@ -653,16 +712,19 @@
     "placement_short_node_names": [
         "overcloud-controller-0"
     ],
-    "podman_bootstrap_node_ip": "192.168.1.7",
+    "podman_bootstrap_node_ip": "192.168.1.6",
     "podman_enabled": true,
     "podman_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "podman_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "podman_short_bootstrap_node_name": "overcloud-controller-0",
+    "podman_short_bootstrap_node_name": "overcloud-compute-0",
     "podman_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "public_network": "external",
@@ -683,29 +745,35 @@
         "overcloud-controller-0"
     ],
     "redis_vip": "172.16.2.135",
-    "snmp_bootstrap_node_ip": "192.168.1.7",
+    "snmp_bootstrap_node_ip": "192.168.1.6",
     "snmp_enabled": true,
     "snmp_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "snmp_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "snmp_short_bootstrap_node_name": "overcloud-controller-0",
+    "snmp_short_bootstrap_node_name": "overcloud-compute-0",
     "snmp_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "snmpd_network": "ctlplane",
-    "sshd_bootstrap_node_ip": "192.168.1.7",
+    "sshd_bootstrap_node_ip": "192.168.1.6",
     "sshd_enabled": true,
     "sshd_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "sshd_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "sshd_short_bootstrap_node_name": "overcloud-controller-0",
+    "sshd_short_bootstrap_node_name": "overcloud-compute-0",
     "sshd_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "standalone_hostname_resolve_network": "internal_api",
@@ -748,52 +816,64 @@
     "swift_storage_short_node_names": [
         "overcloud-controller-0"
     ],
-    "timezone_bootstrap_node_ip": "192.168.1.7",
+    "timezone_bootstrap_node_ip": "192.168.1.6",
     "timezone_enabled": true,
     "timezone_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "timezone_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "timezone_short_bootstrap_node_name": "overcloud-controller-0",
+    "timezone_short_bootstrap_node_name": "overcloud-compute-0",
     "timezone_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
-    "tripleo_firewall_bootstrap_node_ip": "192.168.1.7",
+    "tripleo_firewall_bootstrap_node_ip": "192.168.1.6",
     "tripleo_firewall_enabled": true,
     "tripleo_firewall_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "tripleo_firewall_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "tripleo_firewall_short_bootstrap_node_name": "overcloud-controller-0",
+    "tripleo_firewall_short_bootstrap_node_name": "overcloud-compute-0",
     "tripleo_firewall_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
-    "tripleo_packages_bootstrap_node_ip": "192.168.1.7",
+    "tripleo_packages_bootstrap_node_ip": "192.168.1.6",
     "tripleo_packages_enabled": true,
     "tripleo_packages_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "tripleo_packages_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "tripleo_packages_short_bootstrap_node_name": "overcloud-controller-0",
+    "tripleo_packages_short_bootstrap_node_name": "overcloud-compute-0",
     "tripleo_packages_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
-    "tuned_bootstrap_node_ip": "192.168.1.7",
+    "tuned_bootstrap_node_ip": "192.168.1.6",
     "tuned_enabled": true,
     "tuned_node_ips": [
+        "192.168.1.6",
         "192.168.1.7"
     ],
     "tuned_node_names": [
+        "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "tuned_short_bootstrap_node_name": "overcloud-controller-0",
+    "tuned_short_bootstrap_node_name": "overcloud-compute-0",
     "tuned_short_node_names": [
+        "overcloud-compute-0",
         "overcloud-controller-0"
     ],
     "unbound_network": "external"

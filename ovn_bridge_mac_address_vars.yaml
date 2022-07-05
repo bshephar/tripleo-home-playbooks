@@ -1,2 +1,4 @@
+overcloud-compute-0:
+  datacentre: fa:16:3e:e8:08:3d
 overcloud-controller-0:
-  datacentre: fa:16:3e:b9:47:03
+  datacentre: fa:16:3e:d9:bc:7c

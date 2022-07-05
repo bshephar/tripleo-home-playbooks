@@ -687,7 +687,7 @@ tripleo_kernel_sysctl_extra_settings:
     value: 1
 tripleo_network_config_os_net_config_mappings: {}
 tripleo_network_config_override: {}
-tripleo_network_config_template: /home/stack/templates/nic-configs/bonds_vlans.j2
+tripleo_network_config_template: /home/stack/templates/nic-configs/compute-bridge-vlans.j2
 tripleo_network_config_with_ansible: true
 tripleo_podman_tls_verify: 'false'
 tripleo_stack_name: overcloud
