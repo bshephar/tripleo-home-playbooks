@@ -10,7 +10,7 @@ container_cli: podman
 control_virtual_ip: 192.168.1.25
 deploy_artifact_files: []
 deploy_artifact_urls: []
-deploy_identifier: '1657009526'
+deploy_identifier: '1657037917'
 deploy_steps_max: 6
 enable_internal_tls: false
 enabled_networks:
@@ -118,6 +118,7 @@ hosts_entry:
 - 172.16.1.147 overcloud-compute-0.storage.bne-home.net overcloud-compute-0.storage
 - 172.16.2.84 overcloud-compute-0.internalapi.bne-home.net overcloud-compute-0.internalapi
 - 172.16.0.243 overcloud-compute-0.tenant.bne-home.net overcloud-compute-0.tenant
+- 172.20.12.67 overcloud-compute-0.external.bne-home.net overcloud-compute-0.external
 - 192.168.1.6 overcloud-compute-0.ctlplane.bne-home.net overcloud-compute-0.ctlplane
 internal_api_net_name: internal_api
 keystone_resources:
@@ -338,11 +339,12 @@ nova_additional_cell: false
 ping_test_gateway_ips:
   Compute:
   - 192.168.1.254
+  - 172.20.0.254
   Standalone:
   - 192.168.1.254
   - 172.20.0.254
 ping_test_ips:
-  Compute: 192.168.1.6 172.16.1.147 172.16.2.84 172.16.0.243
+  Compute: 192.168.1.6 172.16.1.147 172.16.2.84 172.16.0.243 172.20.12.67
   Standalone: 192.168.1.7 172.16.1.148 172.16.3.113 172.16.2.85 172.16.0.244 172.20.12.80
 primary_role_name: Standalone
 service_net_map:

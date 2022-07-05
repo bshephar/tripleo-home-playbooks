@@ -371,7 +371,7 @@ neutron::plugins::ml2::network_vlan_ranges:
 - datacentre:1:1000
 neutron::plugins::ml2::overlay_ip_version: 4
 neutron::plugins::ml2::ovn::dns_servers: []
-neutron::plugins::ml2::ovn::dvr_enabled: 'False'
+neutron::plugins::ml2::ovn::dvr_enabled: 'True'
 neutron::plugins::ml2::ovn::network_log_burst_limit: 25
 neutron::plugins::ml2::ovn::network_log_rate_limit: 100
 neutron::plugins::ml2::ovn::neutron_sync_mode: log
@@ -403,7 +403,7 @@ neutron::server::agent_down_time: 600
 neutron::server::allow_automatic_l3agent_failover: 'True'
 neutron::server::api_workers: '8'
 neutron::server::auth_strategy: keystone
-neutron::server::enable_dvr: 'False'
+neutron::server::enable_dvr: 'True'
 neutron::server::enable_proxy_headers_parsing: true
 neutron::server::igmp_snooping_enable: false
 neutron::server::notifications::nova::auth_url: http://192.168.1.25:5000
@@ -422,7 +422,7 @@ neutron::server::placement::project_name: service
 neutron::server::placement::region_name: regionOne
 neutron::server::placement::user_domain_name: Default
 neutron::server::placement::username: placement
-neutron::server::router_distributed: 'False'
+neutron::server::router_distributed: 'True'
 neutron::server::rpc_workers: '8'
 neutron::server::sync_db: false
 neutron::service_plugins:

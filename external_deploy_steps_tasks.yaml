@@ -406,6 +406,8 @@
       description: Basic Compute Node role\n
       name: Compute
       networks:
+        External:
+          subnet: external_subnet
         InternalApi:
           subnet: internal_api_subnet
         Storage:

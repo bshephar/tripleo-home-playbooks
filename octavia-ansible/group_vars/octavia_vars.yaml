@@ -1,0 +1,43 @@
+amp_hw_arch: x86_64
+amp_image_filename: ''
+amp_image_name: ''
+amp_image_tag: amphora-image
+amp_ssh_key_dir: /etc/octavia/ssh
+amp_ssh_key_name: new-octavia-key
+amp_ssh_key_path: ''
+amp_to_raw: false
+auth_password: peshpcOkRNosh44C3XNwUGxtw
+auth_project_name: service
+auth_username: octavia
+ca_cert_path: /etc/octavia/certs/ca_01.pem
+ca_passphrase: PIH9YkAgz9YPWbEvTrNIHYe69
+ca_private_key_path: /etc/octavia/certs/private/cakey.pem
+client_cert_path: /etc/octavia/certs/client.pem
+container_cli: podman
+enable_log_offloading: true
+generate_certs: true
+lb_mgmt_net_name: lb-mgmt-net
+lb_mgmt_sec_grp_name: lb-mgmt-sec-grp
+lb_mgmt_subnet_cidr: 172.24.0.0/16
+lb_mgmt_subnet_gateway: 172.24.0.1
+lb_mgmt_subnet_name: lb-mgmt-subnet
+lb_mgmt_subnet_pool_end: 172.24.255.254
+lb_mgmt_subnet_pool_start: 172.24.0.2
+mgmt_port_dev: o-hm0
+octavia_ansible_playbook: /usr/share/ansible/tripleo-playbooks/octavia-files.yaml
+octavia_flavor_id: '65'
+octavia_flavor_properties:
+    disk: '3'
+    ram: '1024'
+    vcpus: '1'
+octavia_group_vars_dir: /home/stack/overcloud-deploy/overcloud/config-download/overcloud/octavia-ansible/group_vars
+octavia_local_tmpdir: /home/stack/overcloud-deploy/overcloud/config-download/overcloud/octavia-ansible/local_dir
+octavia_manage_nova_flavor: true
+os_auth_type: password
+os_auth_url: http://172.20.10.25:5000/v3
+os_identity_api_version: '3'
+os_int_auth_url: http://192.168.1.25:5000/
+os_password: 7i8YsihaRsvMJKyBxT2Z2RD3a
+os_project_name: admin
+os_username: admin
+server_certs_key_passphrase: 7sVnO0kuCpW4Pv8w8NPZrlAtEChEW6ZU

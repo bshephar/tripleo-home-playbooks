@@ -9,9 +9,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 2b00c264-c12b-4de5-94ec-7f7b831da7c6
+    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
     step: '0'
-    deploy_identifier: 1657009526
+    deploy_identifier: 1657037917
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
@@ -35,9 +35,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 2b00c264-c12b-4de5-94ec-7f7b831da7c6
+    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
     step: '1'
-    deploy_identifier: 1657009526
+    deploy_identifier: 1657037917
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
@@ -61,9 +61,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 2b00c264-c12b-4de5-94ec-7f7b831da7c6
+    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
     step: '2'
-    deploy_identifier: 1657009526
+    deploy_identifier: 1657037917
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
@@ -87,9 +87,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 2b00c264-c12b-4de5-94ec-7f7b831da7c6
+    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
     step: '3'
-    deploy_identifier: 1657009526
+    deploy_identifier: 1657037917
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
@@ -113,9 +113,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 2b00c264-c12b-4de5-94ec-7f7b831da7c6
+    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
     step: '4'
-    deploy_identifier: 1657009526
+    deploy_identifier: 1657037917
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
@@ -139,9 +139,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 2b00c264-c12b-4de5-94ec-7f7b831da7c6
+    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
     step: '5'
-    deploy_identifier: 1657009526
+    deploy_identifier: 1657037917
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts

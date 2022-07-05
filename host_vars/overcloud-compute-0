@@ -7,6 +7,7 @@ post_deployments_Compute:  []
 # ansible_host_vars managed by TripleO Heat Templates in puppet/role.role.j2.yaml:
 fqdn_canonical: overcloud-compute-0.bne-home.net
 fqdn_ctlplane: overcloud-compute-0.ctlplane.bne-home.net
+fqdn_external: overcloud-compute-0.external.bne-home.net
 fqdn_internal_api: overcloud-compute-0.internalapi.bne-home.net
 fqdn_storage: overcloud-compute-0.storage.bne-home.net
 fqdn_tenant: overcloud-compute-0.tenant.bne-home.net

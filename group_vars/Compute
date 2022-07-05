@@ -32,7 +32,11 @@ deployed_server_port_map:
     fixed_ips:
     - ip_address: 192.168.1.7
 dns_search_domains: []
+external_cidr: '16'
+external_gateway_ip: 172.20.0.254
+external_host_routes: []
 external_mtu: 9000
+external_vlan_id: 4
 extraconfig: {}
 hieradata_files:
 - '%{::uuid}'
@@ -64,6 +68,7 @@ local_mtu: 1500
 management_mtu: 1500
 max_fail_percentage: 0
 network_cidrs:
+  External_cidr: '16'
   InternalApi_cidr: '24'
   Storage_cidr: '24'
   Tenant_cidr: '24'
@@ -98,6 +103,7 @@ role_networks:
 - Storage
 - InternalApi
 - Tenant
+- External
 role_tags:
 - compute
 - external_bridge
