@@ -13,8 +13,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '0'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -40,8 +40,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '1'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -67,8 +67,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '2'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -96,8 +96,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '1'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -125,8 +125,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '2'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -154,8 +154,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '3'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -183,8 +183,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '4'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -212,8 +212,8 @@
     # to different OS releases (EL7/8) while using delegate_to.
     ansible_python_interpreter: /usr/libexec/platform-python
     step: '5'
-    bootstrap_server_id: 750082a3-3dbe-4578-bb63-119258732e9d
-    deploy_identifier: 1657092239
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
+    deploy_identifier: 1657092768
     enable_debug: False
     enable_puppet: True
     container_cli: podman

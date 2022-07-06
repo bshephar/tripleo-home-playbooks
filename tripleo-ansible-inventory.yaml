@@ -26,7 +26,7 @@ Compute:
       canonical_hostname: overcloud-compute-0.localdomain
       ctlplane_hostname: overcloud-compute-0.ctlplane.localdomain
       ctlplane_ip: 192.168.1.6
-      deploy_server_id: a77bac1d-f70c-4060-9dbb-497f6e6ce8f6
+      deploy_server_id: 48be69fd-8482-4286-a3ea-c98b94f17ea1
       external_hostname: overcloud-compute-0.external.localdomain
       external_ip: 172.20.12.67
       internal_api_hostname: overcloud-compute-0.internalapi.localdomain
@@ -37,7 +37,7 @@ Compute:
       tenant_ip: 172.16.0.243
   vars:
     ansible_ssh_user: heat-admin
-    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
     ctlplane_cidr: '24'
     ctlplane_dns_nameservers: &id001 []
     ctlplane_gateway_ip: 192.168.1.254
@@ -104,7 +104,7 @@ Standalone:
       canonical_hostname: overcloud-controller-0.localdomain
       ctlplane_hostname: overcloud-controller-0.ctlplane.localdomain
       ctlplane_ip: 192.168.1.7
-      deploy_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
+      deploy_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
       external_hostname: overcloud-controller-0.external.localdomain
       external_ip: 172.20.12.80
       internal_api_hostname: overcloud-controller-0.internalapi.localdomain
@@ -117,7 +117,7 @@ Standalone:
       tenant_ip: 172.16.0.244
   vars:
     ansible_ssh_user: heat-admin
-    bootstrap_server_id: da5b7cd1-c37b-4740-aa15-0b73fbaf8549
+    bootstrap_server_id: 165edfe4-926e-4b7f-8b4c-e5815734541f
     ctlplane_cidr: '24'
     ctlplane_dns_nameservers: *id001
     ctlplane_gateway_ip: 192.168.1.254
@@ -189,106 +189,7 @@ allovercloud:
 overcloud:
   children:
     allovercloud: {}
-keystone_public_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-octavia_health_manager:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-cinder_scheduler:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-cinder_volume:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-octavia_worker:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-snmp:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-clustercheck:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-haproxy:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-heat_api_cfn:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-container_image_prepare:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-heat_engine:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-memcached:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-kernel:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-nova_compute:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-nova_migration_target:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-nova_scheduler:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-placement:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-logrotate_tmpwatch:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-nova_libvirt_guests:
-  children:
-    Compute: {}
-  vars:
-    ansible_ssh_user: heat-admin
-podman:
+chrony:
   children:
     Compute: {}
     Standalone: {}
@@ -300,38 +201,18 @@ ovn_metadata:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-oslo_messaging_notify:
+memcached:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-swift_proxy:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-octavia_housekeeping:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-swift_storage:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-logrotate_crond:
+iscsid:
   children:
     Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-nova_metadata:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-chrony:
+tripleo_packages:
   children:
     Compute: {}
     Standalone: {}
@@ -343,82 +224,12 @@ sshd:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-timezone:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-ovn_dbs:
+cinder_scheduler:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-ca_certs:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-heat_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-glance_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-iscsid:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-boot_params_service:
-  children:
-    Compute: {}
-  vars:
-    ansible_ssh_user: heat-admin
-redis:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-tripleo_packages:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-pacemaker:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-mysql_client:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-neutron_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-octavia_deployment_config:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-octavia_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: heat-admin
-keystone:
+clustercheck:
   children:
     Standalone: {}
   vars:
@@ -428,18 +239,86 @@ cinder_api:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
+nova_libvirt_guests:
+  children:
+    Compute: {}
+  vars:
+    ansible_ssh_user: heat-admin
+ovn_dbs:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+logrotate_tmpwatch:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+podman:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+nova_scheduler:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+nova_vnc_proxy:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+container_image_prepare:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+nova_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+octavia_deployment_config:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+neutron_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+swift_storage:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+nova_migration_target:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+octavia_worker:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
 keystone_admin_api:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-horizon:
+glance_api:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-swift_ringbuilder:
+timezone:
   children:
+    Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
@@ -448,7 +327,7 @@ nova_conductor:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-nova_vnc_proxy:
+octavia_housekeeping:
   children:
     Standalone: {}
   vars:
@@ -459,23 +338,39 @@ ovn_controller:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-tripleo_firewall:
+swift_proxy:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+heat_engine:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+kernel:
   children:
     Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-neutron_plugin_ml2_ovn:
+boot_params_service:
+  children:
+    Compute: {}
+  vars:
+    ansible_ssh_user: heat-admin
+oslo_messaging_notify:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-nova_api:
+ca_certs:
   children:
+    Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
-tuned:
+nova_compute:
   children:
     Compute: {}
     Standalone: {}
@@ -487,12 +382,117 @@ nova_libvirt:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
+octavia_health_manager:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+placement:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+snmp:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+tripleo_firewall:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+logrotate_crond:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+heat_api_cfn:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+haproxy:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+keystone:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
 mysql:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: heat-admin
+tuned:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+swift_ringbuilder:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
 oslo_messaging_rpc:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+pacemaker:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+horizon:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+mysql_client:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+cinder_volume:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+keystone_public_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+neutron_plugin_ml2_ovn:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+octavia_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+nova_metadata:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+heat_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: heat-admin
+redis:
   children:
     Standalone: {}
   vars:
