@@ -67,7 +67,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1657037917'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1657092239'
 tripleo_keystone_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:
@@ -77,6 +77,7 @@ tripleo_keystone_volumes:
 - /etc/openldap:/etc/openldap:ro
 - /var/lib/kolla/config_files/keystone.json:/var/lib/kolla/config_files/config.json:ro
 - /var/lib/config-data/puppet-generated/keystone:/var/lib/kolla/config_files/src:ro
+tripleo_ovn_controller_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 tripleo_podman_tls_verify: 'false'
 tripleo_tripleo_lvmfilter_devices_allowlist: []
 tripleo_tripleo_lvmfilter_devices_denylist:

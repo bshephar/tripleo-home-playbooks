@@ -695,6 +695,7 @@ tripleo_network_config_os_net_config_mappings: {}
 tripleo_network_config_override: {}
 tripleo_network_config_template: /home/stack/templates/nic-configs/compute-bridge-vlans.j2
 tripleo_network_config_with_ansible: true
+tripleo_ovn_controller_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 tripleo_podman_tls_verify: 'false'
 tripleo_stack_name: overcloud
 tripleo_tripleo_lvmfilter_devices_allowlist: []
