@@ -155,19 +155,15 @@
   action: insert
   dport: 2049
   proto: tcp
-  source: 0.0.0.0/8
 302 allow nfs-udp:
   action: insert
   dport: 2049
   proto: udp
-  source: 0.0.0.0/8
 303 allow rpc-bind:
   action: insert
   dport: 111
   proto: tcp
-  source: 0.0.0.0/8
 303 allow rpc-bind-udp:
   action: insert
   dport: 111
   proto: udp
-  source: 0.0.0.0/8
