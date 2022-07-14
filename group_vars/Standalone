@@ -1715,6 +1715,26 @@ tripleo_firewall_rules:
     dport: 9100
     proto: tcp
     source: 172.20.0.0/16
+  302 allow nfs:
+    action: insert
+    dport: 2049
+    proto: tcp
+    source: 0.0.0.0/8
+  302 allow nfs-udp:
+    action: insert
+    dport: 2049
+    proto: udp
+    source: 0.0.0.0/8
+  303 allow rpc-bind:
+    action: insert
+    dport: 111
+    proto: tcp
+    source: 0.0.0.0/8
+  303 allow rpc-bind-udp:
+    action: insert
+    dport: 111
+    proto: udp
+    source: 0.0.0.0/8
 tripleo_firewall_ssl_frontend_rules:
   100 cinder_haproxy_frontend_ssl:
     dport:
@@ -1805,7 +1825,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1657092768'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1657771405'
 tripleo_keystone_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:

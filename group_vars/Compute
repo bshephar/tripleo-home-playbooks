@@ -612,6 +612,26 @@ tripleo_firewall_rules:
     dport: 9100
     proto: tcp
     source: 172.20.0.0/16
+  302 allow nfs:
+    action: insert
+    dport: 2049
+    proto: tcp
+    source: 0.0.0.0/8
+  302 allow nfs-udp:
+    action: insert
+    dport: 2049
+    proto: udp
+    source: 0.0.0.0/8
+  303 allow rpc-bind:
+    action: insert
+    dport: 111
+    proto: tcp
+    source: 0.0.0.0/8
+  303 allow rpc-bind-udp:
+    action: insert
+    dport: 111
+    proto: udp
+    source: 0.0.0.0/8
 tripleo_firewall_ssl_frontend_rules:
   100 cinder_haproxy_frontend_ssl:
     dport:
