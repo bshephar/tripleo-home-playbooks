@@ -9,8 +9,8 @@
     - include_tasks: post_upgrade_steps_tasks.yaml
       with_sequence: start=0 end=3
       vars:
-        bootstrap_server_id: 40f7fcc5-338b-4611-8ad6-188be312773d
-        deploy_identifier: 1657774421
+        bootstrap_server_id: 601e9351-6235-4a96-9f91-7456ab2a0b45
+        deploy_identifier: 1658147657
         enable_debug: False
         enable_puppet: True
         container_cli: podman

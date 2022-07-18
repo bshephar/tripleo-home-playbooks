@@ -907,6 +907,7 @@
   service:
     enabled: true
     name: neutron-cleanup
+  when: not (ansible_check_mode|bool)
 - file:
     mode: '{{ item.mode }}'
     path: '{{ item.path }}'

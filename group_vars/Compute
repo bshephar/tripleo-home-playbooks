@@ -111,8 +111,8 @@ service_configs:
   ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
-  ContainerOvnControllerConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
-  ContainerOvnControllerImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  ContainerOvnControllerConfigImage9: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  ContainerOvnControllerImage9: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   compute_disable_irqbalance: false
   compute_enable_ksm: false
   container_cpuset_cpus: ''
@@ -495,6 +495,7 @@ tenant_gateway_ip: null
 tenant_host_routes: []
 tenant_mtu: 9000
 tenant_vlan_id: 50
+tripleo_enable_hw_offload: false
 tripleo_firewall_edge_frontend_rules: {}
 tripleo_firewall_edge_ssl_frontend_rules: {}
 tripleo_firewall_frontend_rules:
@@ -711,7 +712,20 @@ tripleo_network_config_os_net_config_mappings: {}
 tripleo_network_config_override: {}
 tripleo_network_config_template: /home/stack/templates/nic-configs/compute-bridge-vlans.j2
 tripleo_network_config_with_ansible: true
-tripleo_ovn_controller_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+tripleo_ovn_bridge: br-int
+tripleo_ovn_bridge_mappings:
+- datacentre:br-ex
+tripleo_ovn_controller_common_volumes:
+- /lib/modules:/lib/modules:ro
+- /run:/run
+- /var/lib/openvswitch/ovn:/run/ovn:shared,z
+- /var/log/containers/openvswitch:/var/log/openvswitch:z
+- /var/log/containers/openvswitch:/var/log/ovn:z
+- /var/lib/kolla/config_files/ovn_controller.json:/var/lib/kolla/config_files/config.json:ro
+tripleo_ovn_controller_image8: ''
+tripleo_ovn_controller_image9: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+tripleo_ovn_encap_type: geneve
+tripleo_ovn_sb_server_port: 6642
 tripleo_podman_tls_verify: 'false'
 tripleo_stack_name: overcloud
 tripleo_tripleo_lvmfilter_devices_allowlist: []
