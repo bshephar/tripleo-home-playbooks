@@ -2,10 +2,10 @@ ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomas
 ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
 OvnControllerConfigImages:
-  '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos8/openstack-ovn-controller:current-tripleo
+  '8': ''
   '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 OvnControllerImages:
-  '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos8/openstack-ovn-controller:current-tripleo
+  '8': ''
   '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 compute_disable_irqbalance: false
 compute_enable_ksm: false

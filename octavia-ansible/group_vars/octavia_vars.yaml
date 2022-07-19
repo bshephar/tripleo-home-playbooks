@@ -34,7 +34,7 @@ octavia_group_vars_dir: /home/stack/overcloud-deploy/overcloud/config-download/o
 octavia_local_tmpdir: /home/stack/overcloud-deploy/overcloud/config-download/overcloud/octavia-ansible/local_dir
 octavia_manage_nova_flavor: true
 os_auth_type: password
-os_auth_url: http://172.20.10.25:5000/v3
+os_auth_url: https://openstack.bne-home.net:13000/v3
 os_identity_api_version: '3'
 os_int_auth_url: http://192.168.1.25:5000/
 os_password: 7i8YsihaRsvMJKyBxT2Z2RD3a
