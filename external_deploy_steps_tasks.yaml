@@ -92,9 +92,6 @@
             name_prefix: openstack-
             name_suffix: ''
             namespace: quay.io/tripleomastercentos9
-            namespaces:
-            - quay.io/tripleomastercentos9
-            - quay.io/tripleomastercentos8
             neutron_driver: ovn
             pushgateway_image: pushgateway
             pushgateway_namespace: quay.io/prometheus
