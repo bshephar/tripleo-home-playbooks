@@ -167,8 +167,7 @@
   step_config: 'include tripleo::profile::base::nova::vncproxy
 
     include tripleo::profile::base::database::mysql::client'
-- config_image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
-    }}'
+- config_image: null
   config_volume: ovn_controller
   puppet_tags: vs_config,exec
   step_config: 'include tripleo::profile::base::neutron::agents::ovn
