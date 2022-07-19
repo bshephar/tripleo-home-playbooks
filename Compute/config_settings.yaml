@@ -1,25 +1,9 @@
 ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
-ContainerOvnControllerConfigImage:
-  '8': ''
-  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
-ContainerOvnControllerImage:
-  '8': ''
-  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 compute_disable_irqbalance: false
 compute_enable_ksm: false
-map_replace:
-- container_cpuset_cpus: OVNContainerCpusetCpus
-  ovn::controller::ovn_bridge_mappings: NeutronBridgeMappings
-  ovn::controller::ovn_cms_options: OVNCMSOptions
-  vswitch::ovs::enable_hw_offload: OvsHwOffload
-- values:
-    NeutronBridgeMappings:
-    - datacentre:br-ex
-    OVNCMSOptions: ''
-    OVNContainerCpusetCpus: ''
-    OvsHwOffload: false
+container_cpuset_cpus: ''
 neutron::agents::ovn_metadata::debug: false
 neutron::agents::ovn_metadata::metadata_host: 192.168.1.25
 neutron::agents::ovn_metadata::metadata_protocol: http
@@ -217,6 +201,9 @@ nova_permit_post_copy: true
 nova_pmem_namespaces: ''
 ovn::controller::hostname: '%{lookup(''fqdn_canonical'')}'
 ovn::controller::ovn_bridge: br-int
+ovn::controller::ovn_bridge_mappings:
+- datacentre:br-ex
+ovn::controller::ovn_cms_options: ''
 ovn::controller::ovn_encap_ip: '%{lookup(''tenant'')}'
 ovn::controller::ovn_encap_type: geneve
 ovn::controller::ovn_monitor_all: true
@@ -349,3 +336,4 @@ tripleo::profile::base::sshd::port:
 - 22
 tripleo::trusted_cas::ca_map: {}
 vhostuser_socket_group: qemu
+vswitch::ovs::enable_hw_offload: false

@@ -158,12 +158,6 @@ service_configs:
   ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
-  ContainerOvnControllerConfigImage:
-    '8': ''
-    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
-  ContainerOvnControllerImage:
-    '8': ''
-    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   apache::default_vhost: false
   apache::ip: '%{lookup(''internal_api'')}'
   apache::mod::alias::icons_options: None
@@ -239,6 +233,7 @@ service_configs:
   cinder::wsgi::apache::workers: '8'
   compute_disable_irqbalance: false
   compute_enable_ksm: false
+  container_cpuset_cpus: ''
   corosync_token_timeout: 10000
   enable_fencing: false
   enable_galera: true
@@ -501,17 +496,6 @@ service_configs:
   keystone_resources_managed: false
   keystone_ssl_certificate: ''
   keystone_ssl_certificate_key: ''
-  map_replace:
-  - container_cpuset_cpus: OVNContainerCpusetCpus
-    ovn::controller::ovn_bridge_mappings: NeutronBridgeMappings
-    ovn::controller::ovn_cms_options: OVNCMSOptions
-    vswitch::ovs::enable_hw_offload: OvsHwOffload
-  - values:
-      NeutronBridgeMappings:
-      - datacentre:br-ex
-      OVNCMSOptions: ''
-      OVNContainerCpusetCpus: ''
-      OvsHwOffload: false
   memcached::disable_cachedump: true
   memcached::listen:
   - 127.0.0.1
@@ -991,6 +975,9 @@ service_configs:
   oslo_messaging_rpc_user_name: guest
   ovn::controller::hostname: '%{lookup(''fqdn_canonical'')}'
   ovn::controller::ovn_bridge: br-int
+  ovn::controller::ovn_bridge_mappings:
+  - datacentre:br-ex
+  ovn::controller::ovn_cms_options: ''
   ovn::controller::ovn_encap_ip: '%{lookup(''tenant'')}'
   ovn::controller::ovn_encap_type: geneve
   ovn::controller::ovn_monitor_all: true
@@ -1438,6 +1425,7 @@ service_configs:
   tripleo::stunnel::foreground: 'yes'
   tripleo::trusted_cas::ca_map: {}
   vhostuser_socket_group: qemu
+  vswitch::ovs::enable_hw_offload: false
 service_metadata_settings: null
 service_names:
 - keystone_admin_api
@@ -1832,7 +1820,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1658201470'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1658202097'
 tripleo_keystone_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:
@@ -1856,9 +1844,7 @@ tripleo_ovn_controller_common_volumes:
 - /var/log/containers/openvswitch:/var/log/openvswitch:z
 - /var/log/containers/openvswitch:/var/log/ovn:z
 - /var/lib/kolla/config_files/ovn_controller.json:/var/lib/kolla/config_files/config.json:ro
-tripleo_ovn_controller_image:
-  '8': ''
-  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+tripleo_ovn_controller_image: null
 tripleo_ovn_encap_type: geneve
 tripleo_ovn_sb_server_port: 6642
 tripleo_podman_tls_verify: 'false'
