@@ -158,6 +158,12 @@ service_configs:
   ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+  ContainerOvnControllerConfigImage:
+    '8': ''
+    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  ContainerOvnControllerImage:
+    '8': ''
+    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   apache::default_vhost: false
   apache::ip: '%{lookup(''internal_api'')}'
   apache::mod::alias::icons_options: None
@@ -1820,7 +1826,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1658202097'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1658203617'
 tripleo_keystone_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:
@@ -1844,7 +1850,9 @@ tripleo_ovn_controller_common_volumes:
 - /var/log/containers/openvswitch:/var/log/openvswitch:z
 - /var/log/containers/openvswitch:/var/log/ovn:z
 - /var/lib/kolla/config_files/ovn_controller.json:/var/lib/kolla/config_files/config.json:ro
-tripleo_ovn_controller_image: null
+tripleo_ovn_controller_image:
+  '8': ''
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 tripleo_ovn_encap_type: geneve
 tripleo_ovn_sb_server_port: 6642
 tripleo_podman_tls_verify: 'false'
