@@ -2,11 +2,11 @@ ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomas
 ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
 ContainerOvnControllerConfigImage:
-  '8': ContainerOvnControllerImage8
-  '9': ContainerOvnControllerConfigImage9
+  '8': ContainerOvnControllerConfig8
+  '9': ContainerOvnControllerConfig9
 ContainerOvnControllerImage:
-  '8': ContainerOvnControllerImage8
-  '9': ContainerOvnControllerImage9
+  '8': ContainerOvnController8
+  '9': ContainerOvnController9
 apache::default_vhost: false
 apache::ip: '%{lookup(''internal_api'')}'
 apache::mod::alias::icons_options: None
