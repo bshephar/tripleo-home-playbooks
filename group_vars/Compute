@@ -111,18 +111,25 @@ service_configs:
   ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+  ContainerOvnControllerConfigImage:
+    '8': ''
+    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  ContainerOvnControllerImage:
+    '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   compute_disable_irqbalance: false
   compute_enable_ksm: false
-  container_cpuset_cpus: ''
-  map_merge:
-  - ContainerOvnControllerConfigImage:
-      '8': OvnControllerConfigImage8
-      '9': OvnControllerConfigImage9
-    ContainerOvnControllerImage:
-      '8': OvnControllerImage8
-      '9': OvnControllerImage9
-  - '8': ''
-    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  map_replace:
+  - container_cpuset_cpus: OVNContainerCpusetCpus
+    ovn::controller::ovn_bridge_mappings: NeutronBridgeMappings
+    ovn::controller::ovn_cms_options: OVNCMSOptions
+    vswitch::ovs::enable_hw_offload: OvsHwOffload
+  - values:
+      NeutronBridgeMappings:
+      - datacentre:br-ex
+      OVNCMSOptions: ''
+      OVNContainerCpusetCpus: ''
+      OvsHwOffload: false
   memcached_authtoken_port: 11211
   memcached_port: 11211
   neutron::agents::ovn_metadata::debug: false
@@ -333,9 +340,6 @@ service_configs:
   oslo_messaging_rpc_user_name: guest
   ovn::controller::hostname: '%{lookup(''fqdn_canonical'')}'
   ovn::controller::ovn_bridge: br-int
-  ovn::controller::ovn_bridge_mappings:
-  - datacentre:br-ex
-  ovn::controller::ovn_cms_options: ''
   ovn::controller::ovn_encap_ip: '%{lookup(''tenant'')}'
   ovn::controller::ovn_encap_type: geneve
   ovn::controller::ovn_monitor_all: true
@@ -468,7 +472,6 @@ service_configs:
   - 22
   tripleo::trusted_cas::ca_map: {}
   vhostuser_socket_group: qemu
-  vswitch::ovs::enable_hw_offload: false
 service_metadata_settings: null
 service_names:
 - boot_params_service
@@ -729,7 +732,9 @@ tripleo_ovn_controller_common_volumes:
 - /var/log/containers/openvswitch:/var/log/openvswitch:z
 - /var/log/containers/openvswitch:/var/log/ovn:z
 - /var/lib/kolla/config_files/ovn_controller.json:/var/lib/kolla/config_files/config.json:ro
-tripleo_ovn_controller_image: null
+tripleo_ovn_controller_image:
+  '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 tripleo_ovn_controller_image8: ''
 tripleo_ovn_controller_image9: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 tripleo_ovn_encap_type: geneve
