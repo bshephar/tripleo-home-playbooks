@@ -127,6 +127,8 @@
     tripleo_container_image_prepare_log_file: /var/log/tripleo-container-image-prepare.log
     tripleo_container_image_prepare_roles:
     - CountDefault: 1
+      RoleParametersDefault:
+        OVNCMSOptions: enable-chassis-as-gw
       ServicesDefault:
       - OS::TripleO::Services::Aide
       - OS::TripleO::Services::AodhApi
@@ -310,6 +312,7 @@
       HostnameFormatDefault: '%stackname%-novacompute-%index%'
       RoleParametersDefault:
         FsAioMaxNumber: 1048576
+        OVNCMSOptions: enable-chassis-as-gw
         TunedProfileName: virtual-host
       ServicesDefault:
       - OS::TripleO::Services::Aide

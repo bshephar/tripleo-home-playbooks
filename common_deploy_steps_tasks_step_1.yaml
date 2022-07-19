@@ -36,7 +36,7 @@
   become: true
   no_log: True
   copy:
-    content: "{{ lookup('file', tripleo_role_name + '/step_config.pp', errors='ignore') | default('', True) }}"
+    content: "{{ lookup('template', tripleo_role_name + '/step_config.pp', errors='ignore') | default('', True) }}"
     dest: /var/lib/tripleo-config/{{ ansible_check_mode | bool | ternary('check-mode/', '') }}puppet_step_config.pp
     force: true
     mode: '0600'

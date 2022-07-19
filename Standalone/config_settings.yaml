@@ -765,7 +765,7 @@ ovn::controller::hostname: '%{lookup(''fqdn_canonical'')}'
 ovn::controller::ovn_bridge: br-int
 ovn::controller::ovn_bridge_mappings:
 - datacentre:br-ex
-ovn::controller::ovn_cms_options: ''
+ovn::controller::ovn_cms_options: enable-chassis-as-gw
 ovn::controller::ovn_encap_ip: '%{lookup(''tenant'')}'
 ovn::controller::ovn_encap_type: geneve
 ovn::controller::ovn_monitor_all: true

@@ -129,7 +129,7 @@
   loop: "{{container_puppet_tasks.get('step_' ~ step, [])}}"
   when: (groups[item.service_name] | default ([]) | map('extract', hostvars, 'inventory_hostname') | sort | first | lower) == ansible_facts['hostname'] | lower
   vars:
-    container_puppet_tasks: "{{ lookup('file', tripleo_role_name + '/container_puppet_tasks.yaml', errors='ignore') | default({}, True) | from_yaml }}"
+    container_puppet_tasks: "{{ lookup('template', tripleo_role_name + '/container_puppet_tasks.yaml', errors='ignore') | default({}, True) | from_yaml }}"
   tags:
     - container_config_tasks
 
