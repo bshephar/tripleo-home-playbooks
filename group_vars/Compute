@@ -115,7 +115,7 @@ service_configs:
     '8': ''
     '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   ContainerOvnControllerImage:
-    '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    '8': ''
     '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   compute_disable_irqbalance: false
   compute_enable_ksm: false
@@ -733,7 +733,7 @@ tripleo_ovn_controller_common_volumes:
 - /var/log/containers/openvswitch:/var/log/ovn:z
 - /var/lib/kolla/config_files/ovn_controller.json:/var/lib/kolla/config_files/config.json:ro
 tripleo_ovn_controller_image:
-  '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  '8': ''
   '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 tripleo_ovn_controller_image8: ''
 tripleo_ovn_controller_image9: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo

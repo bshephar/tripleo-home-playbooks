@@ -5,7 +5,7 @@ ContainerOvnControllerConfigImage:
   '8': ''
   '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 ContainerOvnControllerImage:
-  '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+  '8': ''
   '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 apache::default_vhost: false
 apache::ip: '%{lookup(''internal_api'')}'
