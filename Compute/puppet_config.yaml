@@ -38,7 +38,9 @@
 - config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cron:current-tripleo
   config_volume: crond
   step_config: include tripleo::profile::base::logging::logrotate
-- config_image: null
+- config_image:
+    '8': ''
+    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   config_volume: ovn_controller
   puppet_tags: vs_config,exec
   step_config: 'include tripleo::profile::base::neutron::agents::ovn
