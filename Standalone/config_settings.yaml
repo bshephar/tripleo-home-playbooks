@@ -1,12 +1,6 @@
 ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
-ContainerOvnControllerConfigImage:
-  '8': ContainerOvnControllerConfig8
-  '9': ContainerOvnControllerConfig9
-ContainerOvnControllerImage:
-  '8': ContainerOvnController8
-  '9': ContainerOvnController9
 apache::default_vhost: false
 apache::ip: '%{lookup(''internal_api'')}'
 apache::mod::alias::icons_options: None
@@ -313,6 +307,15 @@ keystone::wsgi::apache::workers: '8'
 keystone_resources_managed: false
 keystone_ssl_certificate: ''
 keystone_ssl_certificate_key: ''
+map_merge:
+- ContainerOvnControllerConfigImage:
+    '8': OvnControllerConfigImage8
+    '9': OvnControllerConfigImage9
+  ContainerOvnControllerImage:
+    '8': OvnControllerImage8
+    '9': OvnControllerImage9
+- '8': ''
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 memcached::disable_cachedump: true
 memcached::listen:
 - 127.0.0.1

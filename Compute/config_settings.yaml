@@ -1,15 +1,18 @@
 ContainerNovaComputeImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
-ContainerOvnControllerConfigImage:
-  '8': ContainerOvnControllerConfig8
-  '9': ContainerOvnControllerConfig9
-ContainerOvnControllerImage:
-  '8': ContainerOvnController8
-  '9': ContainerOvnController9
 compute_disable_irqbalance: false
 compute_enable_ksm: false
 container_cpuset_cpus: ''
+map_merge:
+- ContainerOvnControllerConfigImage:
+    '8': OvnControllerConfigImage8
+    '9': OvnControllerConfigImage9
+  ContainerOvnControllerImage:
+    '8': OvnControllerImage8
+    '9': OvnControllerImage9
+- '8': ''
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 neutron::agents::ovn_metadata::debug: false
 neutron::agents::ovn_metadata::metadata_host: 192.168.1.25
 neutron::agents::ovn_metadata::metadata_protocol: http
