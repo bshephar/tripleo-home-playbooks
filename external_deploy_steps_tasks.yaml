@@ -92,6 +92,9 @@
             name_prefix: openstack-
             name_suffix: ''
             namespace: quay.io/tripleomastercentos9
+            namespaces:
+            - quay.io/tripleomastercentos9
+            - quay.io/tripleomastercentos8
             neutron_driver: ovn
             pushgateway_image: pushgateway
             pushgateway_namespace: quay.io/prometheus
@@ -439,13 +442,13 @@
     vars:
       tripleo_keystone_resources_cloud_config:
         auth:
-          auth_url: http://172.20.10.25:5000
+          auth_url: https://openstack.bne-home.net:13000
           password: 7i8YsihaRsvMJKyBxT2Z2RD3a
           project_domain_name: Default
           project_name: admin
           user_domain_name: Default
           username: admin
-        cacert: ''
+        cacert: /etc/pki/ca-trust/source/anchors/overcloud-cacert.pem
         identity_api_version: '3'
         region_name: regionOne
         volume_api_version: '3'
@@ -457,12 +460,12 @@
     vars:
       tripleo_keystone_resources_cloud_config:
         auth:
-          auth_url: http://172.20.10.25:5000
+          auth_url: https://openstack.bne-home.net:13000
           password: 7i8YsihaRsvMJKyBxT2Z2RD3a
           system_scope: all
           user_domain_name: Default
           username: admin
-        cacert: ''
+        cacert: /etc/pki/ca-trust/source/anchors/overcloud-cacert.pem
         identity_api_version: '3'
         region_name: regionOne
         volume_api_version: '3'
@@ -483,7 +486,7 @@
       tripleo_keystone_resources_cloud_name: overcloud-system-admin
       tripleo_keystone_resources_internal_endpoint: http://192.168.1.25:5000
       tripleo_keystone_resources_member_role_enabled: false
-      tripleo_keystone_resources_public_endpoint: http://172.20.10.25:5000
+      tripleo_keystone_resources_public_endpoint: https://openstack.bne-home.net:13000
       tripleo_keystone_resources_region: regionOne
       tripleo_keystone_resources_service_project: service
   - name: is Keystone LDAP enabled

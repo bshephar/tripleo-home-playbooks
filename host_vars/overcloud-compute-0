@@ -1,6 +1,7 @@
 pre_network_Compute:  [] 
 
-pre_deployments_Compute:  [] 
+pre_deployments_Compute: 
+  - CADeployment
 
 post_deployments_Compute:  [] 
 

@@ -18,7 +18,7 @@
     tripleo_keystone_admin_password: 7i8YsihaRsvMJKyBxT2Z2RD3a
     tripleo_keystone_admin_url: http://192.168.1.25:35357
     tripleo_keystone_internal_url: http://192.168.1.25:5000
-    tripleo_keystone_public_url: http://172.20.10.25:5000
+    tripleo_keystone_public_url: https://openstack.bne-home.net:13000
     tripleo_keystone_region: regionOne
   when:
   - step|int == 3

@@ -54,6 +54,9 @@
             name_prefix: openstack-
             name_suffix: ''
             namespace: quay.io/tripleomastercentos9
+            namespaces:
+            - quay.io/tripleomastercentos9
+            - quay.io/tripleomastercentos8
             neutron_driver: ovn
             pushgateway_image: pushgateway
             pushgateway_namespace: quay.io/prometheus
@@ -401,13 +404,13 @@
     vars:
       tripleo_keystone_resources_cloud_config:
         auth:
-          auth_url: http://172.20.10.25:5000
+          auth_url: https://openstack.bne-home.net:13000
           password: 7i8YsihaRsvMJKyBxT2Z2RD3a
           project_domain_name: Default
           project_name: admin
           user_domain_name: Default
           username: admin
-        cacert: ''
+        cacert: /etc/pki/ca-trust/source/anchors/overcloud-cacert.pem
         identity_api_version: '3'
         region_name: regionOne
         volume_api_version: '3'
@@ -419,12 +422,12 @@
     vars:
       tripleo_keystone_resources_cloud_config:
         auth:
-          auth_url: http://172.20.10.25:5000
+          auth_url: https://openstack.bne-home.net:13000
           password: 7i8YsihaRsvMJKyBxT2Z2RD3a
           system_scope: all
           user_domain_name: Default
           username: admin
-        cacert: ''
+        cacert: /etc/pki/ca-trust/source/anchors/overcloud-cacert.pem
         identity_api_version: '3'
         region_name: regionOne
         volume_api_version: '3'

@@ -112,10 +112,10 @@ service_configs:
   ContainerNovaLibvirtConfigImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtImage: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
   OvnControllerConfigImages:
-    '8': ''
+    '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos8/openstack-ovn-controller:current-tripleo
     '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   OvnControllerImages:
-    '8': ''
+    '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos8/openstack-ovn-controller:current-tripleo
     '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   compute_disable_irqbalance: false
   compute_enable_ksm: false
@@ -252,7 +252,7 @@ service_configs:
   nova::compute::vcpu_pin_set: []
   nova::compute::verify_glance_signatures: false
   nova::compute::vgpu::vgpu_types_device_addresses_mapping: {}
-  nova::compute::vncproxy_host: 172.20.10.25
+  nova::compute::vncproxy_host: openstack.bne-home.net
   nova::compute::vncserver_proxyclient_address: '%{lookup(''internal_api'')}'
   nova::cpu_allocation_ratio: 4.0
   nova::db::database_db_max_retries: -1
@@ -303,9 +303,9 @@ service_configs:
   nova::rabbit_use_ssl: 'False'
   nova::ram_allocation_ratio: 1.5
   nova::rpc_response_timeout: 60
-  nova::vncproxy::common::vncproxy_host: 172.20.10.25
-  nova::vncproxy::common::vncproxy_port: '6080'
-  nova::vncproxy::common::vncproxy_protocol: http
+  nova::vncproxy::common::vncproxy_host: openstack.bne-home.net
+  nova::vncproxy::common::vncproxy_port: '13080'
+  nova::vncproxy::common::vncproxy_protocol: https
   nova::workarounds::disable_compute_service_check_for_ffu: false
   nova::workarounds::never_download_image_if_on_rbd: false
   nova_compute_opt_env_vars: {}
@@ -727,7 +727,7 @@ tripleo_ovn_controller_common_volumes:
 - /var/log/containers/openvswitch:/var/log/ovn:z
 - /var/lib/kolla/config_files/ovn_controller.json:/var/lib/kolla/config_files/config.json:ro
 tripleo_ovn_controller_image:
-  '8': ''
+  '8': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos8/openstack-ovn-controller:current-tripleo
   '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 tripleo_ovn_encap_type: geneve
 tripleo_ovn_sb_server_port: 6642

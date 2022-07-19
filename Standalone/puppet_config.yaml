@@ -41,7 +41,8 @@
     |String $val| { noop_resource($val) }
 
     include tripleo::profile::pacemaker::haproxy_bundle'
-  volumes: []
+  volumes:
+  - /etc/pki/tls/private/overcloud_endpoint.pem:/etc/pki/tls/private/overcloud_endpoint.pem:ro
 - config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-heat-api:current-tripleo
   config_volume: heat_api
   puppet_tags: heat_config,file,concat,file_line,heat_api_paste_ini
