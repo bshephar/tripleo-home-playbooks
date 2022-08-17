@@ -67,7 +67,8 @@
   step_config: 'include tripleo::profile::base::horizon
 
     '
-- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-iscsid:current-tripleo
+- config_image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-iscsid:current-tripleo'',
+    ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-iscsid:current-tripleo''}'
   config_volume: iscsid
   puppet_tags: iscsid_config
   step_config: 'include tripleo::profile::base::iscsid
@@ -121,7 +122,8 @@
     include tripleo::profile::base::nova::api
 
     include tripleo::profile::base::database::mysql::client'
-- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+- config_image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
+    ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
   config_volume: nova_libvirt
   puppet_tags: nova_config
   step_config: '# TODO(emilien): figure how to deal with libvirt profile.
@@ -139,7 +141,8 @@
   step_config: 'include tripleo::profile::base::nova::conductor
 
     include tripleo::profile::base::database::mysql::client'
-- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+- config_image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
+    ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
   config_volume: nova_libvirt
   puppet_tags: libvirtd_config,virtlogd_config,virtproxyd_config,virtqemud_config,virtnodedevd_config,virtsecretd_config,virtstoraged_config,nova_config,file,libvirt_tls_password
   step_config: 'include tripleo::profile::base::nova::libvirt
@@ -151,7 +154,8 @@
   step_config: 'include tripleo::profile::base::nova::metadata
 
     include tripleo::profile::base::database::mysql::client'
-- config_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+- config_image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
+    ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
   config_volume: nova_libvirt
   step_config: 'include tripleo::profile::base::sshd
 
@@ -168,7 +172,8 @@
   step_config: 'include tripleo::profile::base::nova::vncproxy
 
     include tripleo::profile::base::database::mysql::client'
-- config_image: null
+- config_image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
+    | default(tripleo_ovn_controller_image[''9'']) }}'
   config_volume: ovn_controller
   puppet_tags: vs_config,exec
   step_config: 'include tripleo::profile::base::neutron::agents::ovn
