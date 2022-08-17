@@ -34,7 +34,7 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660719114'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
     image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
       ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
     net: host
@@ -60,7 +60,7 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660719114'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
     image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
       ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
     net: none
@@ -103,7 +103,7 @@ step_3:
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660719114'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
       __OS_DEBUG: 'false'
     image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
       ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
@@ -410,7 +410,7 @@ step_4:
       ovs-vsctl remove open . external_ids ovn-cms-options; fi
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660719114'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
     image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
       | default(tripleo_ovn_controller_image[''9'']) }}'
     net: host
@@ -539,7 +539,7 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660719114'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
     image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true
