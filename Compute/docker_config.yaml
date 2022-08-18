@@ -34,7 +34,7 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660822888'
     image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
       ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
     net: host
@@ -60,9 +60,8 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660822888'
+    image: ''
     net: none
     privileged: false
     user: root
@@ -103,10 +102,10 @@ step_3:
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660822888'
       __OS_DEBUG: 'false'
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+    image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
+      | default(tripleo_nova_compute_image[''9'']) }}'
     net: none
     privileged: false
     security_opt:
@@ -410,7 +409,7 @@ step_4:
       ovs-vsctl remove open . external_ids ovn-cms-options; fi
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660822888'
     image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
       | default(tripleo_ovn_controller_image[''9'']) }}'
     net: host
@@ -458,8 +457,8 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+    image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
+      | default(tripleo_nova_compute_image[''9'']) }}'
     net: host
     privileged: true
     restart: always
@@ -539,7 +538,7 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1660822888'
     image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true
@@ -568,8 +567,8 @@ step_5:
       LIBGUESTFS_BACKEND: direct
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+    image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
+      | default(tripleo_nova_compute_image[''9'']) }}'
     ipc: host
     net: host
     privileged: true

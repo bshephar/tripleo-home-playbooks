@@ -433,7 +433,7 @@
     preserve_properties: true
     source: /var/lib/kolla/config_files/src/etc/httpd/conf.modules.d
 /var/lib/kolla/config_files/nova-migration-target.json:
-  command: /usr/sbin/sshd -D -p 2022
+  command: /usr/sbin/sshd -D
   config_files:
   - dest: /
     merge: true

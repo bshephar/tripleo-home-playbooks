@@ -157,8 +157,9 @@ role_tags:
 - controller
 - standalone
 service_configs:
-  ContainerNovaComputeImage: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-    ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+  ContainerNovaComputeImage:
+    '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo
+    '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
   ContainerNovaLibvirtConfigImage: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
     ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
   ContainerNovaLibvirtImage: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
@@ -726,7 +727,6 @@ service_configs:
   nova::compute::neutron_tunnel_numa_nodes: []
   nova::compute::pci::passthrough: ''
   nova::compute::provider::custom_inventories: {}
-  nova::compute::rbd::ephemeral_storage: false
   nova::compute::rbd::libvirt_images_rbd_ceph_conf: /etc/ceph/ceph.conf
   nova::compute::rbd::libvirt_images_rbd_glance_copy_poll_interval: 15
   nova::compute::rbd::libvirt_images_rbd_glance_copy_timeout: 600
@@ -887,8 +887,6 @@ service_configs:
   nova_is_additional_cell: false
   nova_libvirt_max_queues: 0
   nova_libvirt_opt_volumes: []
-  nova_permit_auto_converge: true
-  nova_permit_post_copy: true
   nova_pmem_namespaces: ''
   octavia::api::default_listener_tls_versions:
   - TLSv1.2
@@ -1349,6 +1347,8 @@ service_configs:
     - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
     - LC_IDENTIFICATION LC_ALL LANGUAGE
     - XMODIFIERS
+    AllowTcpForwarding: 'no'
+    AllowUsers: nova_migration
     AuthorizedKeysFile: .ssh/authorized_keys
     ChallengeResponseAuthentication: 'no'
     GSSAPIAuthentication: 'no'
@@ -1361,10 +1361,10 @@ service_configs:
     SyslogFacility: AUTHPRIV
     UseDNS: 'no'
     UsePAM: 'yes'
-    X11Forwarding: 'yes'
+    X11Forwarding: 'no'
   tripleo::profile::base::sshd::password_authentication: 'no'
   tripleo::profile::base::sshd::port:
-  - 22
+  - 2022
   tripleo::profile::base::swift::proxy::ceilometer_enabled: false
   tripleo::profile::base::swift::proxy::tls_proxy_bind_ip: '%{lookup(''storage'')}'
   tripleo::profile::base::swift::proxy::tls_proxy_fqdn: '%{lookup(''fqdn_storage'')}'
@@ -1835,7 +1835,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1660737729'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1660822888'
 tripleo_keystone_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:
@@ -1849,6 +1849,12 @@ tripleo_network_config_os_net_config_mappings: {}
 tripleo_network_config_override: {}
 tripleo_network_config_template: /home/stack/templates/nic-configs/bonds_vlans.j2
 tripleo_network_config_with_ansible: true
+tripleo_nova_compute_image:
+  '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+tripleo_nova_libvirt_image:
+  '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 tripleo_ovn_bridge: br-int
 tripleo_ovn_bridge_mappings:
 - datacentre:br-ex

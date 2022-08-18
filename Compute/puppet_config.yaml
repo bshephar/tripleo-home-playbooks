@@ -7,8 +7,8 @@
     '
   volumes:
   - /etc/iscsi:/tmp/iscsi.host:z
-- config_image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-    ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+- config_image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
+    | default(tripleo_nova_compute_image[''9'']) }}'
   config_volume: nova_libvirt
   puppet_tags: nova_config
   step_config: '# TODO(emilien): figure how to deal with libvirt profile.
@@ -34,8 +34,8 @@
   step_config: 'include tripleo::profile::base::nova::compute::libvirt_guests
 
     '
-- config_image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-    ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+- config_image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
+    | default(tripleo_nova_compute_image[''9'']) }}'
   config_volume: nova_libvirt
   step_config: 'include tripleo::profile::base::sshd
 

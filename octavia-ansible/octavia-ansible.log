@@ -3920,3 +3920,277 @@
 2022-08-17 08:33:00,246 p=249017 u=root n=ansible | PLAY RECAP *********************************************************************
 2022-08-17 08:33:00,246 p=249017 u=root n=ansible | overcloud-controller-0     : ok=99   changed=36   unreachable=0    failed=0    skipped=11   rescued=0    ignored=0   
 2022-08-17 08:33:00,246 p=249017 u=root n=ansible | tripleo-director           : ok=8    changed=2    unreachable=0    failed=0    skipped=8    rescued=0    ignored=0   
+2022-08-18 08:03:47,722 p=151641 u=root n=ansible | PLAY [Undercloud[0]] ***********************************************************
+2022-08-18 08:03:47,735 p=151641 u=root n=ansible | TASK [Gathering Facts] *********************************************************
+2022-08-18 08:03:52,829 p=151641 u=root n=ansible | ok: [tripleo-director]
+2022-08-18 08:03:52,873 p=151641 u=root n=ansible | TASK [octavia_undercloud : set file if already set by heat variable (backwards-compatibility)] ***
+2022-08-18 08:03:52,918 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:52,936 p=151641 u=root n=ansible | TASK [octavia_undercloud : set location if CentOS] *****************************
+2022-08-18 08:03:52,971 p=151641 u=root n=ansible | ok: [tripleo-director]
+2022-08-18 08:03:52,989 p=151641 u=root n=ansible | TASK [octavia_undercloud : set location if Red Hat] ****************************
+2022-08-18 08:03:53,005 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:53,022 p=151641 u=root n=ansible | TASK [octavia_undercloud : check if amphora image file exists] *****************
+2022-08-18 08:03:53,364 p=151641 u=root n=ansible | ok: [tripleo-director]
+2022-08-18 08:03:53,383 p=151641 u=root n=ansible | TASK [octavia_undercloud : include_tasks] **************************************
+2022-08-18 08:03:53,415 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:53,432 p=151641 u=root n=ansible | TASK [octavia_undercloud : check if pub key file exists] ***********************
+2022-08-18 08:03:53,466 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:53,483 p=151641 u=root n=ansible | TASK [octavia_undercloud : fail if ssh pub key file does not exist or is not readable] ***
+2022-08-18 08:03:53,527 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:53,544 p=151641 u=root n=ansible | TASK [octavia_undercloud : Set ssh key path fact] ******************************
+2022-08-18 08:03:53,590 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:53,608 p=151641 u=root n=ansible | TASK [octavia_undercloud : Create ssh key dir] *********************************
+2022-08-18 08:03:53,926 p=151641 u=root n=ansible | ok: [tripleo-director]
+2022-08-18 08:03:53,944 p=151641 u=root n=ansible | TASK [octavia_undercloud : Generate ssh key for Octavia] ***********************
+2022-08-18 08:03:54,252 p=151641 u=root n=ansible | ok: [tripleo-director]
+2022-08-18 08:03:54,272 p=151641 u=root n=ansible | TASK [octavia_undercloud : Set ssh key path fact] ******************************
+2022-08-18 08:03:54,308 p=151641 u=root n=ansible | ok: [tripleo-director]
+2022-08-18 08:03:54,325 p=151641 u=root n=ansible | TASK [octavia_undercloud : get the desired sha-256 public key fingerprint] *****
+2022-08-18 08:03:54,539 p=151641 u=root n=ansible | changed: [tripleo-director]
+2022-08-18 08:03:54,557 p=151641 u=root n=ansible | TASK [octavia_undercloud : get existing public key sha-256 fingerprint] ********
+2022-08-18 08:03:57,676 p=151641 u=root n=ansible | changed: [tripleo-director]
+2022-08-18 08:03:57,695 p=151641 u=root n=ansible | TASK [octavia_undercloud : delete previous Octavia ssh key] ********************
+2022-08-18 08:03:57,727 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:57,746 p=151641 u=root n=ansible | TASK [octavia_undercloud : Create keypair] *************************************
+2022-08-18 08:03:57,789 p=151641 u=root n=ansible | skipping: [tripleo-director]
+2022-08-18 08:03:57,840 p=151641 u=root n=ansible | PLAY [octavia_nodes] ***********************************************************
+2022-08-18 08:03:57,853 p=151641 u=root n=ansible | TASK [Gathering Facts] *********************************************************
+2022-08-18 08:04:03,996 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:04,049 p=151641 u=root n=ansible | TASK [include_role : octavia_controller_check] *********************************
+2022-08-18 08:04:04,229 p=151641 u=root n=ansible | TASK [octavia_controller_check : Check if octavia CA file exists on host] ******
+2022-08-18 08:04:04,860 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:04,893 p=151641 u=root n=ansible | TASK [octavia_controller_check : Get CA file if exists] ************************
+2022-08-18 08:04:05,707 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:05,740 p=151641 u=root n=ansible | TASK [octavia_controller_check : Store CA data] ********************************
+2022-08-18 08:04:05,804 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:05,840 p=151641 u=root n=ansible | TASK [octavia_controller_check : Get remaining validity period of the CA] ******
+2022-08-18 08:04:06,558 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:06,590 p=151641 u=root n=ansible | TASK [octavia_controller_check : Force CA update if remaining validity is less than 1 year] ***
+2022-08-18 08:04:06,632 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:04:06,667 p=151641 u=root n=ansible | TASK [octavia_controller_check : Check if octavia CA private key exists on host] ***
+2022-08-18 08:04:07,301 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:07,334 p=151641 u=root n=ansible | TASK [octavia_controller_check : Get CA private key file if exists] ************
+2022-08-18 08:04:08,011 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:08,043 p=151641 u=root n=ansible | TASK [octavia_controller_check : Store CA private key] *************************
+2022-08-18 08:04:08,133 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:08,166 p=151641 u=root n=ansible | TASK [octavia_controller_check : Detect if key is encrypted with AES256] *******
+2022-08-18 08:04:08,839 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:08,873 p=151641 u=root n=ansible | TASK [octavia_controller_check : Store flag if a private key update is required] ***
+2022-08-18 08:04:08,941 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:08,974 p=151641 u=root n=ansible | TASK [octavia_controller_check : Check if octavia client certificate exists on host] ***
+2022-08-18 08:04:09,606 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:09,637 p=151641 u=root n=ansible | TASK [octavia_controller_check : Get client certificate file if exists] ********
+2022-08-18 08:04:10,275 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:10,307 p=151641 u=root n=ansible | TASK [octavia_controller_check : Store client certificate data] ****************
+2022-08-18 08:04:10,372 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:10,457 p=151641 u=root n=ansible | PLAY [octavia_nodes[0]] ********************************************************
+2022-08-18 08:04:10,476 p=151641 u=root n=ansible | TASK [Gathering Facts] *********************************************************
+2022-08-18 08:04:16,367 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:16,470 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : include_tasks] ********************************
+2022-08-18 08:04:16,508 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_overcloud_config/tasks/network.yml for overcloud-controller-0
+2022-08-18 08:04:16,527 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create management network for load balancers] ***
+2022-08-18 08:04:19,162 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:19,195 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : getting management network ID] ****************
+2022-08-18 08:04:21,829 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:21,861 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : setting management network ID fact] ***********
+2022-08-18 08:04:21,898 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:21,931 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create subnet] ********************************
+2022-08-18 08:04:26,300 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:26,332 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create security group (get the security group id)] ***
+2022-08-18 08:04:30,147 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:30,180 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : setting fact for management network security group] ***
+2022-08-18 08:04:30,218 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:30,254 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create security group rule to open amphora management ssh port] ***
+2022-08-18 08:04:32,875 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:32,908 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create security group rule to open amphora management API port] ***
+2022-08-18 08:04:35,183 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:35,246 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create security group for health manager] *****
+2022-08-18 08:04:39,308 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:39,341 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create security group rule for health manager] ***
+2022-08-18 08:04:41,861 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:41,894 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create security group rule for log offloading] ***
+2022-08-18 08:04:44,066 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:44,102 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : include_tasks] ********************************
+2022-08-18 08:04:44,145 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_overcloud_config/tasks/quotas.yml for overcloud-controller-0
+2022-08-18 08:04:44,186 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : increase quotas for project used for amphora] ***
+2022-08-18 08:04:46,899 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:46,932 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : include_tasks] ********************************
+2022-08-18 08:04:46,981 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_overcloud_config/tasks/flavor.yml for overcloud-controller-0
+2022-08-18 08:04:47,024 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create nova flavor for Octavia] ***************
+2022-08-18 08:04:49,547 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:49,582 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : gather all of the CAs] ************************
+2022-08-18 08:04:49,704 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:49,721 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : count unique CAs and keys] ********************
+2022-08-18 08:04:49,824 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:49,857 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : fail if CA or private key do not match in all Octavia nodes] ***
+2022-08-18 08:04:49,905 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:04:49,938 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : fail if the number of CA and private key doesn't match] ***
+2022-08-18 08:04:49,983 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:04:50,016 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : record cert so others can use it] *************
+2022-08-18 08:04:50,113 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:50,182 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : disable CA generation] ************************
+2022-08-18 08:04:50,251 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:50,285 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : don't update certificates if CA is present on all octavia nodes] ***
+2022-08-18 08:04:50,336 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:04:50,369 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : include_tasks] ********************************
+2022-08-18 08:04:50,439 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_overcloud_config/tasks/certs_gen.yml for overcloud-controller-0
+2022-08-18 08:04:50,461 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : delete temporary ssl directory] ***************
+2022-08-18 08:04:51,083 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:51,115 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create temporary ssl directories] *************
+2022-08-18 08:04:51,742 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:51,776 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create temporary ssl newcerts directory] ******
+2022-08-18 08:04:52,400 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:52,434 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create index.txt] *****************************
+2022-08-18 08:04:53,798 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:53,829 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create serial file] ***************************
+2022-08-18 08:04:55,345 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:55,378 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : create openssl configuration file from template] ***
+2022-08-18 08:04:56,656 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:56,688 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Generating certificate authority private key] ***
+2022-08-18 08:04:56,729 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:04:56,763 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Write previous CA private key] ****************
+2022-08-18 08:04:56,806 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:04:56,839 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Write previous CA private key] ****************
+2022-08-18 08:04:58,009 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:58,040 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Update CA private key] ************************
+2022-08-18 08:04:58,721 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:58,753 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Reading private key] **************************
+2022-08-18 08:04:59,381 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:04:59,413 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Setting private key fact] *********************
+2022-08-18 08:04:59,453 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:04:59,488 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Generating certificate authority certificate] ***
+2022-08-18 08:05:00,134 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:00,166 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Reading CA certificate] ***********************
+2022-08-18 08:05:00,787 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:00,819 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Setting CA certificate fact] ******************
+2022-08-18 08:05:00,857 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:00,889 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Generating service private key & certificate request] ***
+2022-08-18 08:05:01,942 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:01,979 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Signing service certificate request] **********
+2022-08-18 08:05:02,632 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:02,666 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Read service private key and public certifcate] ***
+2022-08-18 08:05:03,329 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:03,363 p=151641 u=root n=ansible | TASK [octavia_overcloud_config : Set service key fact] *************************
+2022-08-18 08:05:03,438 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:03,547 p=151641 u=root n=ansible | PLAY [octavia_nodes] ***********************************************************
+2022-08-18 08:05:03,569 p=151641 u=root n=ansible | TASK [Gathering Facts] *********************************************************
+2022-08-18 08:05:09,644 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:09,721 p=151641 u=root n=ansible | TASK [octavia_controller_config : Set node name fact] **************************
+2022-08-18 08:05:09,750 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:09,783 p=151641 u=root n=ansible | TASK [octavia_controller_config : include_tasks] *******************************
+2022-08-18 08:05:09,860 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_controller_config/tasks/certificate.yml for overcloud-controller-0
+2022-08-18 08:05:09,888 p=151641 u=root n=ansible | TASK [octavia_controller_config : making sure octavia worker configuration directory exists] ***
+2022-08-18 08:05:10,595 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:10,629 p=151641 u=root n=ansible | TASK [octavia_controller_config : Copying key info to octavia if not already there] ***
+2022-08-18 08:05:11,899 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=None)
+2022-08-18 08:05:13,161 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=None)
+2022-08-18 08:05:14,364 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=None)
+2022-08-18 08:05:14,366 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:14,392 p=151641 u=root n=ansible | TASK [octavia_controller_config : include_tasks] *******************************
+2022-08-18 08:05:14,445 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_controller_config/tasks/netport.yml for overcloud-controller-0
+2022-08-18 08:05:14,473 p=151641 u=root n=ansible | TASK [octavia_controller_config : create management port] **********************
+2022-08-18 08:05:16,776 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:16,805 p=151641 u=root n=ansible | TASK [octavia_controller_config : getting management port] *********************
+2022-08-18 08:05:19,140 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:19,170 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting fact for management network controller port ID] ***
+2022-08-18 08:05:19,223 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:19,241 p=151641 u=root n=ansible | TASK [octavia_controller_config : get management port mac] *********************
+2022-08-18 08:05:21,503 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:21,536 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting fact for management network controller port MAC] ***
+2022-08-18 08:05:21,576 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:21,609 p=151641 u=root n=ansible | TASK [octavia_controller_config : get fixed ip info] ***************************
+2022-08-18 08:05:23,766 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:23,799 p=151641 u=root n=ansible | TASK [octavia_controller_config : get management port detail result] ***********
+2022-08-18 08:05:23,879 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:23,913 p=151641 u=root n=ansible | TASK [octavia_controller_config : parse management port details] ***************
+2022-08-18 08:05:24,016 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:24,049 p=151641 u=root n=ansible | TASK [octavia_controller_config : get management port net mask] ****************
+2022-08-18 08:05:26,675 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:26,706 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting fact for management subnet cidr] *****
+2022-08-18 08:05:26,745 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:26,777 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting fact for management network netmask] ***
+2022-08-18 08:05:26,859 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:26,890 p=151641 u=root n=ansible | TASK [octavia_controller_config : get MTU for management port] *****************
+2022-08-18 08:05:29,273 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:29,305 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting fact for management port MTU] ********
+2022-08-18 08:05:29,344 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:29,379 p=151641 u=root n=ansible | TASK [octavia_controller_config : creating fact for management network health manager controller IP] ***
+2022-08-18 08:05:29,419 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:29,452 p=151641 u=root n=ansible | TASK [octavia_controller_config : include_tasks] *******************************
+2022-08-18 08:05:29,501 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_controller_config/tasks/netinterface.yml for overcloud-controller-0
+2022-08-18 08:05:29,529 p=151641 u=root n=ansible | TASK [octavia_controller_config : create br-int interface file] ****************
+2022-08-18 08:05:30,169 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:30,201 p=151641 u=root n=ansible | TASK [octavia_controller_config : create octavia management interface] *********
+2022-08-18 08:05:31,302 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:31,335 p=151641 u=root n=ansible | TASK [octavia_controller_config : Bring the management port interface up] ******
+2022-08-18 08:05:31,378 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:05:31,412 p=151641 u=root n=ansible | TASK [octavia_controller_config : include_tasks] *******************************
+2022-08-18 08:05:31,453 p=151641 u=root n=ansible | included: /usr/share/ansible/roles/octavia_controller_config/tasks/octavia.yml for overcloud-controller-0
+2022-08-18 08:05:31,474 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting [controller_worker]/amp_boot_network_list] ***
+2022-08-18 08:05:32,284 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:32,319 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting [controller_worker]/amp_secgroup_list] ***
+2022-08-18 08:05:32,944 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:32,972 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting [health_manager]/bind_ip] ************
+2022-08-18 08:05:33,614 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:33,646 p=151641 u=root n=ansible | TASK [octavia_controller_config : gather facts about the service project] ******
+2022-08-18 08:05:35,822 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:35,849 p=151641 u=root n=ansible | TASK [octavia_controller_config : setting [controller_worker]/amp_image_owner_id] ***
+2022-08-18 08:05:36,447 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:36,524 p=151641 u=root n=ansible | RUNNING HANDLER [octavia_controller_config : octavia config updated] ***********
+2022-08-18 08:05:36,570 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:36,609 p=151641 u=root n=ansible | PLAY [octavia_nodes] ***********************************************************
+2022-08-18 08:05:36,648 p=151641 u=root n=ansible | TASK [Gathering Facts] *********************************************************
+2022-08-18 08:05:42,495 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:42,574 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : Show debug information] *****************
+2022-08-18 08:05:42,608 p=151641 u=root n=ansible | ok: [overcloud-controller-0] => {
+    "msg": "Octavia services will be restarted because of updated configuration"
+}
+2022-08-18 08:05:42,629 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : create ip list] *************************
+2022-08-18 08:05:42,692 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:42,725 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : create ip list (remove the last two characters)] ***
+2022-08-18 08:05:42,753 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:42,786 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : create ip list (rsyslog)] ***************
+2022-08-18 08:05:42,866 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:42,883 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : create ip list (remove the last two characters) (rsyslog)] ***
+2022-08-18 08:05:42,948 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:42,983 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : create /etc/rsyslog.d] ******************
+2022-08-18 08:05:43,665 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:43,697 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : create rsyslog 10-octavia.conf] *********
+2022-08-18 08:05:44,802 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:44,835 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : check if octavia rsyslog is running] ****
+2022-08-18 08:05:45,495 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:45,529 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : restart octavia rsyslog service] ********
+2022-08-18 08:05:45,575 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:05:45,607 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : read the current IP list] ***************
+2022-08-18 08:05:46,236 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:46,271 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : retrieve current ip list] ***************
+2022-08-18 08:05:46,332 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:05:46,365 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : check if ip list needs updating] ********
+2022-08-18 08:05:46,382 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:05:46,417 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : setting [health_manager]/controller_ip_port_list] ***
+2022-08-18 08:05:47,105 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:47,133 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : setting [amphora_agent]/tenant_log_targets] ***
+2022-08-18 08:05:47,803 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:47,835 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : setting [amphora_agent]/admin_log_targets] ***
+2022-08-18 08:05:48,518 p=151641 u=root n=ansible | changed: [overcloud-controller-0]
+2022-08-18 08:05:48,562 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : get list of running octavia services] ***
+2022-08-18 08:05:49,207 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=tripleo_octavia_api)
+2022-08-18 08:05:49,831 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=tripleo_octavia_worker)
+2022-08-18 08:05:50,409 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=tripleo_octavia_health_manager)
+2022-08-18 08:05:51,025 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=tripleo_octavia_housekeeping)
+2022-08-18 08:05:51,629 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item=tripleo_octavia_driver_agent)
+2022-08-18 08:05:51,663 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : restart octavia services] ***************
+2022-08-18 08:05:56,840 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item={'changed': True, 'stdout': 'tripleo_octavia_api', 'stderr': '', 'rc': 0, 'cmd': 'systemctl is-active --quiet tripleo_octavia_api && echo tripleo_octavia_api\n', 'start': '2022-08-18 12:05:49.113551', 'end': '2022-08-18 12:05:49.126240', 'delta': '0:00:00.012689', 'msg': '', 'invocation': {'module_args': {'_raw_params': 'systemctl is-active --quiet tripleo_octavia_api && echo tripleo_octavia_api\n', '_uses_shell': True, 'warn': False, 'stdin_add_newline': True, 'strip_empty_ends': True, 'argv': None, 'chdir': None, 'executable': None, 'creates': None, 'removes': None, 'stdin': None}}, 'stdout_lines': ['tripleo_octavia_api'], 'stderr_lines': [], 'failed': False, 'failed_when_result': False, 'item': 'tripleo_octavia_api', 'ansible_loop_var': 'item'})
+2022-08-18 08:05:59,914 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item={'changed': True, 'stdout': 'tripleo_octavia_worker', 'stderr': '', 'rc': 0, 'cmd': 'systemctl is-active --quiet tripleo_octavia_worker && echo tripleo_octavia_worker\n', 'start': '2022-08-18 12:05:49.737400', 'end': '2022-08-18 12:05:49.749396', 'delta': '0:00:00.011996', 'msg': '', 'invocation': {'module_args': {'_raw_params': 'systemctl is-active --quiet tripleo_octavia_worker && echo tripleo_octavia_worker\n', '_uses_shell': True, 'warn': False, 'stdin_add_newline': True, 'strip_empty_ends': True, 'argv': None, 'chdir': None, 'executable': None, 'creates': None, 'removes': None, 'stdin': None}}, 'stdout_lines': ['tripleo_octavia_worker'], 'stderr_lines': [], 'failed': False, 'failed_when_result': False, 'item': 'tripleo_octavia_worker', 'ansible_loop_var': 'item'})
+2022-08-18 08:06:02,851 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item={'changed': True, 'stdout': 'tripleo_octavia_health_manager', 'stderr': '', 'rc': 0, 'cmd': 'systemctl is-active --quiet tripleo_octavia_health_manager && echo tripleo_octavia_health_manager\n', 'start': '2022-08-18 12:05:50.318573', 'end': '2022-08-18 12:05:50.329710', 'delta': '0:00:00.011137', 'msg': '', 'invocation': {'module_args': {'_raw_params': 'systemctl is-active --quiet tripleo_octavia_health_manager && echo tripleo_octavia_health_manager\n', '_uses_shell': True, 'warn': False, 'stdin_add_newline': True, 'strip_empty_ends': True, 'argv': None, 'chdir': None, 'executable': None, 'creates': None, 'removes': None, 'stdin': None}}, 'stdout_lines': ['tripleo_octavia_health_manager'], 'stderr_lines': [], 'failed': False, 'failed_when_result': False, 'item': 'tripleo_octavia_health_manager', 'ansible_loop_var': 'item'})
+2022-08-18 08:06:04,755 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item={'changed': True, 'stdout': 'tripleo_octavia_housekeeping', 'stderr': '', 'rc': 0, 'cmd': 'systemctl is-active --quiet tripleo_octavia_housekeeping && echo tripleo_octavia_housekeeping\n', 'start': '2022-08-18 12:05:50.934823', 'end': '2022-08-18 12:05:50.946643', 'delta': '0:00:00.011820', 'msg': '', 'invocation': {'module_args': {'_raw_params': 'systemctl is-active --quiet tripleo_octavia_housekeeping && echo tripleo_octavia_housekeeping\n', '_uses_shell': True, 'warn': False, 'stdin_add_newline': True, 'strip_empty_ends': True, 'argv': None, 'chdir': None, 'executable': None, 'creates': None, 'removes': None, 'stdin': None}}, 'stdout_lines': ['tripleo_octavia_housekeeping'], 'stderr_lines': [], 'failed': False, 'failed_when_result': False, 'item': 'tripleo_octavia_housekeeping', 'ansible_loop_var': 'item'})
+2022-08-18 08:06:48,267 p=151641 u=root n=ansible | changed: [overcloud-controller-0] => (item={'changed': True, 'stdout': 'tripleo_octavia_driver_agent', 'stderr': '', 'rc': 0, 'cmd': 'systemctl is-active --quiet tripleo_octavia_driver_agent && echo tripleo_octavia_driver_agent\n', 'start': '2022-08-18 12:05:51.544518', 'end': '2022-08-18 12:05:51.555975', 'delta': '0:00:00.011457', 'msg': '', 'invocation': {'module_args': {'_raw_params': 'systemctl is-active --quiet tripleo_octavia_driver_agent && echo tripleo_octavia_driver_agent\n', '_uses_shell': True, 'warn': False, 'stdin_add_newline': True, 'strip_empty_ends': True, 'argv': None, 'chdir': None, 'executable': None, 'creates': None, 'removes': None, 'stdin': None}}, 'stdout_lines': ['tripleo_octavia_driver_agent'], 'stderr_lines': [], 'failed': False, 'failed_when_result': False, 'item': 'tripleo_octavia_driver_agent', 'ansible_loop_var': 'item'})
+2022-08-18 08:06:48,339 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : get list of running octavia containers] ***
+2022-08-18 08:06:48,354 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:06:48,371 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : restart octavia containers] *************
+2022-08-18 08:06:48,383 p=151641 u=root n=ansible | skipping: [overcloud-controller-0]
+2022-08-18 08:06:48,403 p=151641 u=root n=ansible | TASK [octavia_controller_post_config : remove directory /etc/octavia/conf.d/common (LP#1836074)] ***
+2022-08-18 08:06:49,045 p=151641 u=root n=ansible | ok: [overcloud-controller-0]
+2022-08-18 08:06:49,122 p=151641 u=root n=ansible | PLAY RECAP *********************************************************************
+2022-08-18 08:06:49,122 p=151641 u=root n=ansible | overcloud-controller-0     : ok=99   changed=37   unreachable=0    failed=0    skipped=11   rescued=0    ignored=0   
+2022-08-18 08:06:49,122 p=151641 u=root n=ansible | tripleo-director           : ok=8    changed=2    unreachable=0    failed=0    skipped=8    rescued=0    ignored=0   

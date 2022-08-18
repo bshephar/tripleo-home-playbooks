@@ -56,6 +56,12 @@ tripleo_kernel_sysctl_extra_settings:
     value: 0
   net.ipv6.ip_nonlocal_bind:
     value: 1
+tripleo_nova_compute_image:
+  '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
+tripleo_nova_libvirt_image:
+  '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 tripleo_ovn_bridge: br-int
 tripleo_ovn_bridge_mappings:
 - datacentre:br-ex

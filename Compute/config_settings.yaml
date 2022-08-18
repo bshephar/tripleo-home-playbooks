@@ -1,5 +1,6 @@
-ContainerNovaComputeImage: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
-  ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
+ContainerNovaComputeImage:
+  '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo
+  '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo
 ContainerNovaLibvirtConfigImage: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-compute:current-tripleo'',
   ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
 ContainerNovaLibvirtImage: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
@@ -123,7 +124,6 @@ nova::compute::neutron_physnets_numa_nodes_mapping: {}
 nova::compute::neutron_tunnel_numa_nodes: []
 nova::compute::pci::passthrough: ''
 nova::compute::provider::custom_inventories: {}
-nova::compute::rbd::ephemeral_storage: false
 nova::compute::rbd::libvirt_images_rbd_ceph_conf: /etc/ceph/ceph.conf
 nova::compute::rbd::libvirt_images_rbd_glance_copy_poll_interval: 15
 nova::compute::rbd::libvirt_images_rbd_glance_copy_timeout: 600
@@ -204,8 +204,6 @@ nova_glance_rbd_download_multistore_id: ''
 nova_is_additional_cell: false
 nova_libvirt_max_queues: 0
 nova_libvirt_opt_volumes: []
-nova_permit_auto_converge: true
-nova_permit_post_copy: true
 nova_pmem_namespaces: ''
 ovn::controller::hostname: '%{lookup(''fqdn_canonical'')}'
 ovn::controller::ovn_bridge: br-int
@@ -327,6 +325,8 @@ tripleo::profile::base::sshd::options:
   - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
   - LC_IDENTIFICATION LC_ALL LANGUAGE
   - XMODIFIERS
+  AllowTcpForwarding: 'no'
+  AllowUsers: nova_migration
   AuthorizedKeysFile: .ssh/authorized_keys
   ChallengeResponseAuthentication: 'no'
   GSSAPIAuthentication: 'no'
@@ -339,10 +339,10 @@ tripleo::profile::base::sshd::options:
   SyslogFacility: AUTHPRIV
   UseDNS: 'no'
   UsePAM: 'yes'
-  X11Forwarding: 'yes'
+  X11Forwarding: 'no'
 tripleo::profile::base::sshd::password_authentication: 'no'
 tripleo::profile::base::sshd::port:
-- 22
+- 2022
 tripleo::trusted_cas::ca_map: {}
 vhostuser_socket_group: qemu
 vswitch::ovs::enable_hw_offload: false
