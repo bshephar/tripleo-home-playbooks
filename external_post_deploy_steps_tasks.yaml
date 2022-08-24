@@ -60,12 +60,12 @@
         enable_log_offloading: true
         generate_certs: true
         lb_mgmt_net_name: lb-mgmt-net
-        lb_mgmt_sec_grp_name: lb-mgmt-sec-grp
-        lb_mgmt_subnet_cidr: 172.24.0.0/16
-        lb_mgmt_subnet_gateway: 172.24.0.1
+        lb_mgmt_sec_grp_name: lb-mgmt-sec-group
+        lb_mgmt_subnet_cidr: 192.168.1.0/24
+        lb_mgmt_subnet_gateway: 192.168.1.254
         lb_mgmt_subnet_name: lb-mgmt-subnet
-        lb_mgmt_subnet_pool_end: 172.24.255.254
-        lb_mgmt_subnet_pool_start: 172.24.0.2
+        lb_mgmt_subnet_pool_end: 192.168.1.160
+        lb_mgmt_subnet_pool_start: 192.168.1.150
         mgmt_port_dev: o-hm0
         octavia_ansible_playbook: /usr/share/ansible/tripleo-playbooks/octavia-files.yaml
         octavia_flavor_id: '65'
