@@ -4,6 +4,7 @@
     name: Cinder volume puppet bundle
     vars:
       tripleo_ha_wrapper_bundle_name: openstack-cinder-volume
+      tripleo_ha_wrapper_config_suffix: .cinder_volume_previous_run
       tripleo_ha_wrapper_puppet_config_volume: cinder
       tripleo_ha_wrapper_puppet_debug: false
       tripleo_ha_wrapper_puppet_execute: include ::tripleo::profile::base::pacemaker;
@@ -44,15 +45,10 @@
   when:
   - not container_healthcheck_disabled
   - step|int == 5
-- containers.podman.podman_container_info:
-    name: nova_migration_target
-  delay: 30
-  failed_when:
-  - nova_migration_target_infos.containers.0.Healthcheck.Status is defined
-  - '''healthy'' not in nova_migration_target_infos.containers.0.Healthcheck.Status'
-  name: validate nova-migration-target container state
-  register: nova_migration_target_infos
-  retries: 10
+- include_role:
+    name: tripleo_nova_migration_target
+    tasks_from: configure.yaml
+  name: nova migration target configure tasks
   tags:
   - opendev-validation
   - opendev-validation-nova

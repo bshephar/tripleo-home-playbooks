@@ -10,7 +10,7 @@ container_cli: podman
 control_virtual_ip: 192.168.1.25
 deploy_artifact_files: []
 deploy_artifact_urls: []
-deploy_identifier: '1662431404'
+deploy_identifier: '1662435266'
 deploy_steps_max: 6
 enable_internal_tls: false
 enabled_networks:
@@ -223,6 +223,12 @@ keystone_resources:
       public: https://openstack.bne-home.net:13876
     project: service
     region: regionOne
+    roles:
+    - load-balancer_admin
+    - load-balancer_quota_admin
+    - load-balancer_member
+    - load-balancer_global_observer
+    - load-balancer_observer
     service: load-balancer
     users:
       octavia:
@@ -365,6 +371,7 @@ service_net_map:
   designate_api_network: internal_api
   designate_bind_network: external
   designate_mdns_network: internal_api
+  designate_worker_network: external
   docker_registry_network: ctlplane
   etcd_network: internal_api
   ganesha_network: external

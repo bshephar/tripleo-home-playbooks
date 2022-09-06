@@ -5,8 +5,8 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
-    deploy_identifier: 1662431404
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -16,6 +16,11 @@
     docker_puppet_process_count: 6
     docker_puppet_mount_host_puppet: True
   tasks:
+    - name: Host prep steps
+      delegate_to: localhost
+      run_once: true
+      debug:
+        msg: Use --start-at-task 'Host prep steps' to resume from this task
 
     - name: Deploy Artifacts
       tripleo_push_artifacts:
@@ -25,26 +30,14 @@
         - ((deploy_artifact_urls | default([]) | length) > 0) or
           ((deploy_artifact_files | default([]) | length) > 0)
 
-    - name: Standalone Host prep block
+    - name: Standalone Host prep tasks
+      include_tasks: Standalone/host_prep_tasks.yaml
       when:
         - tripleo_role_name == 'Standalone'
-      block:
-        - name: Standalone Host prep steps
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Standalone Host prep steps' to resume from this task
-        - include_tasks: Standalone/host_prep_tasks.yaml
-    - name: Compute Host prep block
+    - name: Compute Host prep tasks
+      include_tasks: Compute/host_prep_tasks.yaml
       when:
         - tripleo_role_name == 'Compute'
-      block:
-        - name: Compute Host prep steps
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Compute Host prep steps' to resume from this task
-        - include_tasks: Compute/host_prep_tasks.yaml
   tags:
     - overcloud
     - host_prep_steps

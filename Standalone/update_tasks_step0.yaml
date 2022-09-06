@@ -8,7 +8,7 @@
   name: Set HAProxy upgrade facts
 - block:
   - file:
-      mode: 1777
+      mode: 1023
       path: /var/tmp
       setype: tmp_t
       state: directory
@@ -56,7 +56,7 @@
   stat: path=/run/yum.pid
   when: step|int == 0 or step|int == 3
 - fail: msg="ERROR existing yum.pid detected - can't continue! Please ensure there
-    is no other package update process for the duration of the minor update worfklow.
+    is no other package update process for the duration of the minor update workflow.
     Exiting."
   name: Exit if existing yum process
   when: (step|int == 0 or step|int == 3) and yum_pid_file.stat.exists

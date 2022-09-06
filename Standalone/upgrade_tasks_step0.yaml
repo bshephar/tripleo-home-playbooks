@@ -68,7 +68,7 @@
   - step|int == 0
 - block:
   - file:
-      mode: 1777
+      mode: 1023
       path: /var/tmp
       setype: tmp_t
       state: directory
@@ -107,38 +107,6 @@
     set_fact: is_mysql_bootstrap_node={{mysql_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower}}
     tags: common
   name: Prepare switch of galera image name
-  when:
-  - step|int == 0
-- block:
-  - failed_when: false
-    name: Get ovn-dbs image id currently used by pacemaker
-    register: ovn_dbs_image_current_res
-    shell: pcs resource config ovn-dbs-bundle | grep -Eo 'image=[^ ]+' | awk -F= '{print
-      $2;}'
-  - name: ovn-dbs image facts
-    set_fact:
-      ovn_dbs_image: quay.io/tripleomastercentos9/openstack-ovn-northd:current-tripleo
-      ovn_dbs_image_current: '{{ovn_dbs_image_current_res.stdout}}'
-      ovn_dbs_image_latest: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
-  - import_role:
-      name: tripleo_container_tag
-    name: Temporarily tag the current ovn_dbs image id with the upgraded image name
-    vars:
-      container_image: '{{ovn_dbs_image_current}}'
-      container_image_latest: '{{ovn_dbs_image_latest}}'
-      pull_image: false
-    when:
-    - ovn_dbs_image_current != ''
-    - ovn_dbs_image_current != ovn_dbs_image_latest
-  - changed_when: false
-    failed_when: false
-    name: Check ovn-dbs-bundle cluster resource status
-    register: ovn_dbs_pcs_result
-    shell: pcs resource config ovn-dbs-bundle
-  - name: Set fact ovn_dbs_pcs_res
-    set_fact:
-      ovn_dbs_pcs_res: '{{ ovn_dbs_pcs_result.rc == 0 }}'
-  name: Prepare switch of ovn-dbs image name
   when:
   - step|int == 0
 - block:

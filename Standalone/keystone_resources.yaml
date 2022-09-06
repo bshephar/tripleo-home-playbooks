@@ -99,6 +99,12 @@ octavia:
     public: https://openstack.bne-home.net:13876
   project: service
   region: regionOne
+  roles:
+  - load-balancer_admin
+  - load-balancer_quota_admin
+  - load-balancer_member
+  - load-balancer_global_observer
+  - load-balancer_observer
   service: load-balancer
   users:
     octavia:

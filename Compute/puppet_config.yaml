@@ -6,8 +6,7 @@
     '
   volumes:
   - /etc/iscsi:/tmp/iscsi.host:z
-- config_image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
-    | default(tripleo_nova_compute_image[''9'']) }}'
+- config_image: quay.io/tripleowallaby/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   puppet_tags: nova_config
   step_config: '# TODO(emilien): figure how to deal with libvirt profile.
@@ -31,8 +30,7 @@
   step_config: 'include tripleo::profile::base::nova::compute::libvirt_guests
 
     '
-- config_image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
-    | default(tripleo_nova_compute_image[''9'']) }}'
+- config_image: quay.io/tripleowallaby/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   step_config: 'include tripleo::profile::base::sshd
 
@@ -40,8 +38,7 @@
 - config_image: quay.io/tripleowallaby/openstack-cron:current-tripleo
   config_volume: crond
   step_config: include tripleo::profile::base::logging::logrotate
-- config_image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
-    | default(tripleo_ovn_controller_image[''9'']) }}'
+- config_image: quay.io/tripleowallaby/openstack-ovn-controller:current-tripleo
   config_volume: ovn_controller
   puppet_tags: vs_config,exec
   step_config: 'include tripleo::profile::base::neutron::agents::ovn
@@ -56,7 +53,8 @@
   puppet_tags: neutron_config,ovn_metadata_agent_config
   step_config: 'include tripleo::profile::base::neutron::ovn_metadata
 
+    include tripleo::profile::base::neutron::ovn_metadata_agent_wrappers
+
     '
   volumes:
-  - /lib/modules:/lib/modules:ro
-  - /run/openvswitch:/run/openvswitch:shared,z
+  - /var/lib/neutron:/var/lib/neutron:shared,z

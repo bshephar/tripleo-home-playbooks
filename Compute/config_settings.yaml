@@ -11,6 +11,7 @@ neutron::agents::ovn_metadata::metadata_host: 192.168.1.25
 neutron::agents::ovn_metadata::metadata_protocol: http
 neutron::agents::ovn_metadata::metadata_workers: '8'
 neutron::agents::ovn_metadata::ovsdb_connection_timeout: 180
+neutron::agents::ovn_metadata::ovsdb_probe_interval: 60000
 neutron::agents::ovn_metadata::shared_secret: tbSWhJKGivgVP7R2jav8YD9Cy
 neutron::auth_strategy: keystone
 neutron::core_plugin: ml2
@@ -26,6 +27,7 @@ neutron::logging::debug: false
 neutron::notification_driver:
 - noop
 neutron::purge_config: false
+neutron::rabbit_heartbeat_in_pthread: false
 neutron::rabbit_heartbeat_timeout_threshold: 60
 neutron::report_interval: 300
 neutron::rpc_response_timeout: 60
@@ -180,6 +182,7 @@ nova::policy::enforce_scope: false
 nova::policy::policies: {}
 nova::policy::purge_config: true
 nova::purge_config: false
+nova::rabbit_heartbeat_in_pthread: false
 nova::rabbit_heartbeat_timeout_threshold: 60
 nova::rabbit_use_ssl: 'False'
 nova::ram_allocation_ratio: 1.5

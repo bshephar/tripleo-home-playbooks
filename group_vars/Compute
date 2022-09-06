@@ -123,6 +123,7 @@ service_configs:
   neutron::agents::ovn_metadata::metadata_protocol: http
   neutron::agents::ovn_metadata::metadata_workers: '8'
   neutron::agents::ovn_metadata::ovsdb_connection_timeout: 180
+  neutron::agents::ovn_metadata::ovsdb_probe_interval: 60000
   neutron::agents::ovn_metadata::shared_secret: tbSWhJKGivgVP7R2jav8YD9Cy
   neutron::auth_strategy: keystone
   neutron::core_plugin: ml2
@@ -138,6 +139,7 @@ service_configs:
   neutron::notification_driver:
   - noop
   neutron::purge_config: false
+  neutron::rabbit_heartbeat_in_pthread: false
   neutron::rabbit_heartbeat_timeout_threshold: 60
   neutron::report_interval: 300
   neutron::rpc_response_timeout: 60
@@ -293,6 +295,7 @@ service_configs:
   nova::policy::policies: {}
   nova::policy::purge_config: true
   nova::purge_config: false
+  nova::rabbit_heartbeat_in_pthread: false
   nova::rabbit_heartbeat_timeout_threshold: 60
   nova::rabbit_use_ssl: 'False'
   nova::ram_allocation_ratio: 1.5
@@ -331,6 +334,7 @@ service_configs:
   ovn::controller::ovn_openflow_probe_interval: 60
   ovn::controller::ovn_remote_probe_interval: 60000
   ovn::southbound::port: 6642
+  ovn_db_clustered: true
   rbd_disk_cachemodes:
   - network=writeback
   rbd_persistent_storage: false
@@ -493,7 +497,6 @@ tenant_gateway_ip: null
 tenant_host_routes: []
 tenant_mtu: 9000
 tenant_vlan_id: 50
-tripleo_enable_hw_offload: false
 tripleo_firewall_edge_frontend_rules: {}
 tripleo_firewall_edge_ssl_frontend_rules: {}
 tripleo_firewall_frontend_rules:
@@ -536,12 +539,6 @@ tripleo_firewall_frontend_rules:
   100 octavia_haproxy_frontend:
     dport:
     - 9876
-  100 ovn_nbdb_haproxy_frontend:
-    dport:
-    - 6641
-  100 ovn_sbdb_haproxy_frontend_ssl:
-    dport:
-    - 6642
   100 placement_haproxy_frontend:
     dport:
     - 8778
@@ -667,6 +664,7 @@ tripleo_firewall_ssl_frontend_rules:
   100 swift_proxy_server_haproxy_frontend_ssl:
     dport:
     - 13808
+tripleo_iscsid_image: quay.io/tripleowallaby/openstack-iscsid:current-tripleo
 tripleo_kernel_extra_modules: {}
 tripleo_kernel_extra_packages: {}
 tripleo_kernel_sysctl_extra_settings:
@@ -706,31 +704,13 @@ tripleo_kernel_sysctl_extra_settings:
     value: 0
   net.ipv6.ip_nonlocal_bind:
     value: 1
+  vm.unprivileged_userfaultfd:
+    value: 1
 tripleo_network_config_os_net_config_mappings: {}
 tripleo_network_config_override: {}
 tripleo_network_config_template: /home/stack/templates/nic-configs/compute-bridge-vlans.j2
 tripleo_network_config_with_ansible: true
-tripleo_nova_compute_image:
-  '8': quay.io/tripleomaster/openstack-nova-compute:current-tripleo
-  '9': quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
-tripleo_nova_libvirt_image:
-  '8': quay.io/tripleomaster/openstack-nova-compute:current-tripleo
-  '9': quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
-tripleo_ovn_bridge: br-int
-tripleo_ovn_bridge_mappings:
-- datacentre:br-ex
-tripleo_ovn_controller_common_volumes:
-- /lib/modules:/lib/modules:ro
-- /run:/run
-- /var/lib/openvswitch/ovn:/run/ovn:shared,z
-- /var/log/containers/openvswitch:/var/log/openvswitch:z
-- /var/log/containers/openvswitch:/var/log/ovn:z
-- /var/lib/kolla/config_files/ovn_controller.json:/var/lib/kolla/config_files/config.json:ro
-tripleo_ovn_controller_image:
-  '8': quay.io/tripleomaster/openstack-ovn-controller:current-tripleo
-  '9': quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
-tripleo_ovn_encap_type: geneve
-tripleo_ovn_sb_server_port: 6642
+tripleo_nova_libvirt_virsh_container: nova_virtproxyd
 tripleo_podman_tls_verify: 'true'
 tripleo_stack_name: overcloud
 tripleo_tripleo_lvmfilter_devices_allowlist: []

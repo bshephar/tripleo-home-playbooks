@@ -1,12 +1,7 @@
-- containers.podman.podman_container_info:
-    name: nova_migration_target
-  delay: 30
-  failed_when:
-  - nova_migration_target_infos.containers.0.Healthcheck.Status is defined
-  - '''healthy'' not in nova_migration_target_infos.containers.0.Healthcheck.Status'
-  name: validate nova-migration-target container state
-  register: nova_migration_target_infos
-  retries: 10
+- include_role:
+    name: tripleo_nova_migration_target
+    tasks_from: configure.yaml
+  name: nova migration target configure tasks
   tags:
   - opendev-validation
   - opendev-validation-nova

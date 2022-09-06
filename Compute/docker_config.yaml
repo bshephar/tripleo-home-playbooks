@@ -1,30 +1,4 @@
 step_2:
-  create_haproxy_wrapper:
-    command:
-    - /container_puppet_apply.sh
-    - '4'
-    - file
-    - include ::tripleo::profile::base::neutron::ovn_metadata_agent_wrappers
-    detach: false
-    image: quay.io/tripleowallaby/openstack-neutron-metadata-agent-ovn:current-tripleo
-    net: host
-    pid: host
-    start_order: 1
-    user: root
-    volumes:
-    - /etc/hosts:/etc/hosts:ro
-    - /etc/localtime:/etc/localtime:ro
-    - /etc/pki/ca-trust/extracted:/etc/pki/ca-trust/extracted:ro
-    - /etc/pki/ca-trust/source/anchors:/etc/pki/ca-trust/source/anchors:ro
-    - /etc/pki/tls/certs/ca-bundle.crt:/etc/pki/tls/certs/ca-bundle.crt:ro
-    - /etc/pki/tls/certs/ca-bundle.trust.crt:/etc/pki/tls/certs/ca-bundle.trust.crt:ro
-    - /etc/pki/tls/cert.pem:/etc/pki/tls/cert.pem:ro
-    - /dev/log:/dev/log
-    - /var/lib/container-config-scripts/container_puppet_apply.sh:/container_puppet_apply.sh:ro
-    - /etc/puppet:/tmp/puppet-etc:ro
-    - /usr/share/openstack-puppet/modules:/usr/share/openstack-puppet/modules:ro
-    - /run/openvswitch:/run/openvswitch:shared,z
-    - /var/lib/neutron:/var/lib/neutron:shared,z
   create_virtlogd_wrapper:
     cgroupns: host
     command:
@@ -34,7 +8,7 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662435266'
     image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
@@ -59,51 +33,22 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
-    image: u
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662435266'
+    image: quay.io/tripleowallaby/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
     user: root
     volumes:
     - /var/log/containers/nova:/var/log/nova:z
 step_3:
-  iscsid:
-    environment:
-      KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    healthcheck:
-      test: /openstack/healthcheck
-    image: quay.io/tripleowallaby/openstack-iscsid:current-tripleo
-    net: host
-    privileged: true
-    restart: always
-    start_order: 2
-    volumes:
-    - /etc/hosts:/etc/hosts:ro
-    - /etc/localtime:/etc/localtime:ro
-    - /etc/pki/ca-trust/extracted:/etc/pki/ca-trust/extracted:ro
-    - /etc/pki/ca-trust/source/anchors:/etc/pki/ca-trust/source/anchors:ro
-    - /etc/pki/tls/certs/ca-bundle.crt:/etc/pki/tls/certs/ca-bundle.crt:ro
-    - /etc/pki/tls/certs/ca-bundle.trust.crt:/etc/pki/tls/certs/ca-bundle.trust.crt:ro
-    - /etc/pki/tls/cert.pem:/etc/pki/tls/cert.pem:ro
-    - /dev/log:/dev/log
-    - /etc/puppet:/etc/puppet:ro
-    - /var/lib/kolla/config_files/iscsid.json:/var/lib/kolla/config_files/config.json:ro
-    - /dev:/dev
-    - /run:/run
-    - /sys:/sys
-    - /lib/modules:/lib/modules:ro
-    - /var/lib/config-data/puppet-generated/iscsid/etc/iscsi:/var/lib/kolla/config_files/src-iscsid:ro
-    - /etc/target:/etc/target:z
-    - /var/lib/iscsi:/var/lib/iscsi:z
   nova_statedir_owner:
     command: /container-config-scripts/pyshim.sh /container-config-scripts/nova_statedir_ownership.py
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662435266'
       __OS_DEBUG: 'false'
-    image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
-      | default(tripleo_nova_compute_image[''9'']) }}'
+    image: quay.io/tripleowallaby/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
     security_opt:
@@ -297,6 +242,7 @@ step_3:
     - /var/lib/config-data/puppet-generated/nova_libvirt:/var/lib/kolla/config_files/src:ro
     - /var/lib/tripleo-config/ceph:/var/lib/kolla/config_files/src-ceph:ro
     - /var/lib/kolla/config_files/nova_virtqemud.json:/var/lib/kolla/config_files/config.json:ro
+    - /var/log/containers/libvirt/swtpm:/var/log/swtpm:z
   nova_virtsecretd:
     cgroupns: host
     depends_on:
@@ -392,34 +338,6 @@ step_3:
     - /var/lib/tripleo-config/ceph:/var/lib/kolla/config_files/src-ceph:ro
     - /var/lib/kolla/config_files/nova_virtstoraged.json:/var/lib/kolla/config_files/config.json:ro
 step_4:
-  configure_cms_options:
-    command:
-    - /bin/bash
-    - -c
-    - CMS_OPTS=$(hiera ovn::controller::ovn_cms_options -c /etc/puppet/hiera.yaml);  if
-      [ X"$CMS_OPTS" !=  X ]; then ovs-vsctl set open . external_ids:ovn-cms-options=$CMS_OPTS;else
-      ovs-vsctl remove open . external_ids ovn-cms-options; fi
-    detach: false
-    environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
-    image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
-      | default(tripleo_ovn_controller_image[''9'']) }}'
-    net: host
-    privileged: true
-    start_order: 0
-    user: root
-    volumes:
-    - /etc/hosts:/etc/hosts:ro
-    - /etc/localtime:/etc/localtime:ro
-    - /etc/pki/ca-trust/extracted:/etc/pki/ca-trust/extracted:ro
-    - /etc/pki/ca-trust/source/anchors:/etc/pki/ca-trust/source/anchors:ro
-    - /etc/pki/tls/certs/ca-bundle.crt:/etc/pki/tls/certs/ca-bundle.crt:ro
-    - /etc/pki/tls/certs/ca-bundle.trust.crt:/etc/pki/tls/certs/ca-bundle.trust.crt:ro
-    - /etc/pki/tls/cert.pem:/etc/pki/tls/cert.pem:ro
-    - /dev/log:/dev/log
-    - /etc/puppet:/etc/puppet:ro
-    - /lib/modules:/lib/modules:ro
-    - /run/openvswitch:/run/openvswitch:shared,z
   logrotate_crond:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
@@ -449,8 +367,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
-      | default(tripleo_nova_compute_image[''9'']) }}'
+    image: quay.io/tripleowallaby/openstack-nova-compute:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -477,8 +394,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 6642
-    image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
-      | default(tripleo_ovn_controller_image[''9'']) }}'
+    image: quay.io/tripleowallaby/openstack-ovn-controller:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -530,7 +446,7 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662435266'
     image: quay.io/tripleowallaby/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true
@@ -559,8 +475,7 @@ step_5:
       LIBGUESTFS_BACKEND: direct
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
-      | default(tripleo_nova_compute_image[''9'']) }}'
+    image: quay.io/tripleowallaby/openstack-nova-compute:current-tripleo
     ipc: host
     net: host
     privileged: true

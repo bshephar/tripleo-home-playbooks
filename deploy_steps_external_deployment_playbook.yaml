@@ -5,9 +5,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '1'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -37,9 +37,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '1'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -49,6 +49,11 @@
     docker_puppet_process_count: 6
     docker_puppet_mount_host_puppet: True
   tasks:
+    - name: Deploy step tasks for 1
+      delegate_to: localhost
+      run_once: true
+      debug:
+        msg: Use --start-at-task 'Deploy step tasks for 1' to resume from this task
     - name: Write the config_step hieradata for the deploy step 1 tasks
 
       copy:
@@ -60,11 +65,6 @@
 
     - name: Overcloud common bootstrap tasks for step 1
       block:
-        - name: Overcloud common bootstrap tasks for step 1
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Overcloud common bootstrap tasks for step 1' to resume from this task
         - name: "Check if /var/lib/tripleo-config/container-startup-config/step_1 already exists"
           stat:
             path: "/var/lib/tripleo-config/container-startup-config/step_1"
@@ -75,11 +75,6 @@
             - ((deploy_identifier is defined and deploy_identifier != "" and deploy_identifier is not none) or
               not container_startup_configs_json_stat.stat.exists)
 
-    - name: Deploy step tasks for 1
-      delegate_to: localhost
-      run_once: true
-      debug:
-        msg: Use --start-at-task 'Deploy step tasks for 1' to resume from this task
     - include_tasks: "Standalone/deploy_steps_tasks_step1.yaml"
       when:
         - tripleo_role_name == 'Standalone'
@@ -90,11 +85,6 @@
         - playbook_dir ~ '/Compute/deploy_steps_tasks_step1.yaml' is exists
     - name: Overcloud common deploy step tasks 1
       block:
-        - name: Overcloud common deploy step tasks 1
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Overcloud common deploy step tasks 1' to resume from this task
         - name: "Check if /var/lib/tripleo-config/container-startup-config/step_1 already exists"
           stat:
             path: "/var/lib/tripleo-config/container-startup-config/step_1"
@@ -113,9 +103,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '2'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -145,9 +135,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '2'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -157,6 +147,11 @@
     docker_puppet_process_count: 6
     docker_puppet_mount_host_puppet: True
   tasks:
+    - name: Deploy step tasks for 2
+      delegate_to: localhost
+      run_once: true
+      debug:
+        msg: Use --start-at-task 'Deploy step tasks for 2' to resume from this task
     - name: Write the config_step hieradata for the deploy step 2 tasks
 
       copy:
@@ -166,11 +161,6 @@
         mode: '0600'
 
 
-    - name: Deploy step tasks for 2
-      delegate_to: localhost
-      run_once: true
-      debug:
-        msg: Use --start-at-task 'Deploy step tasks for 2' to resume from this task
     - include_tasks: "Standalone/deploy_steps_tasks_step2.yaml"
       when:
         - tripleo_role_name == 'Standalone'
@@ -181,11 +171,6 @@
         - playbook_dir ~ '/Compute/deploy_steps_tasks_step2.yaml' is exists
     - name: Overcloud common deploy step tasks 2
       block:
-        - name: Overcloud common deploy step tasks 2
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Overcloud common deploy step tasks 2' to resume from this task
         - name: "Check if /var/lib/tripleo-config/container-startup-config/step_2 already exists"
           stat:
             path: "/var/lib/tripleo-config/container-startup-config/step_2"
@@ -204,9 +189,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '3'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -236,9 +221,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '3'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -248,6 +233,11 @@
     docker_puppet_process_count: 6
     docker_puppet_mount_host_puppet: True
   tasks:
+    - name: Deploy step tasks for 3
+      delegate_to: localhost
+      run_once: true
+      debug:
+        msg: Use --start-at-task 'Deploy step tasks for 3' to resume from this task
     - name: Write the config_step hieradata for the deploy step 3 tasks
 
       copy:
@@ -257,11 +247,6 @@
         mode: '0600'
 
 
-    - name: Deploy step tasks for 3
-      delegate_to: localhost
-      run_once: true
-      debug:
-        msg: Use --start-at-task 'Deploy step tasks for 3' to resume from this task
     - include_tasks: "Standalone/deploy_steps_tasks_step3.yaml"
       when:
         - tripleo_role_name == 'Standalone'
@@ -272,11 +257,6 @@
         - playbook_dir ~ '/Compute/deploy_steps_tasks_step3.yaml' is exists
     - name: Overcloud common deploy step tasks 3
       block:
-        - name: Overcloud common deploy step tasks 3
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Overcloud common deploy step tasks 3' to resume from this task
         - name: "Check if /var/lib/tripleo-config/container-startup-config/step_3 already exists"
           stat:
             path: "/var/lib/tripleo-config/container-startup-config/step_3"
@@ -295,9 +275,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '4'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -327,9 +307,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '4'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -339,6 +319,11 @@
     docker_puppet_process_count: 6
     docker_puppet_mount_host_puppet: True
   tasks:
+    - name: Deploy step tasks for 4
+      delegate_to: localhost
+      run_once: true
+      debug:
+        msg: Use --start-at-task 'Deploy step tasks for 4' to resume from this task
     - name: Write the config_step hieradata for the deploy step 4 tasks
 
       copy:
@@ -348,11 +333,6 @@
         mode: '0600'
 
 
-    - name: Deploy step tasks for 4
-      delegate_to: localhost
-      run_once: true
-      debug:
-        msg: Use --start-at-task 'Deploy step tasks for 4' to resume from this task
     - include_tasks: "Standalone/deploy_steps_tasks_step4.yaml"
       when:
         - tripleo_role_name == 'Standalone'
@@ -363,11 +343,6 @@
         - playbook_dir ~ '/Compute/deploy_steps_tasks_step4.yaml' is exists
     - name: Overcloud common deploy step tasks 4
       block:
-        - name: Overcloud common deploy step tasks 4
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Overcloud common deploy step tasks 4' to resume from this task
         - name: "Check if /var/lib/tripleo-config/container-startup-config/step_4 already exists"
           stat:
             path: "/var/lib/tripleo-config/container-startup-config/step_4"
@@ -386,9 +361,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '5'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -418,9 +393,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: eea41953-08bd-40c8-bf92-e3b74faa779f
+    bootstrap_server_id: 21205a32-fddd-42f7-b241-ae776b8e6045
     step: '5'
-    deploy_identifier: 1662431404
+    deploy_identifier: 1662435266
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -430,6 +405,11 @@
     docker_puppet_process_count: 6
     docker_puppet_mount_host_puppet: True
   tasks:
+    - name: Deploy step tasks for 5
+      delegate_to: localhost
+      run_once: true
+      debug:
+        msg: Use --start-at-task 'Deploy step tasks for 5' to resume from this task
     - name: Write the config_step hieradata for the deploy step 5 tasks
 
       copy:
@@ -439,11 +419,6 @@
         mode: '0600'
 
 
-    - name: Deploy step tasks for 5
-      delegate_to: localhost
-      run_once: true
-      debug:
-        msg: Use --start-at-task 'Deploy step tasks for 5' to resume from this task
     - include_tasks: "Standalone/deploy_steps_tasks_step5.yaml"
       when:
         - tripleo_role_name == 'Standalone'
@@ -454,11 +429,6 @@
         - playbook_dir ~ '/Compute/deploy_steps_tasks_step5.yaml' is exists
     - name: Overcloud common deploy step tasks 5
       block:
-        - name: Overcloud common deploy step tasks 5
-          delegate_to: localhost
-          run_once: true
-          debug:
-            msg: Use --start-at-task 'Overcloud common deploy step tasks 5' to resume from this task
         - name: "Check if /var/lib/tripleo-config/container-startup-config/step_5 already exists"
           stat:
             path: "/var/lib/tripleo-config/container-startup-config/step_5"

@@ -3,45 +3,10 @@
   name: Run firewall role
   vars:
     tripleo_firewall_engine: iptables
-- community.general.sefcontext:
-    setype: '{{ item.setype }}'
-    state: present
-    target: '{{ item.path }}(/.*)?'
-  name: create fcontext entry for iscsi
-  with_items:
-  - path: /etc/iscsi
-    setype: container_file_t
-  - path: /etc/target
-    setype: container_file_t
-  - path: /var/lib/iscsi
-    setype: container_file_t
-- file:
-    path: '{{ item.path }}'
-    setype: '{{ item.setype }}'
-    state: directory
-  name: create persistent directories
-  with_items:
-  - path: /etc/iscsi
-    setype: container_file_t
-  - path: /etc/target
-    setype: container_file_t
-  - path: /var/lib/iscsi
-    setype: container_file_t
-- name: stat /lib/systemd/system/iscsid.socket
-  register: stat_iscsid_socket
-  stat: path=/lib/systemd/system/iscsid.socket
-- name: Stop and disable iscsid.socket service
-  service: name=iscsid.socket state=stopped enabled=no
-  when: stat_iscsid_socket.stat.exists
-- command: systemctl is-enabled --quiet iscsi.service
-  failed_when: false
-  name: Check if iscsi.service is enabled
-  register: iscsi_service_enabled_result
-- name: Stop iscsi.service
-  service: name=iscsi.service state=stopped enabled=no
-  when:
-  - iscsi_service_enabled_result is changed
-  - iscsi_service_enabled_result.rc == 0
+- include_role:
+    name: tripleo_iscsid
+    tasks_from: iscsid_install.yaml
+  name: Iscsid install tasks
 - include_role:
     name: tripleo_kernel
 - file:
@@ -367,6 +332,7 @@
     path: /var/log/containers/libvirt
     setype: container_file_t
 - file:
+    mode: '{{ item.mode | default(omit) }}'
     path: '{{ item.path }}'
     setype: '{{ item.setype | default(omit) }}'
     state: directory
@@ -388,6 +354,9 @@
   - path: /var/log/libvirt
     setype: container_file_t
   - path: /var/log/libvirt/qemu
+    setype: container_file_t
+  - mode: '0750'
+    path: /var/log/containers/libvirt/swtpm
     setype: container_file_t
 - group:
     gid: 107
@@ -440,14 +409,10 @@
   when:
   - ansible_facts.selinux is defined
   - ansible_facts.selinux.status == "enabled"
-- file:
-    path: '{{ item.path }}'
-    setype: '{{ item.setype }}'
-    state: directory
-  loop:
-  - path: /run/libvirt
-    setype: virt_var_run_t
-  name: Create libvirt persistent data directories
+- include_role:
+    name: tripleo_nova_migration_target
+    tasks_from: install.yaml
+  name: nova migration target install task
 - name: allow logrotate to read inside containers
   seboolean:
     name: logrotate_read_inside_containers
@@ -457,13 +422,6 @@
   - ansible_facts.selinux is defined
   - ansible_facts.selinux.status == "enabled"
 - block:
-  - file:
-      dest: /etc/rhsm-host
-      src: /etc/rhsm
-      state: link
-    name: Ensure subscription-manager is not detecting container
-    when:
-    - ansible_facts['distribution'] == 'RedHat'
   - name: Set login facts
     no_log: true
     set_fact:

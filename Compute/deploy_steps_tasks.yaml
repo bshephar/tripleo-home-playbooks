@@ -21,6 +21,12 @@
   name: Run lvmfilter role
   when:
   - step|int == 1
+- include_role:
+    name: tripleo_iscsid
+    tasks_from: iscsid.yaml
+  name: Iscsid role
+  when:
+  - step|int == 3
 - containers.podman.podman_container_info:
     name: nova_compute
   delay: 30
@@ -136,15 +142,10 @@
     when: libvirt_target_result.changed
   name: Set up systemd target for libvirt services
   when: step|int == 4
-- containers.podman.podman_container_info:
-    name: nova_migration_target
-  delay: 30
-  failed_when:
-  - nova_migration_target_infos.containers.0.Healthcheck.Status is defined
-  - '''healthy'' not in nova_migration_target_infos.containers.0.Healthcheck.Status'
-  name: validate nova-migration-target container state
-  register: nova_migration_target_infos
-  retries: 10
+- include_role:
+    name: tripleo_nova_migration_target
+    tasks_from: configure.yaml
+  name: nova migration target configure tasks
   tags:
   - opendev-validation
   - opendev-validation-nova
@@ -179,7 +180,7 @@
       name: '{{ prefetch_image }}'
       validate_certs: false
     delay: 5
-    loop: '{{ lookup(''template'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
+    loop: '{{ lookup(''file'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
       | default(''{}'', True) | from_yaml | recursive_get_key_from_dict(key=''image'')
       | unique }}'
     loop_control:

@@ -7,12 +7,12 @@
     deploy_source_host: "Undercloud"
   tasks:
 
-    - import_tasks: hiera_steps_tasks.yaml
     - name: Server pre-network deployments
       delegate_to: localhost
       run_once: true
       debug:
         msg: Use --start-at-task 'Server pre-network deployments' to resume from this task
+    - import_tasks: hiera_steps_tasks.yaml
     - include_tasks: deployments.yaml
       vars:
         force: false

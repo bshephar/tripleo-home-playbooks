@@ -301,7 +301,7 @@ pacemaker_mutex_shutdown.sh:
     ACTION=$1\nif [ -z \"$ACTION\" ]; then\n    error \"Action must be specified\"\
     \nfi\n\nLOCK_NAME=tripleo-shutdown-lock\nLOCK_OWNER=$(crm_node -n 2>/dev/null)\n\
     rc=$?\nif [ $rc -ne 0 ]; then\n    if [ $rc -eq 102 ]; then\n        log \"Cluster\
-    \ is not running locally, no need to aquire the shutdown lock\"\n        exit\
+    \ is not running locally, no need to acquire the shutdown lock\"\n        exit\
     \ 0\n    else\n        error \"Unexpected error while connecting to the cluster\
     \ (rc: $rc), bailing out\"\n    fi\nfi\n\n# We start with a very high TTL, that\
     \ long enough to accomodate a cluster stop.\n# As soon as the node will get offline,\

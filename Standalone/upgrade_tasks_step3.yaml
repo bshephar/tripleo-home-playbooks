@@ -147,31 +147,6 @@
   name: Check and upgrade Mysql database after major version upgrade
   when: step|int == 3
 - block:
-  - command: '{{container_cli}} pull {{ovn_dbs_image}}'
-    delay: 3
-    name: Pull latest ovn-dbs images
-    register: result
-    retries: 3
-    until: result.rc == 0
-  - failed_when: false
-    name: Get previous ovn_dbs image id
-    register: old_ovn_dbs_image_id
-    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{ovn_dbs_image_latest}}'
-  - name: Get new ovn_dbs image id
-    register: new_ovn_dbs_image_id
-    shell: '{{container_cli}} inspect --format ''{{''{{''}}.Id{{''}}''}}'' {{ovn_dbs_image}}'
-  - include_role:
-      name: tripleo_container_tag
-    name: Retag pcmklatest to latest ovn_dbs image
-    vars:
-      container_image: '{{ovn_dbs_image}}'
-      container_image_latest: '{{ovn_dbs_image_latest}}'
-    when:
-    - old_ovn_dbs_image_id.stdout != new_ovn_dbs_image_id.stdout
-  name: Retag the pacemaker image if containerized
-  when:
-  - step|int == 3
-- block:
   - name: Get container rabbitmq image
     set_fact:
       rabbitmq_image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo

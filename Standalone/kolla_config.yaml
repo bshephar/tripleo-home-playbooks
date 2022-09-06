@@ -126,8 +126,8 @@
     preserve_properties: true
     source: /var/lib/kolla/config_files/src/*
 /var/lib/kolla/config_files/glance_api.json:
-  command: /usr/bin/glance-api --config-file /etc/glance/glance-api.conf --config-file
-    /etc/glance/glance-image-import.conf
+  command: /usr/bin/glance-api --config-file /etc/glance/glance-image-import.conf
+    --config-file /etc/glance/glance-api.conf
   config_files:
   - dest: /
     merge: true
@@ -301,13 +301,6 @@
   - owner: apache:apache
     path: /usr/share/openstack-dashboard/openstack_dashboard/local/local_settings.d/
     recurse: false
-/var/lib/kolla/config_files/iscsid.json:
-  command: /usr/sbin/iscsid -f
-  config_files:
-  - dest: /etc/iscsi/
-    merge: true
-    preserve_properties: true
-    source: /var/lib/kolla/config_files/src-iscsid/
 /var/lib/kolla/config_files/logrotate-crond.json:
   command: /usr/sbin/crond -s -n
   config_files:
@@ -840,6 +833,66 @@
   - owner: octavia:octavia
     path: /var/log/octavia
     recurse: true
+/var/lib/kolla/config_files/ovn_cluster_north_db_server.json:
+  command: bash -c $* -- eval source /etc/sysconfig/ovn_cluster; exec /usr/local/bin/start-nb-db-server
+    ${OVN_NB_DB_OPTS}
+  config_files:
+  - dest: /
+    merge: true
+    preserve_properties: true
+    source: /var/lib/kolla/config_files/src/*
+  - dest: /
+    merge: true
+    optional: true
+    preserve_properties: true
+    source: /var/lib/kolla/config_files/src-tls/*
+  permissions:
+  - owner: root:root
+    path: /var/log/openvswitch
+    recurse: true
+  - owner: root:root
+    path: /var/log/ovn
+    recurse: true
+/var/lib/kolla/config_files/ovn_cluster_northd.json:
+  command: bash -c $* -- eval source /etc/sysconfig/ovn_cluster; exec /usr/bin/ovn-northd
+    ${OVN_NORTHD_OPTS}
+  config_files:
+  - dest: /
+    merge: true
+    preserve_properties: true
+    source: /var/lib/kolla/config_files/src/*
+  - dest: /
+    merge: true
+    optional: true
+    preserve_properties: true
+    source: /var/lib/kolla/config_files/src-tls/*
+  permissions:
+  - owner: root:root
+    path: /var/log/openvswitch
+    recurse: true
+  - owner: root:root
+    path: /var/log/ovn
+    recurse: true
+/var/lib/kolla/config_files/ovn_cluster_south_db_server.json:
+  command: bash -c $* -- eval source /etc/sysconfig/ovn_cluster; exec /usr/local/bin/start-sb-db-server
+    ${OVN_SB_DB_OPTS}
+  config_files:
+  - dest: /
+    merge: true
+    preserve_properties: true
+    source: /var/lib/kolla/config_files/src/*
+  - dest: /
+    merge: true
+    optional: true
+    preserve_properties: true
+    source: /var/lib/kolla/config_files/src-tls/*
+  permissions:
+  - owner: root:root
+    path: /var/log/openvswitch
+    recurse: true
+  - owner: root:root
+    path: /var/log/ovn
+    recurse: true
 /var/lib/kolla/config_files/ovn_controller.json:
   command: /usr/bin/ovn-controller --pidfile --log-file unix:/run/openvswitch/db.sock
   permissions:
@@ -849,18 +902,6 @@
   - owner: root:root
     path: /var/log/ovn
     recurse: true
-/var/lib/kolla/config_files/ovn_dbs.json:
-  command: /usr/sbin/pacemaker_remoted
-  config_files:
-  - dest: /etc/libqb/force-filesystem-sockets
-    owner: root
-    perm: '0644'
-    source: /dev/null
-  - dest: /
-    merge: true
-    optional: true
-    preserve_properties: true
-    source: /var/lib/kolla/config_files/src/*
 /var/lib/kolla/config_files/ovn_metadata_agent.json:
   command: /usr/bin/networking-ovn-metadata-agent --config-file /etc/neutron/neutron.conf
     --config-file /etc/neutron/plugins/networking-ovn/networking-ovn-metadata-agent.ini
@@ -980,7 +1021,7 @@
     path: /etc/pki/tls/private/rabbitmq.key
     perm: '0600'
 /var/lib/kolla/config_files/redis.json:
-  command: /usr/bin/redis-server /etc/redis.conf
+  command: /usr/bin/redis-server /etc/redis/redis.conf
   config_files:
   - dest: /
     merge: true

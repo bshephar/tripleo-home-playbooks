@@ -24,14 +24,6 @@
     OS_CLOUD: overcloud
   when:
   - step|int == 3
-- name: Restart ovn-dbs service (pacemaker)
-  pacemaker_resource:
-    resource: ovn-dbs-bundle
-    state: restart
-    wait_for_resource: true
-  when:
-  - step|int == 1
-  - ovn_dbs_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower
 - include_role:
     name: tripleo_podman
     tasks_from: tripleo_podman_purge.yml

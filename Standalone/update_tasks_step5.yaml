@@ -7,22 +7,6 @@
     - haproxy_short_bootstrap_node_name|default(false)
   name: Set HAProxy upgrade facts
 - block:
-  - name: Get the present image used by ovn-dbs-bundle
-    register: ovn_dbs_current_image
-    shell: pcs resource config ovn-dbs-bundle | grep -Eo 'image=[^ ]+' | awk -F= '{print
-      $2;}'
-  - block:
-    - command: pcs resource bundle update ovn-dbs-bundle container image={{ovn_dbs_image_latest}}
-      name: Update the ovn-dbs-bundle to use the new container image name
-    when:
-    - ovn_dbs_current_image.stdout != ovn_dbs_image_latest
-  name: Update ovn-dbs-bundle resource to use pcmklatest tag image if not used
-  vars:
-    ovn_dbs_image_latest: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
-  when:
-  - step|int == 5
-  - ovn_dbs_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower
-- block:
   - name: check for octavia post-deploy.conf file
     register: octavia_post_deploy_stat
     stat:

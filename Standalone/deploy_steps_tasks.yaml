@@ -90,6 +90,7 @@
     name: Cinder volume puppet bundle
     vars:
       tripleo_ha_wrapper_bundle_name: openstack-cinder-volume
+      tripleo_ha_wrapper_config_suffix: .cinder_volume_previous_run
       tripleo_ha_wrapper_puppet_config_volume: cinder
       tripleo_ha_wrapper_puppet_debug: false
       tripleo_ha_wrapper_puppet_execute: include ::tripleo::profile::base::pacemaker;
@@ -221,6 +222,12 @@
   name: Run lvmfilter role
   when:
   - step|int == 1
+- include_role:
+    name: tripleo_iscsid
+    tasks_from: iscsid.yaml
+  name: Iscsid role
+  when:
+  - step|int == 3
 - containers.podman.podman_container_info:
     name: keystone
   delay: 30
@@ -473,15 +480,10 @@
   when:
   - not container_healthcheck_disabled
   - step|int == 5
-- containers.podman.podman_container_info:
-    name: nova_migration_target
-  delay: 30
-  failed_when:
-  - nova_migration_target_infos.containers.0.Healthcheck.Status is defined
-  - '''healthy'' not in nova_migration_target_infos.containers.0.Healthcheck.Status'
-  name: validate nova-migration-target container state
-  register: nova_migration_target_infos
-  retries: 10
+- include_role:
+    name: tripleo_nova_migration_target
+    tasks_from: configure.yaml
+  name: nova migration target configure tasks
   tags:
   - opendev-validation
   - opendev-validation-nova
@@ -532,43 +534,119 @@
   when:
   - step|int == 1
   - enable_internal_tls
-- import_role:
-    name: tripleo_container_tag
-  name: OVN DBS tag container image for pacemaker
-  vars:
-    container_image: quay.io/tripleomastercentos9/openstack-ovn-northd:current-tripleo
-    container_image_latest: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+- block:
+  - block:
+    - include_role:
+        name: linux-system-roles.certificate
+      vars:
+        certificate_requests:
+        - ca: ipa
+          dns: '{{fqdn_internal_api}}'
+          key_size: '2048'
+          name: ovn_dbs
+          principal: ovn_dbs/{{fqdn_internal_api}}@{{idm_realm}}
+    name: Certificate generation
+    when: enable_internal_tls | bool
+  - name: set is_ovn_dbs_bootstrap_node fact
+    set_fact: is_ovn_dbs_bootstrap_node={{ovn_dbs_short_bootstrap_node_name|lower
+      == ansible_facts['hostname']|lower}}
+  - include_role:
+      name: tripleo_ovn_cluster
+    name: Configure OVN DBs and northd
+    vars:
+      tripleo_ovn_cluster_dbs_protocol: '{{ enable_internal_tls | ternary(''ssl'',
+        ''tcp'', ''tcp'') }}'
+      tripleo_ovn_cluster_nb_db_port: 6641
+      tripleo_ovn_cluster_nb_local_port: 6643
+      tripleo_ovn_cluster_nb_remote_port: 6643
+      tripleo_ovn_cluster_network: internal_api
+      tripleo_ovn_cluster_sb_db_port: 6642
+      tripleo_ovn_cluster_sb_local_port: 6644
+      tripleo_ovn_cluster_sb_remote_port: 6644
+  name: Prepare OVN cluster
   when: step|int == 1
 - block:
-  - import_role:
-      name: tripleo_ha_wrapper
-    name: Ovn dbs puppet bundle
+  - include_role:
+      name: tripleo_container_manage
+    loop:
+    - ovn_cluster_north_db_server
+    - ovn_cluster_south_db_server
+    - ovn_cluster_northd
+    loop_control:
+      loop_var: ovn_container
+    name: Start OVN container
     vars:
-      tripleo_ha_wrapper_bundle_name: ovn-dbs-bundle
-      tripleo_ha_wrapper_puppet_config_volume: ovn_dbs
-      tripleo_ha_wrapper_puppet_debug: false
-      tripleo_ha_wrapper_puppet_execute: include ::tripleo::profile::base::pacemaker;
-        include ::tripleo::profile::pacemaker::ovn_dbs_bundle
-      tripleo_ha_wrapper_puppet_tags: pacemaker::resource::bundle,pacemaker::property,pacemaker::resource::ip,pacemaker::resource::ocf,pacemaker::constraint::order,pacemaker::constraint::colocation
-      tripleo_ha_wrapper_resource_name: ovndb_servers
-      tripleo_ha_wrapper_resource_state: Slave Master
-      tripleo_ha_wrapper_service_name: ovn_dbs
-  name: OVNDbs HA Wrappers Step
-  when: step|int == 3
+      tripleo_container_manage_config: /var/lib/tripleo-config/container-startup-config/step_0
+      tripleo_container_manage_config_id: '{{ ovn_container }}'
+      tripleo_container_manage_config_patterns: '{{ ovn_container }}.json'
+  - become: true
+    name: Set connection
+    shell: 'podman exec ovn_cluster_north_db_server bash -c "ovn-nbctl --no-leader-only
+      --inactivity-probe={{ tripleo_ovn_cluster_probe_interval }} set-connection p{{
+      tripleo_ovn_cluster_dbs_protocol }}:{{ tripleo_ovn_cluster_nb_db_port }}:{{
+      tripleo_ovn_cluster_dbs_addr }}"
+
+      podman exec ovn_cluster_south_db_server bash -c "ovn-sbctl --no-leader-only
+      --inactivity-probe={{ tripleo_ovn_cluster_probe_interval }} set-connection p{{
+      tripleo_ovn_cluster_dbs_protocol }}:{{ tripleo_ovn_cluster_sb_db_port }}:{{
+      tripleo_ovn_cluster_dbs_addr }}"
+
+      '
+    vars:
+      tripleo_ovn_cluster_dbs_addr: 0.0.0.0
+      tripleo_ovn_cluster_dbs_protocol: '{{ enable_internal_tls | ternary(''ssl'',
+        ''tcp'', ''tcp'') }}'
+      tripleo_ovn_cluster_nb_db_port: 6641
+      tripleo_ovn_cluster_network: internal_api
+      tripleo_ovn_cluster_probe_interval: 60000
+      tripleo_ovn_cluster_sb_db_port: 6642
+    when:
+    - is_ovn_dbs_bootstrap_node | bool
+  name: Start OVN DBs and northd containers (bootstrap node)
+  when:
+  - step|int == 3
+  - is_ovn_dbs_bootstrap_node | bool
 - block:
   - include_role:
-      name: linux-system-roles.certificate
+      name: tripleo_container_manage
+    loop:
+    - ovn_cluster_north_db_server
+    - ovn_cluster_south_db_server
+    - ovn_cluster_northd
+    loop_control:
+      loop_var: ovn_container
+    name: Start OVN container
     vars:
-      certificate_requests:
-      - ca: ipa
-        dns: '{{fqdn_internal_api}}'
-        key_size: '2048'
-        name: ovn_dbs
-        principal: ovn_dbs/{{fqdn_internal_api}}@{{idm_realm}}
-  name: Certificate generation
+      tripleo_container_manage_config: /var/lib/tripleo-config/container-startup-config/step_0
+      tripleo_container_manage_config_id: '{{ ovn_container }}'
+      tripleo_container_manage_config_patterns: '{{ ovn_container }}.json'
+  - become: true
+    name: Set connection
+    shell: 'podman exec ovn_cluster_north_db_server bash -c "ovn-nbctl --no-leader-only
+      --inactivity-probe={{ tripleo_ovn_cluster_probe_interval }} set-connection p{{
+      tripleo_ovn_cluster_dbs_protocol }}:{{ tripleo_ovn_cluster_nb_db_port }}:{{
+      tripleo_ovn_cluster_dbs_addr }}"
+
+      podman exec ovn_cluster_south_db_server bash -c "ovn-sbctl --no-leader-only
+      --inactivity-probe={{ tripleo_ovn_cluster_probe_interval }} set-connection p{{
+      tripleo_ovn_cluster_dbs_protocol }}:{{ tripleo_ovn_cluster_sb_db_port }}:{{
+      tripleo_ovn_cluster_dbs_addr }}"
+
+      '
+    vars:
+      tripleo_ovn_cluster_dbs_addr: 0.0.0.0
+      tripleo_ovn_cluster_dbs_protocol: '{{ enable_internal_tls | ternary(''ssl'',
+        ''tcp'', ''tcp'') }}'
+      tripleo_ovn_cluster_nb_db_port: 6641
+      tripleo_ovn_cluster_network: internal_api
+      tripleo_ovn_cluster_probe_interval: 60000
+      tripleo_ovn_cluster_sb_db_port: 6642
+    when:
+    - is_ovn_dbs_bootstrap_node | bool
+  name: Start OVN DBs and northd containers (non-bootstrap nodes)
   when:
-  - step|int == 1
-  - enable_internal_tls
+  - step|int == 4
+  - not is_ovn_dbs_bootstrap_node | bool
 - block:
   - include_role:
       name: linux-system-roles.certificate
@@ -650,7 +728,7 @@
       name: '{{ prefetch_image }}'
       validate_certs: false
     delay: 5
-    loop: '{{ lookup(''template'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
+    loop: '{{ lookup(''file'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
       | default(''{}'', True) | from_yaml | recursive_get_key_from_dict(key=''image'')
       | unique }}'
     loop_control:

@@ -12,18 +12,6 @@
   when:
   - step|int == 0
 - block:
-  - name: create ovn_dbs virtual ip
-    tripleo_service_vip:
-      fixed_ips:
-      - subnet: internal_api_subnet
-      network: internal_api
-      playbook_dir: '{{ playbook_dir }}'
-      service_name: ovn_dbs
-      stack_name: overcloud
-  name: ovn_external_deploy_init
-  when:
-  - step|int == 0
-- block:
   - name: create redis virtual ip
     tripleo_service_vip:
       fixed_ips:

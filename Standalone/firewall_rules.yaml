@@ -74,12 +74,14 @@
 120 octavia api:
   dport:
   - 9876
-121 OVN DB server ports:
+121 OVN DB server and cluster ports:
   dport:
-  - 3125
   - 6641
   - 6642
+  - 6643
+  - 6644
   proto: tcp
+  source: 172.16.2.0/24
 121 memcached 172.16.2.0/24:
   dport:
   - 11211

@@ -1,4 +1,10 @@
 - include_role:
+    name: tripleo_iscsid
+    tasks_from: iscsid.yaml
+  name: Iscsid role
+  when:
+  - step|int == 3
+- include_role:
     name: tripleo_keystone
     tasks_from: keystone-db-sync.yaml
   name: Keystone DB sync
@@ -36,18 +42,43 @@
   name: Sync MySQL credentials in the running container
   when: step|int == 3
 - block:
-  - import_role:
-      name: tripleo_ha_wrapper
-    name: Ovn dbs puppet bundle
+  - include_role:
+      name: tripleo_container_manage
+    loop:
+    - ovn_cluster_north_db_server
+    - ovn_cluster_south_db_server
+    - ovn_cluster_northd
+    loop_control:
+      loop_var: ovn_container
+    name: Start OVN container
     vars:
-      tripleo_ha_wrapper_bundle_name: ovn-dbs-bundle
-      tripleo_ha_wrapper_puppet_config_volume: ovn_dbs
-      tripleo_ha_wrapper_puppet_debug: false
-      tripleo_ha_wrapper_puppet_execute: include ::tripleo::profile::base::pacemaker;
-        include ::tripleo::profile::pacemaker::ovn_dbs_bundle
-      tripleo_ha_wrapper_puppet_tags: pacemaker::resource::bundle,pacemaker::property,pacemaker::resource::ip,pacemaker::resource::ocf,pacemaker::constraint::order,pacemaker::constraint::colocation
-      tripleo_ha_wrapper_resource_name: ovndb_servers
-      tripleo_ha_wrapper_resource_state: Slave Master
-      tripleo_ha_wrapper_service_name: ovn_dbs
-  name: OVNDbs HA Wrappers Step
-  when: step|int == 3
+      tripleo_container_manage_config: /var/lib/tripleo-config/container-startup-config/step_0
+      tripleo_container_manage_config_id: '{{ ovn_container }}'
+      tripleo_container_manage_config_patterns: '{{ ovn_container }}.json'
+  - become: true
+    name: Set connection
+    shell: 'podman exec ovn_cluster_north_db_server bash -c "ovn-nbctl --no-leader-only
+      --inactivity-probe={{ tripleo_ovn_cluster_probe_interval }} set-connection p{{
+      tripleo_ovn_cluster_dbs_protocol }}:{{ tripleo_ovn_cluster_nb_db_port }}:{{
+      tripleo_ovn_cluster_dbs_addr }}"
+
+      podman exec ovn_cluster_south_db_server bash -c "ovn-sbctl --no-leader-only
+      --inactivity-probe={{ tripleo_ovn_cluster_probe_interval }} set-connection p{{
+      tripleo_ovn_cluster_dbs_protocol }}:{{ tripleo_ovn_cluster_sb_db_port }}:{{
+      tripleo_ovn_cluster_dbs_addr }}"
+
+      '
+    vars:
+      tripleo_ovn_cluster_dbs_addr: 0.0.0.0
+      tripleo_ovn_cluster_dbs_protocol: '{{ enable_internal_tls | ternary(''ssl'',
+        ''tcp'', ''tcp'') }}'
+      tripleo_ovn_cluster_nb_db_port: 6641
+      tripleo_ovn_cluster_network: internal_api
+      tripleo_ovn_cluster_probe_interval: 60000
+      tripleo_ovn_cluster_sb_db_port: 6642
+    when:
+    - is_ovn_dbs_bootstrap_node | bool
+  name: Start OVN DBs and northd containers (bootstrap node)
+  when:
+  - step|int == 3
+  - is_ovn_dbs_bootstrap_node | bool

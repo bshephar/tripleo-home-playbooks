@@ -13,12 +13,10 @@
     name: Remove old tmpfiles.d config
   name: nova_libvirt_container_tmpfile_cleanup
   when: step|int == 1
-- block:
-  - file:
-      path: /etc/tmpfiles.d/var-run-libvirt.conf
-      state: absent
-    name: Remove old tmpfiles.d config
-  name: nova_migration_target_tmpfile_cleanup
+- include_role:
+    name: tripleo_nova_migration_target
+    tasks_from: update.yaml
+  name: nova-migration-target update
   when: step|int == 1
 - file:
     path: /etc/cron.daily/containers-tmpwatch
@@ -83,7 +81,7 @@
   stat: path=/run/yum.pid
   when: step|int == 0 or step|int == 3
 - fail: msg="ERROR existing yum.pid detected - can't continue! Please ensure there
-    is no other package update process for the duration of the minor update worfklow.
+    is no other package update process for the duration of the minor update workflow.
     Exiting."
   name: Exit if existing yum process
   when: (step|int == 0 or step|int == 3) and yum_pid_file.stat.exists

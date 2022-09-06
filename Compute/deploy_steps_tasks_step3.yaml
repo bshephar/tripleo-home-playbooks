@@ -1,1 +1,6 @@
-[]
+- include_role:
+    name: tripleo_iscsid
+    tasks_from: iscsid.yaml
+  name: Iscsid role
+  when:
+  - step|int == 3

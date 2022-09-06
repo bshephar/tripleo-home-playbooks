@@ -1,16 +1,8 @@
-ContainerNovaComputeImage:
-  '8': quay.io/tripleomaster/openstack-nova-compute:current-tripleo
-  '9': quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
-ContainerNovaLibvirtConfigImage: '{''8'': ''quay.io/tripleomaster/openstack-nova-compute:current-tripleo'',
-  ''9'': ''quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo''}'
-ContainerNovaLibvirtImage: '{''8'': ''quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-  ''9'': ''quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
-ContainerOvnControllerConfigImage:
-  '8': quay.io/tripleomaster/openstack-ovn-controller:current-tripleo
-  '9': quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
-ContainerOvnControllerImage:
-  '8': quay.io/tripleomaster/openstack-ovn-controller:current-tripleo
-  '9': quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+ContainerNovaComputeImage: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+ContainerNovaLibvirtConfigImage: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+ContainerNovaLibvirtImage: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+ContainerOvnControllerConfigImage: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+ContainerOvnControllerImage: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
 apache::default_vhost: false
 apache::ip: '%{lookup(''internal_api'')}'
 apache::mod::alias::icons_options: None
@@ -68,6 +60,7 @@ cinder::nova::project_name: service
 cinder::nova::region_name: regionOne
 cinder::policy::enforce_new_defaults: false
 cinder::policy::policies: {}
+cinder::rabbit_heartbeat_in_pthread: false
 cinder::rabbit_heartbeat_timeout_threshold: 60
 cinder::rpc_response_timeout: 60
 cinder::scheduler::scheduler_driver: cinder.scheduler.filter_scheduler.FilterScheduler
@@ -128,9 +121,6 @@ glance::backend::swift::swift_store_auth_version: 3
 glance::backend::swift::swift_store_create_container_on_put: true
 glance::backend::swift::swift_store_key: IEhguPUe6OnKOeRjGPsC45Kp6
 glance::backend::swift::swift_store_user: service:glance
-glance::config::api_config:
-  paste_deploy/config_file:
-    value: /etc/glance/glance-api-paste.ini
 glance::cron::db_purge::age: '30'
 glance::cron::db_purge::destination: /var/log/glance/glance-rowsflush.log
 glance::cron::db_purge::hour: '0'
@@ -143,10 +133,9 @@ glance::cron::db_purge::user: glance
 glance::cron::db_purge::weekday: '*'
 glance::notify::rabbitmq::notification_driver:
 - noop
+glance::notify::rabbitmq::rabbit_heartbeat_in_pthread: false
 glance::policy::policies: {}
 glance_backend: swift
-glance_log_file: ''
-glance_notifier_strategy: noop
 hacluster_pwd: BCGJv9oALriRdI4A
 haproxy_backend_syntax: true
 haproxy_docker: true
@@ -179,7 +168,6 @@ heat::db::sync_db: false
 heat::enable_proxy_headers_parsing: true
 heat::engine::auth_encryption_key: rmIdtwAAZaeCsKkeZSr9h5wazt1KamRo
 heat::engine::client_retry_limit: 2
-heat::engine::configure_delegated_roles: false
 heat::engine::convergence_engine: true
 heat::engine::heat_metadata_server_url: https://openstack.bne-home.net:13005
 heat::engine::heat_waitcondition_server_url: https://openstack.bne-home.net:13005/v1/waitcondition
@@ -208,6 +196,7 @@ heat::max_json_body_size: 4194304
 heat::notification_driver:
 - noop
 heat::policy::policies: {}
+heat::rabbit_heartbeat_in_pthread: false
 heat::rabbit_heartbeat_timeout_threshold: 60
 heat::region_name: regionOne
 heat::rpc_response_timeout: 600
@@ -303,6 +292,7 @@ keystone::notification_driver:
 - noop
 keystone::notification_format: basic
 keystone::policy::policies: {}
+keystone::rabbit_heartbeat_in_pthread: false
 keystone::rabbit_heartbeat_timeout_threshold: 60
 keystone::service_name: httpd
 keystone::sync_db: false
@@ -341,6 +331,7 @@ neutron::agents::ovn_metadata::metadata_host: 192.168.1.25
 neutron::agents::ovn_metadata::metadata_protocol: http
 neutron::agents::ovn_metadata::metadata_workers: '8'
 neutron::agents::ovn_metadata::ovsdb_connection_timeout: 180
+neutron::agents::ovn_metadata::ovsdb_probe_interval: 60000
 neutron::agents::ovn_metadata::shared_secret: tbSWhJKGivgVP7R2jav8YD9Cy
 neutron::auth_strategy: keystone
 neutron::bind_host: '%{lookup(''internal_api'')}'
@@ -379,13 +370,14 @@ neutron::plugins::ml2::network_vlan_ranges:
 - datacentre:1:1000
 neutron::plugins::ml2::overlay_ip_version: 4
 neutron::plugins::ml2::ovn::dns_servers: []
-neutron::plugins::ml2::ovn::dvr_enabled: 'True'
+neutron::plugins::ml2::ovn::dvr_enabled: true
 neutron::plugins::ml2::ovn::network_log_burst_limit: 25
 neutron::plugins::ml2::ovn::network_log_rate_limit: 100
 neutron::plugins::ml2::ovn::neutron_sync_mode: log
 neutron::plugins::ml2::ovn::ovn_emit_need_to_frag: false
 neutron::plugins::ml2::ovn::ovn_metadata_enabled: true
 neutron::plugins::ml2::ovn::ovsdb_connection_timeout: 180
+neutron::plugins::ml2::ovn::ovsdb_probe_interval: 60000
 neutron::plugins::ml2::ovs_driver::vnic_type_prohibitlist: []
 neutron::plugins::ml2::sriov_driver::vnic_type_prohibitlist: []
 neutron::plugins::ml2::tenant_network_types:
@@ -404,6 +396,7 @@ neutron::policy::policies: {}
 neutron::purge_config: false
 neutron::quota::quota_port: '500'
 neutron::quota::quota_security_group: '10'
+neutron::rabbit_heartbeat_in_pthread: false
 neutron::rabbit_heartbeat_timeout_threshold: 60
 neutron::report_interval: 300
 neutron::rpc_response_timeout: 60
@@ -411,7 +404,6 @@ neutron::server::agent_down_time: 600
 neutron::server::allow_automatic_l3agent_failover: 'True'
 neutron::server::api_workers: '8'
 neutron::server::auth_strategy: keystone
-neutron::server::enable_dvr: 'True'
 neutron::server::enable_proxy_headers_parsing: true
 neutron::server::igmp_snooping_enable: false
 neutron::server::notifications::nova::auth_url: http://192.168.1.25:5000
@@ -430,7 +422,6 @@ neutron::server::placement::project_name: service
 neutron::server::placement::region_name: regionOne
 neutron::server::placement::user_domain_name: Default
 neutron::server::placement::username: placement
-neutron::server::router_distributed: 'True'
 neutron::server::rpc_workers: '8'
 neutron::server::sync_db: false
 neutron::service_plugins:
@@ -640,6 +631,7 @@ nova::policy::enforce_scope: false
 nova::policy::policies: {}
 nova::policy::purge_config: true
 nova::purge_config: false
+nova::rabbit_heartbeat_in_pthread: false
 nova::rabbit_heartbeat_timeout_threshold: 60
 nova::rabbit_use_ssl: 'False'
 nova::ram_allocation_ratio: 1.5
@@ -710,6 +702,7 @@ octavia::controller::amp_boot_network_list: []
 octavia::controller::amp_flavor_id: '65'
 octavia::controller::amp_image_tag: amphora-image
 octavia::controller::amp_ssh_key_name: new-octavia-key
+octavia::controller::amp_timezone: UTC
 octavia::controller::build_active_retries: 120
 octavia::controller::connection_logging: true
 octavia::controller::connection_max_retries: 120
@@ -747,6 +740,7 @@ octavia::nova::endpoint_type: internalURL
 octavia::nova::region_name: regionOne
 octavia::policy::policies: {}
 octavia::purge_config: false
+octavia::rabbit_heartbeat_in_pthread: false
 octavia::rpc_response_timeout: 60
 octavia::service_auth::auth_type: password
 octavia::service_auth::auth_url: http://192.168.1.25:5000/v3
@@ -772,7 +766,6 @@ ovn::controller::ovn_monitor_all: true
 ovn::controller::ovn_openflow_probe_interval: 60
 ovn::controller::ovn_remote_probe_interval: 60000
 ovn::northbound::port: 6641
-ovn::northd::dbs_listen_ip: '%{lookup(''internal_api'')}'
 ovn::southbound::port: 6642
 pacemaker::corosync::cluster_name: tripleo_cluster
 pacemaker::corosync::manage_fw: false
@@ -858,8 +851,6 @@ rbd_disk_cachemodes:
 - network=writeback
 rbd_persistent_storage: false
 redis::bind: '%{lookup(''internal_api'')}'
-redis::config_file: /etc/redis.conf
-redis::config_file_orig: /etc/redis.conf.puppet
 redis::daemonize: false
 redis::masterauth: c2rUeXMF4caeCT2jLBwJxLADE
 redis::port: 6379
@@ -957,7 +948,6 @@ tripleo::haproxy::haproxy_stats_bind_address: '%{lookup(''ctlplane'')}'
 tripleo::haproxy::haproxy_stats_password: enL9EtclCvNl06yJrOlD6BsXb
 tripleo::haproxy::haproxy_stats_user: admin
 tripleo::haproxy::mysql_clustercheck: true
-tripleo::haproxy::ovn_dbs_manage_lb: false
 tripleo::haproxy::redis_password: c2rUeXMF4caeCT2jLBwJxLADE
 tripleo::haproxy::service_certificate: /etc/pki/tls/private/overcloud_endpoint.pem
 tripleo::packages::enable_install: true
@@ -1095,8 +1085,7 @@ tripleo::profile::base::nova::migration::target::ssh_authorized_keys:
   Generated by TripleO
 tripleo::profile::base::nova::virtlogd_wrapper::debug: false
 tripleo::profile::base::nova::virtlogd_wrapper::enable_wrapper: true
-tripleo::profile::base::nova::virtlogd_wrapper::virtlogd_image: '{''8'': ''quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-  ''9'': ''quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+tripleo::profile::base::nova::virtlogd_wrapper::virtlogd_image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
 tripleo::profile::base::nova::virtlogd_wrapper::virtlogd_process_wrapper: /var/lib/container-config-scripts/virtlogd_wrapper
 tripleo::profile::base::octavia::enable_driver_agent: true
 tripleo::profile::base::octavia::provider::ovn::protocol: tcp
@@ -1184,13 +1173,13 @@ tripleo::profile::pacemaker::cinder::volume_bundle::docker_volumes:
 - /var/lib/iscsi:/var/lib/iscsi:z
 - /etc/target:/etc/target:z
 tripleo::profile::pacemaker::clustercheck::bind_address: '%{lookup(''internal_api'')}'
-tripleo::profile::pacemaker::database::mysql::bind_address: '%{lookup(''fqdn_internal_api'')}'
-tripleo::profile::pacemaker::database::mysql::ca_file: /etc/ipa/ca.crt
-tripleo::profile::pacemaker::database::mysql::gmcast_listen_addr: '%{lookup(''internal_api'')}'
 tripleo::profile::pacemaker::database::mysql_bundle::bind_address: '%{lookup(''fqdn_internal_api'')}'
 tripleo::profile::pacemaker::database::mysql_bundle::container_backend: podman
 tripleo::profile::pacemaker::database::mysql_bundle::control_port: 3123
+tripleo::profile::pacemaker::database::mysql_bundle::mariabackup_password: ocJW5gJGJOiRSjUjEESOJcdSZ
+tripleo::profile::pacemaker::database::mysql_bundle::mariabackup_user: mariabackup
 tripleo::profile::pacemaker::database::mysql_bundle::mysql_docker_image: quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest
+tripleo::profile::pacemaker::database::mysql_bundle::sst_method: rsync
 tripleo::profile::pacemaker::haproxy_bundle::container_backend: podman
 tripleo::profile::pacemaker::haproxy_bundle::haproxy_docker_image: quay.io/tripleomastercentos9/openstack-haproxy:pcmklatest
 tripleo::profile::pacemaker::haproxy_bundle::internal_certs_directory: /etc/pki/tls/certs/haproxy
@@ -1199,16 +1188,6 @@ tripleo::profile::pacemaker::haproxy_bundle::tls_mapping:
 - /etc/pki/tls/private/overcloud_endpoint.pem
 tripleo::profile::pacemaker::haproxy_bundle::tls_mapping_init_bundle:
 - /etc/pki/tls/private/overcloud_endpoint.pem
-tripleo::profile::pacemaker::ovn_dbs_bundle::container_backend: podman
-tripleo::profile::pacemaker::ovn_dbs_bundle::dbs_timeout: 60
-tripleo::profile::pacemaker::ovn_dbs_bundle::force_ocf: true
-tripleo::profile::pacemaker::ovn_dbs_bundle::listen_on_master_ip_only: 'yes'
-tripleo::profile::pacemaker::ovn_dbs_bundle::monitor_interval_master: 10
-tripleo::profile::pacemaker::ovn_dbs_bundle::monitor_interval_slave: 30
-tripleo::profile::pacemaker::ovn_dbs_bundle::nb_db_port: 6641
-tripleo::profile::pacemaker::ovn_dbs_bundle::ovn_dbs_docker_image: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
-tripleo::profile::pacemaker::ovn_dbs_bundle::replication_probe_interval: 60000
-tripleo::profile::pacemaker::ovn_dbs_bundle::sb_db_port: 6642
 tripleo::profile::pacemaker::rabbitmq_bundle::container_backend: podman
 tripleo::profile::pacemaker::rabbitmq_bundle::rabbitmq_docker_control_port: 3122
 tripleo::profile::pacemaker::rabbitmq_bundle::rabbitmq_docker_image: quay.io/tripleomastercentos9/openstack-rabbitmq:pcmklatest

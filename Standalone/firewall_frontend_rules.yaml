@@ -37,12 +37,6 @@
 100 octavia_haproxy_frontend:
   dport:
   - 9876
-100 ovn_nbdb_haproxy_frontend:
-  dport:
-  - 6641
-100 ovn_sbdb_haproxy_frontend_ssl:
-  dport:
-  - 6642
 100 placement_haproxy_frontend:
   dport:
   - 8778

@@ -219,27 +219,37 @@
   when:
   - step|int == 1
   - enable_internal_tls
-- import_role:
-    name: tripleo_container_tag
-  name: OVN DBS tag container image for pacemaker
-  vars:
-    container_image: quay.io/tripleomastercentos9/openstack-ovn-northd:current-tripleo
-    container_image_latest: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
-  when: step|int == 1
 - block:
+  - block:
+    - include_role:
+        name: linux-system-roles.certificate
+      vars:
+        certificate_requests:
+        - ca: ipa
+          dns: '{{fqdn_internal_api}}'
+          key_size: '2048'
+          name: ovn_dbs
+          principal: ovn_dbs/{{fqdn_internal_api}}@{{idm_realm}}
+    name: Certificate generation
+    when: enable_internal_tls | bool
+  - name: set is_ovn_dbs_bootstrap_node fact
+    set_fact: is_ovn_dbs_bootstrap_node={{ovn_dbs_short_bootstrap_node_name|lower
+      == ansible_facts['hostname']|lower}}
   - include_role:
-      name: linux-system-roles.certificate
+      name: tripleo_ovn_cluster
+    name: Configure OVN DBs and northd
     vars:
-      certificate_requests:
-      - ca: ipa
-        dns: '{{fqdn_internal_api}}'
-        key_size: '2048'
-        name: ovn_dbs
-        principal: ovn_dbs/{{fqdn_internal_api}}@{{idm_realm}}
-  name: Certificate generation
-  when:
-  - step|int == 1
-  - enable_internal_tls
+      tripleo_ovn_cluster_dbs_protocol: '{{ enable_internal_tls | ternary(''ssl'',
+        ''tcp'', ''tcp'') }}'
+      tripleo_ovn_cluster_nb_db_port: 6641
+      tripleo_ovn_cluster_nb_local_port: 6643
+      tripleo_ovn_cluster_nb_remote_port: 6643
+      tripleo_ovn_cluster_network: internal_api
+      tripleo_ovn_cluster_sb_db_port: 6642
+      tripleo_ovn_cluster_sb_local_port: 6644
+      tripleo_ovn_cluster_sb_remote_port: 6644
+  name: Prepare OVN cluster
+  when: step|int == 1
 - block:
   - include_role:
       name: linux-system-roles.certificate
@@ -304,7 +314,7 @@
       name: '{{ prefetch_image }}'
       validate_certs: false
     delay: 5
-    loop: '{{ lookup(''template'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
+    loop: '{{ lookup(''file'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
       | default(''{}'', True) | from_yaml | recursive_get_key_from_dict(key=''image'')
       | unique }}'
     loop_control:

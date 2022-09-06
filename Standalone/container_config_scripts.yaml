@@ -383,7 +383,7 @@ pacemaker_mutex_shutdown.sh:
     ACTION=$1\nif [ -z \"$ACTION\" ]; then\n    error \"Action must be specified\"\
     \nfi\n\nLOCK_NAME=tripleo-shutdown-lock\nLOCK_OWNER=$(crm_node -n 2>/dev/null)\n\
     rc=$?\nif [ $rc -ne 0 ]; then\n    if [ $rc -eq 102 ]; then\n        log \"Cluster\
-    \ is not running locally, no need to aquire the shutdown lock\"\n        exit\
+    \ is not running locally, no need to acquire the shutdown lock\"\n        exit\
     \ 0\n    else\n        error \"Unexpected error while connecting to the cluster\
     \ (rc: $rc), bailing out\"\n    fi\nfi\n\n# We start with a very high TTL, that\
     \ long enough to accomodate a cluster stop.\n# As soon as the node will get offline,\
@@ -770,12 +770,11 @@ placement_wait_for_service.py:
     \ -= 1\n        try:\n            r = requests.get(placement_endpoint_url + '/',\
     \ verify=False)\n            if r.status_code == 200 and response_reg.match(r.text):\n\
     \                LOG.info('Placement service up! - %s', r.text)\n            \
-    \    sys.exit(0)\n                break\n            else:\n                LOG.info('response\
-    \ - %r', r)\n                LOG.info('Placement service not up - %s, %s',\n \
-    \                        r.status_code,\n                         r.text)\n  \
-    \      except Exception:\n            LOG.exception('Error query the placement\
-    \ endpoint:')\n        time.sleep(timeout)\n\n    sys.exit(1)\n\n# vim: set et\
-    \ ts=4 sw=4 :\n"
+    \    sys.exit(0)\n            else:\n                LOG.info('response - %r',\
+    \ r)\n                LOG.info('Placement service not up - %s, %s',\n        \
+    \                 r.status_code,\n                         r.text)\n        except\
+    \ Exception:\n            LOG.exception('Error query the placement endpoint:')\n\
+    \        time.sleep(timeout)\n\n    sys.exit(1)\n\n# vim: set et ts=4 sw=4 :\n"
   mode: '0755'
 pyshim.sh:
   content: "#!/usr/bin/bash\n# Copyright 2018 Red Hat Inc.\n#\n# Licensed under the\
