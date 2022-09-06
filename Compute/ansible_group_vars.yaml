@@ -1,5 +1,5 @@
-ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+ContainerIscsidConfigImage: quay.io/tripleomaster/openstack-iscsid:current-tripleo
+ContainerIscsidImage: quay.io/tripleomaster/openstack-iscsid:current-tripleo
 ansible_async_dir: /tmp/.ansible_async
 chrony_acl_rules:
 - deny all
@@ -14,7 +14,7 @@ chrony_ntp_servers:
 - 3.pool.ntp.org
 chrony_role_action: all
 hieradata_localhost_address: localhost
-tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+tripleo_iscsid_image: quay.io/tripleomaster/openstack-iscsid:current-tripleo
 tripleo_kernel_extra_modules: {}
 tripleo_kernel_extra_packages: {}
 tripleo_kernel_sysctl_extra_settings:

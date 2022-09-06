@@ -9,7 +9,7 @@
         "192.168.1.6"
     ],
     "boot_params_service_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain"
     ],
     "boot_params_service_short_bootstrap_node_name": "overcloud-compute-0",
     "boot_params_service_short_node_names": [
@@ -22,8 +22,8 @@
         "192.168.1.7"
     ],
     "ca_certs_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "ca_certs_short_bootstrap_node_name": "overcloud-compute-0",
     "ca_certs_short_node_names": [
@@ -43,8 +43,8 @@
         "192.168.1.7"
     ],
     "chrony_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "chrony_short_bootstrap_node_name": "overcloud-compute-0",
     "chrony_short_node_names": [
@@ -58,7 +58,7 @@
         "172.16.2.85"
     ],
     "cinder_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "cinder_api_short_bootstrap_node_name": "overcloud-controller-0",
     "cinder_api_short_node_names": [
@@ -71,7 +71,7 @@
         "192.168.1.7"
     ],
     "cinder_scheduler_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "cinder_scheduler_short_bootstrap_node_name": "overcloud-controller-0",
     "cinder_scheduler_short_node_names": [
@@ -83,7 +83,7 @@
         "192.168.1.7"
     ],
     "cinder_volume_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "cinder_volume_short_bootstrap_node_name": "overcloud-controller-0",
     "cinder_volume_short_node_names": [
@@ -95,7 +95,7 @@
         "192.168.1.7"
     ],
     "clustercheck_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "clustercheck_short_bootstrap_node_name": "overcloud-controller-0",
     "clustercheck_short_node_names": [
@@ -110,7 +110,7 @@
         "192.168.1.7"
     ],
     "container_image_prepare_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "container_image_prepare_short_bootstrap_node_name": "overcloud-controller-0",
     "container_image_prepare_short_node_names": [
@@ -118,10 +118,11 @@
     ],
     "controller_node_ips": "192.168.1.7",
     "controller_node_names": "overcloud-controller-0",
-    "deploy_identifier": "1661322976",
+    "deploy_identifier": "1662436537",
     "designate_api_network": "internal_api",
     "designate_bind_network": "external",
     "designate_mdns_network": "internal_api",
+    "designate_worker_network": "external",
     "docker_registry_network": "ctlplane",
     "enabled_services": [
         "boot_params_service",
@@ -193,7 +194,7 @@
         "172.16.2.85"
     ],
     "glance_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "glance_api_short_bootstrap_node_name": "overcloud-controller-0",
     "glance_api_short_node_names": [
@@ -207,7 +208,7 @@
         "192.168.1.7"
     ],
     "haproxy_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "haproxy_short_bootstrap_node_name": "overcloud-controller-0",
     "haproxy_short_node_names": [
@@ -221,7 +222,7 @@
         "172.16.2.85"
     ],
     "heat_api_cfn_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "heat_api_cfn_short_bootstrap_node_name": "overcloud-controller-0",
     "heat_api_cfn_short_node_names": [
@@ -233,7 +234,7 @@
         "172.16.2.85"
     ],
     "heat_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "heat_api_short_bootstrap_node_name": "overcloud-controller-0",
     "heat_api_short_node_names": [
@@ -245,7 +246,7 @@
         "192.168.1.7"
     ],
     "heat_engine_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "heat_engine_short_bootstrap_node_name": "overcloud-controller-0",
     "heat_engine_short_node_names": [
@@ -258,7 +259,7 @@
         "172.16.2.85"
     ],
     "horizon_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "horizon_short_bootstrap_node_name": "overcloud-controller-0",
     "horizon_short_node_names": [
@@ -275,8 +276,8 @@
         "192.168.1.7"
     ],
     "iscsid_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "iscsid_short_bootstrap_node_name": "overcloud-compute-0",
     "iscsid_short_node_names": [
@@ -290,8 +291,8 @@
         "192.168.1.7"
     ],
     "kernel_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "kernel_short_bootstrap_node_name": "overcloud-compute-0",
     "kernel_short_node_names": [
@@ -305,7 +306,7 @@
         "172.16.2.85"
     ],
     "keystone_admin_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "keystone_admin_api_short_bootstrap_node_name": "overcloud-controller-0",
     "keystone_admin_api_short_node_names": [
@@ -317,7 +318,7 @@
         "192.168.1.7"
     ],
     "keystone_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "keystone_public_api_bootstrap_node_ip": "172.16.2.85",
     "keystone_public_api_enabled": true,
@@ -326,7 +327,7 @@
         "172.16.2.85"
     ],
     "keystone_public_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "keystone_public_api_short_bootstrap_node_name": "overcloud-controller-0",
     "keystone_public_api_short_node_names": [
@@ -343,8 +344,8 @@
         "192.168.1.7"
     ],
     "logrotate_crond_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "logrotate_crond_short_bootstrap_node_name": "overcloud-compute-0",
     "logrotate_crond_short_node_names": [
@@ -357,7 +358,7 @@
         "192.168.1.7"
     ],
     "logrotate_tmpwatch_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "logrotate_tmpwatch_short_bootstrap_node_name": "overcloud-controller-0",
     "logrotate_tmpwatch_short_node_names": [
@@ -371,7 +372,7 @@
         "172.16.2.85"
     ],
     "memcached_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "memcached_short_bootstrap_node_name": "overcloud-controller-0",
     "memcached_short_node_names": [
@@ -386,8 +387,8 @@
         "192.168.1.7"
     ],
     "mysql_client_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "mysql_client_short_bootstrap_node_name": "overcloud-compute-0",
     "mysql_client_short_node_names": [
@@ -400,7 +401,7 @@
         "172.16.2.85"
     ],
     "mysql_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "mysql_short_bootstrap_node_name": "overcloud-controller-0",
     "mysql_short_node_names": [
@@ -413,7 +414,7 @@
         "172.16.2.85"
     ],
     "neutron_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "neutron_api_short_bootstrap_node_name": "overcloud-controller-0",
     "neutron_api_short_node_names": [
@@ -425,7 +426,7 @@
         "192.168.1.7"
     ],
     "neutron_plugin_ml2_ovn_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "neutron_plugin_ml2_ovn_short_bootstrap_node_name": "overcloud-controller-0",
     "neutron_plugin_ml2_ovn_short_node_names": [
@@ -439,7 +440,7 @@
         "172.16.2.85"
     ],
     "nova_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "nova_api_short_bootstrap_node_name": "overcloud-controller-0",
     "nova_api_short_node_names": [
@@ -452,8 +453,8 @@
         "192.168.1.7"
     ],
     "nova_compute_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "nova_compute_short_bootstrap_node_name": "overcloud-compute-0",
     "nova_compute_short_node_names": [
@@ -466,7 +467,7 @@
         "192.168.1.7"
     ],
     "nova_conductor_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "nova_conductor_short_bootstrap_node_name": "overcloud-controller-0",
     "nova_conductor_short_node_names": [
@@ -480,7 +481,7 @@
         "192.168.1.6"
     ],
     "nova_libvirt_guests_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain"
     ],
     "nova_libvirt_guests_short_bootstrap_node_name": "overcloud-compute-0",
     "nova_libvirt_guests_short_node_names": [
@@ -492,8 +493,8 @@
         "172.16.2.85"
     ],
     "nova_libvirt_node_names": [
-        "overcloud-compute-0.internalapi.bne-home.net",
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-compute-0.internalapi.localdomain",
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "nova_libvirt_short_bootstrap_node_name": "overcloud-compute-0",
     "nova_libvirt_short_node_names": [
@@ -507,7 +508,7 @@
         "172.16.2.85"
     ],
     "nova_metadata_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "nova_metadata_short_bootstrap_node_name": "overcloud-controller-0",
     "nova_metadata_short_node_names": [
@@ -520,8 +521,8 @@
         "192.168.1.7"
     ],
     "nova_migration_target_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "nova_migration_target_short_bootstrap_node_name": "overcloud-compute-0",
     "nova_migration_target_short_node_names": [
@@ -534,7 +535,7 @@
         "192.168.1.7"
     ],
     "nova_scheduler_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "nova_scheduler_short_bootstrap_node_name": "overcloud-controller-0",
     "nova_scheduler_short_node_names": [
@@ -547,7 +548,7 @@
         "172.16.2.85"
     ],
     "nova_vnc_proxy_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "nova_vnc_proxy_short_bootstrap_node_name": "overcloud-controller-0",
     "nova_vnc_proxy_short_node_names": [
@@ -560,7 +561,7 @@
         "172.16.2.85"
     ],
     "octavia_api_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "octavia_api_short_bootstrap_node_name": "overcloud-controller-0",
     "octavia_api_short_node_names": [
@@ -572,7 +573,7 @@
         "192.168.1.7"
     ],
     "octavia_deployment_config_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "octavia_deployment_config_short_bootstrap_node_name": "overcloud-controller-0",
     "octavia_deployment_config_short_node_names": [
@@ -584,7 +585,7 @@
         "192.168.1.7"
     ],
     "octavia_health_manager_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "octavia_health_manager_short_bootstrap_node_name": "overcloud-controller-0",
     "octavia_health_manager_short_node_names": [
@@ -596,7 +597,7 @@
         "192.168.1.7"
     ],
     "octavia_housekeeping_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "octavia_housekeeping_short_bootstrap_node_name": "overcloud-controller-0",
     "octavia_housekeeping_short_node_names": [
@@ -608,7 +609,7 @@
         "192.168.1.7"
     ],
     "octavia_worker_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "octavia_worker_short_bootstrap_node_name": "overcloud-controller-0",
     "octavia_worker_short_node_names": [
@@ -622,7 +623,7 @@
         "172.16.2.85"
     ],
     "oslo_messaging_notify_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "oslo_messaging_notify_short_bootstrap_node_name": "overcloud-controller-0",
     "oslo_messaging_notify_short_node_names": [
@@ -635,7 +636,7 @@
         "172.16.2.85"
     ],
     "oslo_messaging_rpc_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "oslo_messaging_rpc_short_bootstrap_node_name": "overcloud-controller-0",
     "oslo_messaging_rpc_short_node_names": [
@@ -648,8 +649,8 @@
         "192.168.1.7"
     ],
     "ovn_controller_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "ovn_controller_short_bootstrap_node_name": "overcloud-compute-0",
     "ovn_controller_short_node_names": [
@@ -663,7 +664,7 @@
         "172.16.2.85"
     ],
     "ovn_dbs_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "ovn_dbs_short_bootstrap_node_name": "overcloud-controller-0",
     "ovn_dbs_short_node_names": [
@@ -677,8 +678,8 @@
         "192.168.1.7"
     ],
     "ovn_metadata_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "ovn_metadata_short_bootstrap_node_name": "overcloud-compute-0",
     "ovn_metadata_short_node_names": [
@@ -692,7 +693,7 @@
         "172.16.2.85"
     ],
     "pacemaker_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "pacemaker_remote_network": "internal_api",
     "pacemaker_short_bootstrap_node_name": "overcloud-controller-0",
@@ -706,7 +707,7 @@
         "172.16.2.85"
     ],
     "placement_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "placement_short_bootstrap_node_name": "overcloud-controller-0",
     "placement_short_node_names": [
@@ -719,8 +720,8 @@
         "192.168.1.7"
     ],
     "podman_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "podman_short_bootstrap_node_name": "overcloud-compute-0",
     "podman_short_node_names": [
@@ -738,13 +739,13 @@
         "172.16.2.85"
     ],
     "redis_node_names": [
-        "overcloud-controller-0.internalapi.bne-home.net"
+        "overcloud-controller-0.internalapi.localdomain"
     ],
     "redis_short_bootstrap_node_name": "overcloud-controller-0",
     "redis_short_node_names": [
         "overcloud-controller-0"
     ],
-    "redis_vip": "172.16.2.16",
+    "redis_vip": "172.16.2.135",
     "snmp_bootstrap_node_ip": "192.168.1.6",
     "snmp_enabled": true,
     "snmp_node_ips": [
@@ -752,8 +753,8 @@
         "192.168.1.7"
     ],
     "snmp_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "snmp_short_bootstrap_node_name": "overcloud-compute-0",
     "snmp_short_node_names": [
@@ -768,8 +769,8 @@
         "192.168.1.7"
     ],
     "sshd_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "sshd_short_bootstrap_node_name": "overcloud-compute-0",
     "sshd_short_node_names": [
@@ -785,7 +786,7 @@
         "172.16.1.148"
     ],
     "swift_proxy_node_names": [
-        "overcloud-controller-0.storage.bne-home.net"
+        "overcloud-controller-0.storage.localdomain"
     ],
     "swift_proxy_short_bootstrap_node_name": "overcloud-controller-0",
     "swift_proxy_short_node_names": [
@@ -797,7 +798,7 @@
         "192.168.1.7"
     ],
     "swift_ringbuilder_node_names": [
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "swift_ringbuilder_short_bootstrap_node_name": "overcloud-controller-0",
     "swift_ringbuilder_short_node_names": [
@@ -810,7 +811,7 @@
         "172.16.3.113"
     ],
     "swift_storage_node_names": [
-        "overcloud-controller-0.storagemgmt.bne-home.net"
+        "overcloud-controller-0.storagemgmt.localdomain"
     ],
     "swift_storage_short_bootstrap_node_name": "overcloud-controller-0",
     "swift_storage_short_node_names": [
@@ -823,8 +824,8 @@
         "192.168.1.7"
     ],
     "timezone_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "timezone_short_bootstrap_node_name": "overcloud-compute-0",
     "timezone_short_node_names": [
@@ -838,8 +839,8 @@
         "192.168.1.7"
     ],
     "tripleo_firewall_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "tripleo_firewall_short_bootstrap_node_name": "overcloud-compute-0",
     "tripleo_firewall_short_node_names": [
@@ -853,8 +854,8 @@
         "192.168.1.7"
     ],
     "tripleo_packages_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "tripleo_packages_short_bootstrap_node_name": "overcloud-compute-0",
     "tripleo_packages_short_node_names": [
@@ -868,8 +869,8 @@
         "192.168.1.7"
     ],
     "tuned_node_names": [
-        "overcloud-compute-0.ctlplane.bne-home.net",
-        "overcloud-controller-0.ctlplane.bne-home.net"
+        "overcloud-compute-0.ctlplane.localdomain",
+        "overcloud-controller-0.ctlplane.localdomain"
     ],
     "tuned_short_bootstrap_node_name": "overcloud-compute-0",
     "tuned_short_node_names": [

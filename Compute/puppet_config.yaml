@@ -1,4 +1,4 @@
-- config_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-iscsid:current-tripleo
   config_volume: iscsid
   puppet_tags: iscsid_config
   step_config: 'include tripleo::profile::base::iscsid
@@ -6,7 +6,7 @@
     '
   volumes:
   - /etc/iscsi:/tmp/iscsi.host:z
-- config_image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   puppet_tags: nova_config
   step_config: '# TODO(emilien): figure how to deal with libvirt profile.
@@ -18,27 +18,27 @@
     include tripleo::profile::base::nova::compute::libvirt
 
     '
-- config_image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   puppet_tags: libvirtd_config,virtlogd_config,virtproxyd_config,virtqemud_config,virtnodedevd_config,virtsecretd_config,virtstoraged_config,nova_config,file,libvirt_tls_password
   step_config: 'include tripleo::profile::base::nova::libvirt
 
     '
-- config_image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   puppet_tags: libvirtd_config,nova_config,file,libvirt_tls_password
   step_config: 'include tripleo::profile::base::nova::compute::libvirt_guests
 
     '
-- config_image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   step_config: 'include tripleo::profile::base::sshd
 
     include tripleo::profile::base::nova::migration::target'
-- config_image: quay.io/tripleomastercentos9/openstack-cron:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-cron:current-tripleo
   config_volume: crond
   step_config: include tripleo::profile::base::logging::logrotate
-- config_image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-ovn-controller:current-tripleo
   config_volume: ovn_controller
   puppet_tags: vs_config,exec
   step_config: 'include tripleo::profile::base::neutron::agents::ovn
@@ -48,7 +48,7 @@
   - /lib/modules:/lib/modules:ro
   - /run/openvswitch:/run/openvswitch:shared,z
   - /etc/sysconfig/modules:/etc/sysconfig/modules
-- config_image: quay.io/tripleomastercentos9/openstack-neutron-server:current-tripleo
+- config_image: quay.io/tripleomaster/openstack-neutron-server:current-tripleo
   config_volume: neutron
   puppet_tags: neutron_config,ovn_metadata_agent_config
   step_config: 'include tripleo::profile::base::neutron::ovn_metadata
