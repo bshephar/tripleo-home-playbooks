@@ -6,7 +6,7 @@ step_2:
     - file
     - include ::tripleo::profile::base::neutron::ovn_metadata_agent_wrappers
     detach: false
-    image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
+    image: quay.io/tripleowallaby/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     pid: host
     start_order: 1
@@ -34,9 +34,8 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1661322976'
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
+    image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     start_order: 1
@@ -60,8 +59,8 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1661322976'
-    image: ''
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
+    image: u
     net: none
     privileged: false
     user: root
@@ -73,8 +72,7 @@ step_3:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-iscsid:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-iscsid:current-tripleo''}'
+    image: quay.io/tripleowallaby/openstack-iscsid:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -102,7 +100,7 @@ step_3:
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1661322976'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
       __OS_DEBUG: 'false'
     image: '{{ tripleo_nova_compute_image[ansible_facts[''distribution_major_version'']]
       | default(tripleo_nova_compute_image[''9'']) }}'
@@ -119,8 +117,7 @@ step_3:
     cgroupns: host
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+    image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     privileged: true
@@ -165,8 +162,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+    image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -213,8 +209,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+    image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -261,8 +256,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+    image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -309,8 +303,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+    image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -357,8 +350,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: '{''8'': ''tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-nova-libvirt:current-tripleo'',
-      ''9'': ''tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-nova-libvirt:current-tripleo''}'
+    image: quay.io/tripleowallaby/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -409,7 +401,7 @@ step_4:
       ovs-vsctl remove open . external_ids ovn-cms-options; fi
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1661322976'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
     image: '{{ tripleo_ovn_controller_image[ansible_facts[''distribution_major_version'']]
       | default(tripleo_ovn_controller_image[''9'']) }}'
     net: host
@@ -433,7 +425,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron
-    image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cron:current-tripleo
+    image: quay.io/tripleowallaby/openstack-cron:current-tripleo
     net: none
     pid: host
     privileged: true
@@ -505,7 +497,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
+    image: quay.io/tripleowallaby/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     pid: host
     privileged: true
@@ -538,8 +530,8 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1661322976'
-    image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662431404'
+    image: quay.io/tripleowallaby/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true
     start_order: 0

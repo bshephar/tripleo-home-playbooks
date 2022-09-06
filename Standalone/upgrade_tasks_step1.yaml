@@ -568,9 +568,7 @@
     when:
     - undercloud_hosts_entries is defined
   - name: Set container_registry_insecure_registries fact.
-    set_fact:
-      tripleo_container_registry_insecure_registries:
-      - tripleo-director.ctlplane.localdomain:8787
+    set_fact: {}
   - include_role:
       name: tripleo_podman
       tasks_from: tripleo_podman_install.yml

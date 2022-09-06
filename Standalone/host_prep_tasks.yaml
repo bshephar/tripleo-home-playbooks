@@ -1193,8 +1193,6 @@
     set_fact:
       tripleo_container_default_pids_limit: 4096
       tripleo_container_events_logger_mechanism: journald
-      tripleo_container_registry_insecure_registries:
-      - tripleo-director.ctlplane.localdomain:8787
       tripleo_container_registry_login: false
       tripleo_container_registry_logins: {}
       tripleo_container_registry_logins_json: {}

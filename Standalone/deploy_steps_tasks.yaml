@@ -81,8 +81,8 @@
     name: tripleo_container_tag
   name: Cinder Volume tag container image for pacemaker
   vars:
-    container_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:current-tripleo
-    container_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+    container_image: quay.io/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+    container_image_latest: quay.io/tripleomastercentos9/openstack-cinder-volume:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -197,8 +197,8 @@
     name: tripleo_container_tag
   name: HAproxy tag container image for pacemaker
   vars:
-    container_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:current-tripleo
-    container_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:pcmklatest
+    container_image: quay.io/tripleomastercentos9/openstack-haproxy:current-tripleo
+    container_image_latest: quay.io/tripleomastercentos9/openstack-haproxy:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -280,8 +280,8 @@
     name: tripleo_container_tag
   name: MySQL tag container image for pacemaker
   vars:
-    container_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:current-tripleo
-    container_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:pcmklatest
+    container_image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
+    container_image_latest: quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -536,8 +536,8 @@
     name: tripleo_container_tag
   name: OVN DBS tag container image for pacemaker
   vars:
-    container_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:current-tripleo
-    container_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+    container_image: quay.io/tripleomastercentos9/openstack-ovn-northd:current-tripleo
+    container_image_latest: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -623,8 +623,8 @@
     name: tripleo_container_tag
   name: RabbitMQ tag container image for pacemaker
   vars:
-    container_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:current-tripleo
-    container_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+    container_image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+    container_image_latest: quay.io/tripleomastercentos9/openstack-rabbitmq:pcmklatest
   when: step|int == 1
 - block:
   - import_role:

@@ -22,8 +22,8 @@
   tags: ovn
   vars:
     image:
-      '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-ovn-controller:current-tripleo
-      '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+      '8': quay.io/tripleomaster/openstack-ovn-controller:current-tripleo
+      '9': quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   when: step|int == 1
 - async: 600
   become: true
@@ -41,8 +41,8 @@
     config_overrides:
       ovn_controller:
         image:
-          '8': tripleo-director.ctlplane.localdomain:8787/tripleomaster/openstack-ovn-controller:current-tripleo
-          '9': tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+          '8': quay.io/tripleomaster/openstack-ovn-controller:current-tripleo
+          '9': quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     config_patterns: ovn_controller.json
     container_cli: '{{ container_cli }}'
     debug: '{{ enable_debug | bool }}'

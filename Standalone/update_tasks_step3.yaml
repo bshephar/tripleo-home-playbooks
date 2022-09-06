@@ -30,8 +30,8 @@
     - old_ovn_dbs_image_id.stdout != new_ovn_dbs_image_id.stdout
   name: ovn-dbs fetch and retag container image for pacemaker
   vars:
-    ovn_dbs_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:current-tripleo
-    ovn_dbs_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+    ovn_dbs_image: quay.io/tripleomastercentos9/openstack-ovn-northd:current-tripleo
+    ovn_dbs_image_latest: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
   when:
   - step|int == 3
 - name: Check swift containers log folder/symlink exists

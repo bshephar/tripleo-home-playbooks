@@ -43,6 +43,39 @@
     tripleo_container_image_prepare_content:
       parameter_defaults:
         AdditionalArchitectures: []
+        ComputeContainerImagePrepare:
+        - set:
+            ceph_alertmanager_image: alertmanager
+            ceph_alertmanager_namespace: quay.io/prometheus
+            ceph_alertmanager_tag: v0.23.0
+            ceph_grafana_image: ceph-grafana
+            ceph_grafana_namespace: quay.io/ceph
+            ceph_grafana_tag: 6.7.4
+            ceph_haproxy_image: haproxy
+            ceph_haproxy_namespace: quay.io/ceph
+            ceph_haproxy_tag: 2.3
+            ceph_image: daemon
+            ceph_keepalived_image: keepalived
+            ceph_keepalived_namespace: quay.io/ceph
+            ceph_keepalived_tag: 2.1.5
+            ceph_namespace: quay.rdoproject.org/tripleomastercentos9
+            ceph_node_exporter_image: node-exporter
+            ceph_node_exporter_namespace: quay.io/prometheus
+            ceph_node_exporter_tag: v1.3.1
+            ceph_prometheus_image: prometheus
+            ceph_prometheus_namespace: quay.io/prometheus
+            ceph_prometheus_tag: v2.33.4
+            ceph_tag: current-ceph
+            name_prefix: openstack-
+            name_suffix: ''
+            namespace: quay.io/tripleowallaby
+            neutron_driver: ovn
+            pushgateway_image: pushgateway
+            pushgateway_namespace: quay.io/prometheus
+            pushgateway_tag: v1.4.2
+            rhel_containers: false
+            tag: current-tripleo
+          tag_from_label: rdo_version
         ComputeCount: 1
         ComputeServices:
         - OS::TripleO::Services::BootParams
@@ -66,8 +99,7 @@
         - OS::TripleO::Services::OVNController
         - OS::TripleO::Services::OVNMetadataAgent
         ContainerImagePrepare:
-        - push_destination: true
-          set:
+        - set:
             ceph_alertmanager_image: alertmanager
             ceph_alertmanager_namespace: quay.io/prometheus
             ceph_alertmanager_tag: v0.23.0
@@ -103,11 +135,11 @@
             tag: current-tripleo
           tag_from_label: rdo_version
         ContainerImageRegistryCredentials: {}
-        DockerInsecureRegistryAddress:
-        - tripleo-director.ctlplane.localdomain:8787
+        DockerInsecureRegistryAddress: []
         DockerRegistryMirror: ''
         NeutronMechanismDrivers:
         - ovn
+        StandaloneContainerImagePrepare: {}
         StandaloneCount: 1
         StandaloneServices:
         - OS::TripleO::Services::CACerts
@@ -349,7 +381,7 @@
       - primary
       - controller
       - standalone
-    - CountDefault: 0
+    - CountDefault: 1
       HostnameFormatDefault: '%stackname%-novacompute-%index%'
       RoleParametersDefault:
         FsAioMaxNumber: 1048576

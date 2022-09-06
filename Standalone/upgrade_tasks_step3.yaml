@@ -1,8 +1,8 @@
 - block:
   - name: Get container cinder_volume image
     set_fact:
-      cinder_volume_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:current-tripleo
-      cinder_volume_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+      cinder_volume_image: quay.io/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+      cinder_volume_image_latest: quay.io/tripleomastercentos9/openstack-cinder-volume:pcmklatest
   - command: '{{container_cli}} pull {{cinder_volume_image}}'
     delay: 3
     name: Pull latest cinder_volume images
@@ -30,8 +30,8 @@
 - block:
   - name: Get container haproxy image
     set_fact:
-      haproxy_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:current-tripleo
-      haproxy_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-haproxy:pcmklatest
+      haproxy_image: quay.io/tripleomastercentos9/openstack-haproxy:current-tripleo
+      haproxy_image_latest: quay.io/tripleomastercentos9/openstack-haproxy:pcmklatest
   - command: '{{container_cli}} pull {{haproxy_image}}'
     delay: 3
     name: Pull latest haproxy images
@@ -75,8 +75,8 @@
 - block:
   - name: Get container galera image
     set_fact:
-      galera_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:current-tripleo
-      galera_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:pcmklatest
+      galera_image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
+      galera_image_latest: quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest
   - command: '{{container_cli}} pull {{galera_image}}'
     delay: 3
     name: Pull latest galera images
@@ -142,7 +142,7 @@
     name: Upgrade Mysql database from a temporary container
     shell: '{{ container_cli }} run --rm --log-driver=k8s-file --log-opt path=/var/log/containers/mysql/db-upgrade.log
       \ -u root --net=host -e "KOLLA_CONFIG_STRATEGY=COPY_ALWAYS" -v {{ mysql_upgrade_db_bind_mounts
-      | join('' -v '')}} "tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-mariadb:pcmklatest"
+      | join('' -v '')}} "quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest"
       /bin/bash -ecx "$UPGRADE_SCRIPT"'
   name: Check and upgrade Mysql database after major version upgrade
   when: step|int == 3
@@ -174,8 +174,8 @@
 - block:
   - name: Get container rabbitmq image
     set_fact:
-      rabbitmq_image: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:current-tripleo
-      rabbitmq_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+      rabbitmq_image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+      rabbitmq_image_latest: quay.io/tripleomastercentos9/openstack-rabbitmq:pcmklatest
   - command: '{{container_cli}} pull {{rabbitmq_image}}'
     delay: 3
     name: Pull latest rabbitmq images

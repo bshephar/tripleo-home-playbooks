@@ -18,7 +18,7 @@
     - ovn_dbs_current_image.stdout != ovn_dbs_image_latest
   name: Update ovn-dbs-bundle resource to use pcmklatest tag image if not used
   vars:
-    ovn_dbs_image_latest: tripleo-director.ctlplane.localdomain:8787/tripleomastercentos9/openstack-ovn-northd:pcmklatest
+    ovn_dbs_image_latest: quay.io/tripleomastercentos9/openstack-ovn-northd:pcmklatest
   when:
   - step|int == 5
   - ovn_dbs_short_bootstrap_node_name|lower == ansible_facts['hostname']|lower
