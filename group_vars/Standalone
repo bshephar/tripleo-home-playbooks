@@ -1,7 +1,5 @@
-ContainerIscsidConfigImage: '{''8'': ''quay.io/tripleomaster/openstack-iscsid:current-tripleo'',
-  ''9'': ''quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo''}'
-ContainerIscsidImage: '{''8'': ''quay.io/tripleomaster/openstack-iscsid:current-tripleo'',
-  ''9'': ''quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo''}'
+ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 ansible_async_dir: /tmp/.ansible_async
 any_errors_fatal: true
 bond_interface_ovs_options: bond_mode=active-backup
@@ -1760,8 +1758,7 @@ tripleo_firewall_ssl_frontend_rules:
   100 swift_proxy_server_haproxy_frontend_ssl:
     dport:
     - 13808
-tripleo_iscsid_image: '{''8'': ''quay.io/tripleomaster/openstack-iscsid:current-tripleo'',
-  ''9'': ''quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo''}'
+tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 tripleo_kernel_extra_modules: {}
 tripleo_kernel_extra_packages: {}
 tripleo_kernel_sysctl_extra_settings:
@@ -1814,7 +1811,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1662435266'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1662436537'
 tripleo_keystone_image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:

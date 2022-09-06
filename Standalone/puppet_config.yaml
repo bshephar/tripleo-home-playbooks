@@ -67,8 +67,7 @@
   step_config: 'include tripleo::profile::base::horizon
 
     '
-- config_image: '{''8'': ''quay.io/tripleomaster/openstack-iscsid:current-tripleo'',
-    ''9'': ''quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo''}'
+- config_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
   config_volume: iscsid
   puppet_tags: iscsid_config
   step_config: 'include tripleo::profile::base::iscsid
