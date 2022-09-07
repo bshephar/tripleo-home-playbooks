@@ -44,7 +44,10 @@
     name: '{{ item.module }}:{{ item.stream }}'
     state: enabled
   vars:
-    dnf_module_list: []
+    dnf_module_list:
+    - distribution_version: '8'
+      module: container-tools
+      stream: '3.0'
   when:
   - step|int == 0
   - dnf_module_list|length > 0

@@ -431,7 +431,7 @@ neutron::service_plugins:
 - segments
 - port_forwarding
 - log
-neutron::vlan_transparent: false
+neutron::vlan_transparent: true
 nfs_backend_enable: false
 nfs_options: context=system_u:object_r:nfs_t:s0
 nfs_share: ''
@@ -1195,3 +1195,4 @@ tripleo::stunnel::foreground: 'yes'
 tripleo::trusted_cas::ca_map: {}
 vhostuser_socket_group: qemu
 vswitch::ovs::enable_hw_offload: false
+vswitch::ovs::vlan_limit: 0

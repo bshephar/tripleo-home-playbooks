@@ -8,8 +8,8 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662445574'
-    image: quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662513236'
+    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     start_order: 1
@@ -33,8 +33,8 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662445574'
-    image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662513236'
+    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
     user: root
@@ -46,9 +46,9 @@ step_3:
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662445574'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662513236'
       __OS_DEBUG: 'false'
-    image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
     security_opt:
@@ -62,7 +62,7 @@ step_3:
     cgroupns: host
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     privileged: true
@@ -107,7 +107,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -154,7 +154,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -201,7 +201,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -249,7 +249,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -296,7 +296,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomaster/openstack-nova-libvirt:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -343,7 +343,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron
-    image: quay.io/tripleomaster/openstack-cron:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-cron:current-tripleo
     net: none
     pid: host
     privileged: true
@@ -367,7 +367,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -394,7 +394,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 6642
-    image: quay.io/tripleomaster/openstack-ovn-controller:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -413,7 +413,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomaster/openstack-neutron-metadata-agent-ovn:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     pid: host
     privileged: true
@@ -446,8 +446,8 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1662445574'
-    image: quay.io/tripleomaster/openstack-neutron-metadata-agent-ovn:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1662513236'
+    image: quay.io/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true
     start_order: 0
@@ -475,7 +475,7 @@ step_5:
       LIBGUESTFS_BACKEND: direct
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: quay.io/tripleomaster/openstack-nova-compute:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     ipc: host
     net: host
     privileged: true

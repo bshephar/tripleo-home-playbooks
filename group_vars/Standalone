@@ -626,7 +626,7 @@ service_configs:
   - segments
   - port_forwarding
   - log
-  neutron::vlan_transparent: false
+  neutron::vlan_transparent: true
   nfs_backend_enable: false
   nfs_options: context=system_u:object_r:nfs_t:s0
   nfs_share: ''
@@ -1418,6 +1418,7 @@ service_configs:
   tripleo::trusted_cas::ca_map: {}
   vhostuser_socket_group: qemu
   vswitch::ovs::enable_hw_offload: false
+  vswitch::ovs::vlan_limit: 0
 service_metadata_settings: null
 service_names:
 - keystone_admin_api
@@ -1811,7 +1812,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1662445574'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1662513236'
 tripleo_keystone_image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:
