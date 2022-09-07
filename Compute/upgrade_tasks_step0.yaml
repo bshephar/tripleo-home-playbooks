@@ -52,10 +52,7 @@
     loop: '{{ dnf_module_list|list }}'
     name: Ensure DNF modules have the right stream
     vars:
-      dnf_module_list:
-      - distribution_version: '8'
-        module: container-tools
-        stream: '3.0'
+      dnf_module_list: []
     when:
     - dnf_module_list|length > 0
     - item.distribution_version is defined
