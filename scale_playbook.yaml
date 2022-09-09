@@ -16,8 +16,8 @@
   ignore_unreachable: true
   become: false
   vars:
-    bootstrap_server_id: 94b46769-dc39-45c4-ae16-322e8f615678
-    deploy_identifier: 1662521648
+    bootstrap_server_id: d16e63dd-e259-4312-ba15-fce34d057f77
+    deploy_identifier: 1662688367
     enable_debug: False
     enable_puppet: True
     container_cli: podman
