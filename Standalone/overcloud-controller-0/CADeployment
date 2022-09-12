@@ -9,10 +9,10 @@ CADeployment:
     ${update_anchor_command}
     md5sum ${cacert_path} > ${heat_outputs_path}.root_cert_md5sum
 
-  creation_time: "2022-09-12T03:58:11Z"
+  creation_time: "2022-09-12T05:09:03Z"
   deployment_name: CADeployment
   group: script
-  id: a2d1d77e-0a59-468f-a9ce-56d2a4b20e26
+  id: cafd220a-c4e3-4aef-a83a-6fee3a297569
   inputs:
     - name: cacert_path
       description: 
@@ -55,7 +55,7 @@ CADeployment:
       description: ID of the server being deployed to
       type: String
       value: |-
-        67dd6473-35e8-4113-8853-1ba1761c54a3
+        d896ed5c-f3cd-414f-bd9a-712117e618dc
     - name: deploy_action
       description: Name of the current action being deployed
       type: String
@@ -65,7 +65,7 @@ CADeployment:
       description: ID of the stack this deployment belongs to
       type: String
       value: |-
-        overcloud-Standalone-sgszhfp6xixf-0-mzwoacs7bqv2-NodeTLSCAData-alcw6mlyiiqe-CADeployment-sjgtvdr7nqbd/c0f6e05c-0167-4dfc-87fe-5c49bec1c97b
+        overcloud-Standalone-ipfts44mbnqa-0-kg4ymcdtjguu-NodeTLSCAData-lbwyreck5xen-CADeployment-j4ruidykcopy/4304a4d1-cca0-4a64-bf62-6a2140ecdf5c
     - name: deploy_resource_name
       description: Name of this deployment resource in the stack
       type: String

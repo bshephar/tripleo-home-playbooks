@@ -8,9 +8,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
     step: '0'
-    deploy_identifier: 1662954777
+    deploy_identifier: 1662959030
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -31,9 +31,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
     step: '1'
-    deploy_identifier: 1662954777
+    deploy_identifier: 1662959030
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -57,9 +57,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
     step: '1'
-    deploy_identifier: 1662954777
+    deploy_identifier: 1662959030
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -83,9 +83,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
     step: '2'
-    deploy_identifier: 1662954777
+    deploy_identifier: 1662959030
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -109,9 +109,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
     step: '3'
-    deploy_identifier: 1662954777
+    deploy_identifier: 1662959030
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -135,9 +135,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
     step: '4'
-    deploy_identifier: 1662954777
+    deploy_identifier: 1662959030
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -161,9 +161,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
     step: '5'
-    deploy_identifier: 1662954777
+    deploy_identifier: 1662959030
     enable_debug: False
     enable_puppet: True
     container_cli: podman
