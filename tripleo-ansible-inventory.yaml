@@ -26,7 +26,7 @@ Compute:
       canonical_hostname: overcloud-compute-0.localdomain
       ctlplane_hostname: overcloud-compute-0.ctlplane.localdomain
       ctlplane_ip: 192.168.1.6
-      deploy_server_id: 038054a8-8430-4f63-a87e-b5a074a5d330
+      deploy_server_id: 3e98e48d-54c9-4074-8460-d657e0ea13c9
       external_hostname: overcloud-compute-0.external.localdomain
       external_ip: 172.20.12.67
       internal_api_hostname: overcloud-compute-0.internalapi.localdomain
@@ -37,7 +37,7 @@ Compute:
       tenant_ip: 172.16.0.243
   vars:
     ansible_ssh_user: tripleo-admin
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: cf5dc65a-ef93-439c-ab28-81fbc525b05f
     ctlplane_cidr: '24'
     ctlplane_dns_nameservers: &id001 []
     ctlplane_gateway_ip: 192.168.1.254
@@ -104,7 +104,7 @@ Standalone:
       canonical_hostname: overcloud-controller-0.localdomain
       ctlplane_hostname: overcloud-controller-0.ctlplane.localdomain
       ctlplane_ip: 192.168.1.7
-      deploy_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+      deploy_server_id: cf5dc65a-ef93-439c-ab28-81fbc525b05f
       external_hostname: overcloud-controller-0.external.localdomain
       external_ip: 172.20.12.80
       internal_api_hostname: overcloud-controller-0.internalapi.localdomain
@@ -117,7 +117,7 @@ Standalone:
       tenant_ip: 172.16.0.244
   vars:
     ansible_ssh_user: tripleo-admin
-    bootstrap_server_id: 67dd6473-35e8-4113-8853-1ba1761c54a3
+    bootstrap_server_id: cf5dc65a-ef93-439c-ab28-81fbc525b05f
     ctlplane_cidr: '24'
     ctlplane_dns_nameservers: *id001
     ctlplane_gateway_ip: 192.168.1.254
@@ -189,30 +189,33 @@ allovercloud:
 overcloud:
   children:
     allovercloud: {}
-mysql_client:
+podman:
   children:
     Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-clustercheck:
+logrotate_tmpwatch:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-sshd:
+octavia_worker:
   children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-ovn_metadata:
-  children:
-    Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
 nova_conductor:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+horizon:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+oslo_messaging_notify:
   children:
     Standalone: {}
   vars:
@@ -222,17 +225,18 @@ swift_ringbuilder:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-octavia_health_manager:
+nova_libvirt:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+keystone:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-boot_params_service:
-  children:
-    Compute: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-cinder_api:
+memcached:
   children:
     Standalone: {}
   vars:
@@ -248,7 +252,82 @@ nova_compute:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-heat_api:
+sshd:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+tuned:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+octavia_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+ovn_dbs:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+octavia_housekeeping:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+clustercheck:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+haproxy:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+keystone_public_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+swift_storage:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+mysql_client:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+timezone:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+ovn_metadata:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+nova_scheduler:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+boot_params_service:
+  children:
+    Compute: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+cinder_volume:
   children:
     Standalone: {}
   vars:
@@ -259,30 +338,13 @@ kernel:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-mysql:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-placement:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-octavia_deployment_config:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-nova_libvirt:
+nova_libvirt_guests:
   children:
     Compute: {}
-    Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-nova_migration_target:
+heat_engine:
   children:
-    Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
@@ -291,130 +353,9 @@ heat_api_cfn:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-cinder_scheduler:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-logrotate_crond:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
 ovn_controller:
   children:
     Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-oslo_messaging_notify:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-chrony:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-oslo_messaging_rpc:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-horizon:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-octavia_worker:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-tripleo_firewall:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-nova_libvirt_guests:
-  children:
-    Compute: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-ca_certs:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-heat_engine:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-nova_scheduler:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-tuned:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-keystone:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-container_image_prepare:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-memcached:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-podman:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-keystone_admin_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-nova_metadata:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-octavia_housekeeping:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-neutron_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-ovn_dbs:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-pacemaker:
-  children:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
@@ -428,28 +369,12 @@ glance_api:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-keystone_public_api:
+container_image_prepare:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-iscsid:
-  children:
-    Compute: {}
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-octavia_api:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-logrotate_tmpwatch:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-tripleo_packages:
+ca_certs:
   children:
     Compute: {}
     Standalone: {}
@@ -460,25 +385,63 @@ nova_api:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
+octavia_health_manager:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+tripleo_firewall:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+tripleo_packages:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+mysql:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+cinder_scheduler:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+placement:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
 snmp:
   children:
     Compute: {}
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-haproxy:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-swift_proxy:
-  children:
-    Standalone: {}
-  vars:
-    ansible_ssh_user: tripleo-admin
-timezone:
+chrony:
   children:
     Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+octavia_deployment_config:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+nova_migration_target:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+pacemaker:
+  children:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
@@ -487,12 +450,49 @@ nova_vnc_proxy:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-swift_storage:
+heat_api:
   children:
     Standalone: {}
   vars:
     ansible_ssh_user: tripleo-admin
-cinder_volume:
+keystone_admin_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+cinder_api:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+oslo_messaging_rpc:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+iscsid:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+logrotate_crond:
+  children:
+    Compute: {}
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+swift_proxy:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+nova_metadata:
+  children:
+    Standalone: {}
+  vars:
+    ansible_ssh_user: tripleo-admin
+neutron_api:
   children:
     Standalone: {}
   vars:

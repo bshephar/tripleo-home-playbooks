@@ -1,9 +1,9 @@
 octavia_nodes:
   hosts:
     overcloud-controller-0:
-      ansible_user: heat-admin
+      ansible_user: tripleo-admin
       ansible_host: 192.168.1.7
-      canonical_hostname: overcloud-controller-0.bne-home.net
+      canonical_hostname: overcloud-controller-0.localdomain
       ansible_become: true
     
 Undercloud:

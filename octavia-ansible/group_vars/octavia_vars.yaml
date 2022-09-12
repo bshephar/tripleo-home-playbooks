@@ -23,6 +23,7 @@ lb_mgmt_subnet_gateway: 192.168.1.254
 lb_mgmt_subnet_name: lb-mgmt-subnet
 lb_mgmt_subnet_pool_end: 192.168.1.160
 lb_mgmt_subnet_pool_start: 192.168.1.150
+log_offload_protocol: udp
 mgmt_port_dev: o-hm0
 octavia_ansible_playbook: /usr/share/ansible/tripleo-playbooks/octavia-files.yaml
 octavia_flavor_id: '65'

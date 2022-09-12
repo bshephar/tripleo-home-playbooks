@@ -9,8 +9,8 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
-    deploy_identifier: 1662959030
+    bootstrap_server_id: cf5dc65a-ef93-439c-ab28-81fbc525b05f
+    deploy_identifier: 1662961098
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -85,8 +85,8 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: d896ed5c-f3cd-414f-bd9a-712117e618dc
-    deploy_identifier: 1662959030
+    bootstrap_server_id: cf5dc65a-ef93-439c-ab28-81fbc525b05f
+    deploy_identifier: 1662961098
     enable_debug: False
     enable_puppet: True
     container_cli: podman
