@@ -631,7 +631,7 @@ service_configs:
   nfs_options: context=system_u:object_r:nfs_t:s0
   nfs_share: ''
   nfs_vers: '4.2'
-  nova::api::allow_resize_to_same_host: false
+  nova::api::allow_resize_to_same_host: true
   nova::api::api_bind_address: '%{lookup(''fqdn_internal_api'')}'
   nova::api::enable_proxy_headers_parsing: true
   nova::api::enabled: true
@@ -1812,7 +1812,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1662961098'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1664850797'
 tripleo_keystone_image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:

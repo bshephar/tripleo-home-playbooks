@@ -5,9 +5,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: cf5dc65a-ef93-439c-ab28-81fbc525b05f
+    bootstrap_server_id: 4526bc06-b970-4417-b3a0-5d9cccd376a4
     step: 0
-    deploy_identifier: 1662961098
+    deploy_identifier: 1664850797
     enable_debug: False
     enable_puppet: True
     container_cli: podman

@@ -436,7 +436,7 @@ nfs_backend_enable: false
 nfs_options: context=system_u:object_r:nfs_t:s0
 nfs_share: ''
 nfs_vers: '4.2'
-nova::api::allow_resize_to_same_host: false
+nova::api::allow_resize_to_same_host: true
 nova::api::api_bind_address: '%{lookup(''fqdn_internal_api'')}'
 nova::api::enable_proxy_headers_parsing: true
 nova::api::enabled: true
