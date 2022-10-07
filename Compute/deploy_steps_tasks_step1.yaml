@@ -4,6 +4,10 @@
   when:
   - step|int == 1
 - include_role:
+    name: tripleo_iscsid
+    tasks_from: configure.yml
+  name: Configure iscsid
+- include_role:
     name: tripleo_nvdimm
   name: manage PMEM namespaces for vPMEM
   vars:

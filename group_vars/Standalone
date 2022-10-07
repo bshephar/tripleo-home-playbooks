@@ -1,5 +1,3 @@
-ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 ansible_async_dir: /tmp/.ansible_async
 any_errors_fatal: true
 bond_interface_ovs_options: bond_mode=active-backup
@@ -64,6 +62,14 @@ internal_api_vlan_id: 20
 keystone_enable_member: true
 local_mtu: 1500
 management_mtu: 1500
+map_merge:
+- ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+  ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+  tripleo_tripleo_lvmfilter_devices_allowlist: []
+  tripleo_tripleo_lvmfilter_devices_denylist:
+  - .*
+  tripleo_tripleo_lvmfilter_enabled: false
+- tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 max_fail_percentage: 0
 network_cidrs:
   External_cidr: '16'
@@ -1759,7 +1765,7 @@ tripleo_firewall_ssl_frontend_rules:
   100 swift_proxy_server_haproxy_frontend_ssl:
     dport:
     - 13808
-tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+tripleo_iscsid_chap_algs: SHA3-256,SHA256,SHA1,MD5
 tripleo_kernel_extra_modules: {}
 tripleo_kernel_extra_packages: {}
 tripleo_kernel_sysctl_extra_settings:
@@ -1812,7 +1818,7 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1664850797'
+  TRIPLEO_DEPLOY_IDENTIFIER: '1665116736'
 tripleo_keystone_image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:
@@ -1829,9 +1835,5 @@ tripleo_network_config_with_ansible: true
 tripleo_nova_libvirt_virsh_container: nova_virtproxyd
 tripleo_podman_tls_verify: 'true'
 tripleo_stack_name: overcloud
-tripleo_tripleo_lvmfilter_devices_allowlist: []
-tripleo_tripleo_lvmfilter_devices_denylist:
-- .*
-tripleo_tripleo_lvmfilter_enabled: false
 tuned_custom_profile: ''
 tuned_profile: throughput-performance

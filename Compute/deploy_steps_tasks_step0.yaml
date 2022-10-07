@@ -16,3 +16,7 @@
     tripleo_kernel_hugepages_remove: false
     tripleo_kernel_reboot_timeout: 900
   when: step|int == 0
+- include_role:
+    name: tripleo_iscsid
+    tasks_from: configure.yml
+  name: Configure iscsid

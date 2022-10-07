@@ -67,14 +67,7 @@
   step_config: 'include tripleo::profile::base::horizon
 
     '
-- config_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  config_volume: iscsid
-  puppet_tags: iscsid_config
-  step_config: 'include tripleo::profile::base::iscsid
-
-    '
-  volumes:
-  - /etc/iscsi:/tmp/iscsi.host:z
+- []
 - config_image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
   config_volume: keystone
   puppet_tags: keystone_config,keystone_domain_config

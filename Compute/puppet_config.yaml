@@ -1,11 +1,4 @@
-- config_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  config_volume: iscsid
-  puppet_tags: iscsid_config
-  step_config: 'include tripleo::profile::base::iscsid
-
-    '
-  volumes:
-  - /etc/iscsi:/tmp/iscsi.host:z
+- []
 - config_image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   puppet_tags: nova_config

@@ -1,3 +1,7 @@
+- include_role:
+    name: tripleo_iscsid
+    tasks_from: configure.yml
+  name: Configure iscsid
 - containers.podman.podman_container_info:
     name: keystone
   delay: 30

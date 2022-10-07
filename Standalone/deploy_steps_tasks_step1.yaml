@@ -124,6 +124,10 @@
   name: Run lvmfilter role
   when:
   - step|int == 1
+- include_role:
+    name: tripleo_iscsid
+    tasks_from: configure.yml
+  name: Configure iscsid
 - block:
   - include_role:
       name: linux-system-roles.certificate
