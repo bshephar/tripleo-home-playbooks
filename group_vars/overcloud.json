@@ -118,7 +118,7 @@
     ],
     "controller_node_ips": "192.168.1.7",
     "controller_node_names": "overcloud-controller-0",
-    "deploy_identifier": "1664850797",
+    "deploy_identifier": "1665116736",
     "designate_api_network": "internal_api",
     "designate_bind_network": "external",
     "designate_mdns_network": "internal_api",

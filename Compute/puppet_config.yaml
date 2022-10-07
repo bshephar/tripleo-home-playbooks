@@ -1,4 +1,4 @@
-- []
+- {}
 - config_image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
   config_volume: nova_libvirt
   puppet_tags: nova_config

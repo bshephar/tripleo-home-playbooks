@@ -67,7 +67,7 @@
   step_config: 'include tripleo::profile::base::horizon
 
     '
-- []
+- {}
 - config_image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
   config_volume: keystone
   puppet_tags: keystone_config,keystone_domain_config
@@ -189,7 +189,6 @@
     include tripleo::profile::base::octavia::provider::ovn
 
     include tripleo::profile::base::database::mysql::client'
-- {}
 - config_image: quay.io/tripleomastercentos9/openstack-octavia-api:current-tripleo
   config_volume: octavia
   puppet_tags: octavia_config

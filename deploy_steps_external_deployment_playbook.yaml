@@ -5,9 +5,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '1'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -37,9 +37,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '1'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -103,9 +103,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '2'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -135,9 +135,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '2'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -189,9 +189,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '3'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -221,9 +221,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '3'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -275,9 +275,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '4'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -307,9 +307,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '4'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -361,9 +361,9 @@
   any_errors_fatal: true
   become: false
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '5'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -393,9 +393,9 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: 96bcb378-d5c1-49cf-9b1a-58d165020dd5
+    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
     step: '5'
-    deploy_identifier: 1665116736
+    deploy_identifier: 1665140099
     enable_debug: False
     enable_puppet: True
     container_cli: podman
