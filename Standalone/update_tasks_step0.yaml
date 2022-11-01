@@ -30,33 +30,12 @@
   name: Delete if symlink
   when: swift_log_link.stat.islnk is defined and swift_log_link.stat.islnk
 - include_role:
-    name: tripleo_redhat_enforce
-  name: Enforce RHOSP rules regarding subscription.
+    name: tripleo_packages
+    tasks_from: update_bootstrap.yml
   vars:
+    dnf_module_list:
+    - distribution_version: '8'
+      module: container-tools
+      stream: '3.0'
     skip_rhel_enforcement: false
-  when:
-  - step|int == 0
-  - ansible_facts['distribution'] == 'RedHat'
-  - not (skip_rhel_enforcement | bool)
-- loop: '{{ dnf_module_list|list }}'
-  name: Ensure DNF modules have the right stream enabled
-  tripleo_dnf_stream:
-    name: '{{ item.module }}:{{ item.stream }}'
-    state: enabled
-  vars:
-    dnf_module_list: []
-  when:
-  - step|int == 0
-  - dnf_module_list|length > 0
-  - item.distribution_version is defined
-  - ansible_facts['distribution_major_version'] is version(item.distribution_version,
-    '==')
-- name: Check for existing yum.pid
-  register: yum_pid_file
-  stat: path=/run/yum.pid
-  when: step|int == 0 or step|int == 3
-- fail: msg="ERROR existing yum.pid detected - can't continue! Please ensure there
-    is no other package update process for the duration of the minor update workflow.
-    Exiting."
-  name: Exit if existing yum process
-  when: (step|int == 0 or step|int == 3) and yum_pid_file.stat.exists
+  when: step|int == 0

@@ -1,10 +1,8 @@
 - include_role:
     name: tripleo_iscsid
-    tasks_from: configure.yml
-  name: Configure iscsid
-- include_role:
-    name: tripleo_iscsid
-    tasks_from: iscsid.yaml
+    tasks_from: run.yml
   name: Iscsid role
+  vars:
+    tripleo_iscsid_config_dir: /var/lib/config-data/puppet-generated/iscsid
   when:
   - step|int == 3

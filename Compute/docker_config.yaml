@@ -8,7 +8,7 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
     image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
@@ -33,7 +33,7 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
     image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
@@ -46,7 +46,7 @@ step_3:
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
       __OS_DEBUG: 'false'
     image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
@@ -92,7 +92,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -140,7 +140,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -187,7 +187,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -234,7 +234,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -282,7 +282,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -329,7 +329,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -363,6 +363,8 @@ step_4:
     - /var/lib/config-data/puppet-generated/crond:/var/lib/kolla/config_files/src:ro
     - /var/log/containers:/var/log/containers:z
   nova_migration_target:
+    cap_add:
+    - AUDIT_WRITE
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
@@ -446,7 +448,7 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
     image: quay.io/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true
@@ -510,3 +512,26 @@ step_5:
     - /sys/bus/pci:/sys/bus/pci
     - /boot:/boot:ro
     - /var/lib/nova:/var/lib/nova:shared
+  nova_wait_for_compute_service:
+    detach: false
+    environment:
+      KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
+      __OS_DEBUG: 'false'
+    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+    net: host
+    start_order: 4
+    user: nova
+    volumes:
+    - /etc/hosts:/etc/hosts:ro
+    - /etc/localtime:/etc/localtime:ro
+    - /etc/pki/ca-trust/extracted:/etc/pki/ca-trust/extracted:ro
+    - /etc/pki/ca-trust/source/anchors:/etc/pki/ca-trust/source/anchors:ro
+    - /etc/pki/tls/certs/ca-bundle.crt:/etc/pki/tls/certs/ca-bundle.crt:ro
+    - /etc/pki/tls/certs/ca-bundle.trust.crt:/etc/pki/tls/certs/ca-bundle.trust.crt:ro
+    - /etc/pki/tls/cert.pem:/etc/pki/tls/cert.pem:ro
+    - /dev/log:/dev/log
+    - /etc/puppet:/etc/puppet:ro
+    - /var/lib/kolla/config_files/nova_compute_wait_for_compute_service.json:/var/lib/kolla/config_files/config.json:ro
+    - /var/lib/config-data/puppet-generated/nova_libvirt:/var/lib/kolla/config_files/src:ro
+    - /var/log/containers/nova:/var/log/nova
+    - /var/lib/container-config-scripts:/container-config-scripts

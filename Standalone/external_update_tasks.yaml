@@ -1,7 +1,8 @@
 - block:
   - become: true
     command: '{{ container_cli }} exec cinder_api cinder-manage db online_data_migrations'
-    delegate_to: '{{ groups[''cinder_api''][0] }}'
+    delegate_to: '{{ (groups[''cinder_api''] | difference(groups[''excluded_overcloud'']))[0]
+      }}'
     name: Online data migration for Cinder
     tags:
     - online_upgrade
@@ -10,24 +11,59 @@
 - block:
   - become: true
     command: '{{ container_cli }} exec nova_conductor nova-manage db online_data_migrations'
-    delegate_to: '{{ groups[''nova_conductor''][0] }}'
+    delegate_to: '{{ (groups[''nova_conductor''] | difference(groups[''excluded_overcloud'']))[0]
+      }}'
     name: Online data migration for Nova
     tags:
     - online_upgrade
     - online_upgrade_nova
   when: step|int == 1
+- async: 600
+  become: true
+  containers.podman.podman_image:
+    force: true
+    name: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    validate_certs: false
+  delegate_to: '{{ item }}'
+  loop: '{{ groups[''ovn_controller''] | difference(groups[''excluded_overcloud''])
+    }}'
+  name: Force pull image in case image name doesn't change.
+  poll: 0
+  register: ovn_controller_image_update
+  tags:
+  - ovn
+  - ovn_image
+  when: step|int == 1
+- async_status:
+    jid: '{{ async_result_item.ansible_job_id }}'
+  become: true
+  delay: 1
+  delegate_to: '{{ async_result_item.item }}'
+  loop: '{{ovn_controller_image_update.results }}'
+  loop_control:
+    loop_var: async_result_item
+  name: Was the ovn_controller image pull successful.
+  register: async_poll_results
+  retries: 600
+  tags:
+  - ovn
+  - ovn_image
+  until: async_poll_results.finished
+  when:
+  - step|int == 1
+  - '''results'' in ovn_controller_image_update'
 - debug:
     msg: ovn container will be using {{ image }}
   name: OVN Container image used
   tags: ovn
   vars:
-    image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   when: step|int == 1
 - async: 600
   become: true
   delegate_to: '{{ item }}'
-  ignore_errors: true
-  loop: '{{ groups[''ovn_controller''] }}'
+  loop: '{{ groups[''ovn_controller''] | difference(groups[''excluded_overcloud''])
+    }}'
   name: Update ovn_controller.
   poll: 0
   register: ovn_controller_update
@@ -38,15 +74,15 @@
     - tripleo_step4
     config_overrides:
       ovn_controller:
-        image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+        image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     config_patterns: ovn_controller.json
-    container_cli: '{{ container_cli }}'
     debug: '{{ enable_debug | bool }}'
-    log_path: '{{ container_log_stdout_path }}'
+    log_base_path: '{{ container_log_stdout_path }}'
   when: step|int == 1
 - async_status:
     jid: '{{ async_result_item.ansible_job_id }}'
   become: true
+  delay: 1
   delegate_to: '{{ async_result_item.item }}'
   loop: '{{ovn_controller_update.results }}'
   loop_control:

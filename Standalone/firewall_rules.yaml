@@ -74,7 +74,7 @@
 120 octavia api:
   dport:
   - 9876
-121 OVN DB server and cluster ports:
+121 OVN DB server and cluster ports for 172.16.2.0/24:
   dport:
   - 6641
   - 6642
@@ -104,10 +104,12 @@
   - 6000
   - 6001
   - 6002
+124 snmp:
+  extras:
+    ensure: absent
 124 snmp 192.168.1.0/24:
-  dport: 161
-  proto: udp
-  source: 192.168.1.0/24
+  extras:
+    ensure: absent
 125 heat_api:
   dport:
   - 8004

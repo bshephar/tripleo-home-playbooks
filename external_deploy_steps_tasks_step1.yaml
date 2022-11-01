@@ -40,7 +40,8 @@
         - OS::TripleO::Services::OVNController
         - OS::TripleO::Services::OVNMetadataAgent
         ContainerImagePrepare:
-        - set:
+        - push_destination: registry.okd.bne-shift.net:8443
+          set:
             ceph_alertmanager_image: alertmanager
             ceph_alertmanager_namespace: quay.io/prometheus
             ceph_alertmanager_tag: v0.23.0
@@ -75,8 +76,11 @@
             rhel_containers: false
             tag: current-tripleo
           tag_from_label: rdo_version
-        ContainerImageRegistryCredentials: {}
-        DockerInsecureRegistryAddress: []
+        ContainerImageRegistryCredentials:
+          registry.okd.bne-shift.net:8443:
+            init: 40Z5ML8bNmDTQUS3f1pt6HPFucr29EV7
+        DockerInsecureRegistryAddress:
+        - registry.okd.bne-shift.net:8443
         DockerRegistryMirror: ''
         NeutronMechanismDrivers:
         - ovn

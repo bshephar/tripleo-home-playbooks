@@ -4,10 +4,6 @@
   when:
   - step|int == 1
 - include_role:
-    name: tripleo_iscsid
-    tasks_from: configure.yml
-  name: Configure iscsid
-- include_role:
     name: tripleo_nvdimm
   name: manage PMEM namespaces for vPMEM
   vars:
@@ -15,6 +11,20 @@
   when:
   - step|int == 1
   - tripleo_nvdimm_pmem_namespaces != ''
+- block:
+  - name: Enable post-copy by setting unprivileged_userfaultfd
+    sysctl:
+      name: vm.unprivileged_userfaultfd
+      reload: true
+      state: present
+      sysctl_file: /etc/sysctl.d/99-tripleo-postcopy.conf
+      sysctl_set: true
+      value: 1
+  name: manage OS version 9 specific sysctls
+  when:
+  - step|int == 1
+  - ansible_facts['os_family'] == 'RedHat'
+  - ansible_facts['distribution_major_version'] is version('9', '==')
 - block:
   - name: is KSM enabled
     set_fact:
@@ -72,7 +82,7 @@
       name: '{{ prefetch_image }}'
       validate_certs: false
     delay: 5
-    loop: '{{ lookup(''file'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
+    loop: '{{ lookup(''template'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
       | default(''{}'', True) | from_yaml | recursive_get_key_from_dict(key=''image'')
       | unique }}'
     loop_control:

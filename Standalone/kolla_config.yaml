@@ -700,8 +700,14 @@
   - owner: root:root
     path: /etc/pki/tls/certs/novnc-proxy.crt
     perm: '0644'
-  - owner: root:nova
+  - owner: root:qemu
     path: /etc/pki/tls/private/novnc-proxy.key
+    perm: '0640'
+  - owner: root:root
+    path: /etc/pki/tls/certs/libvirt-vnc-client-cert.crt
+    perm: '0644'
+  - owner: root:qemu
+    path: /etc/pki/tls/private/libvirt-vnc-client-cert.key
     perm: '0640'
 /var/lib/kolla/config_files/nova_wait_for_api_service.json:
   command: /usr/bin/bootstrap_host_exec nova_api su nova -s /bin/bash -c '/container-config-scripts/pyshim.sh
@@ -747,7 +753,7 @@
     recurse: true
 /var/lib/kolla/config_files/octavia_api_db_sync.json:
   command: /usr/bin/bootstrap_host_exec octavia_api su octavia -s /bin/bash -c '/usr/bin/octavia-db-manage
-    upgrade head'
+    upgrade head && /usr/bin/octavia-db-manage upgrade_persistence'
   config_files:
   - dest: /etc/httpd/conf.d
     merge: false

@@ -15,10 +15,6 @@
       tripleo_ha_wrapper_service_name: cinder_volume
   name: Cinder Volume HA Wrappers Step
   when: step|int == 5
-- include_role:
-    name: tripleo_iscsid
-    tasks_from: configure.yml
-  name: Configure iscsid
 - containers.podman.podman_container_info:
     name: nova_conductor
   delay: 30

@@ -1,3 +1,5 @@
+ContainerIscsidConfigImage: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-iscsid:current-tripleo
+ContainerIscsidImage: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-iscsid:current-tripleo
 ansible_async_dir: /tmp/.ansible_async
 chrony_acl_rules:
 - deny all
@@ -13,18 +15,11 @@ chrony_ntp_servers:
 chrony_role_action: all
 hieradata_localhost_address: localhost
 keystone_enable_member: true
-map_merge:
-- ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  tripleo_tripleo_lvmfilter_devices_allowlist: []
-  tripleo_tripleo_lvmfilter_devices_denylist:
-  - .*
-  tripleo_tripleo_lvmfilter_enabled: false
-- tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 tripleo_enable_internal_tls: false
 tripleo_firewall_frontend_enabled: true
 tripleo_firewall_ssl_frontend_enabled: true
-tripleo_iscsid_chap_algs: SHA3-256,SHA256,SHA1,MD5
+tripleo_internal_tls_ca_file: /etc/ipa/ca.crt
+tripleo_iscsid_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-iscsid:current-tripleo
 tripleo_kernel_extra_modules: {}
 tripleo_kernel_extra_packages: {}
 tripleo_kernel_sysctl_extra_settings:
@@ -62,8 +57,6 @@ tripleo_kernel_sysctl_extra_settings:
     value: 0
   net.ipv6.ip_nonlocal_bind:
     value: 1
-  vm.unprivileged_userfaultfd:
-    value: 1
 tripleo_keystone_common_volumes:
 - /etc/hosts:/etc/hosts:ro
 - /etc/localtime:/etc/localtime:ro
@@ -77,8 +70,8 @@ tripleo_keystone_common_volumes:
 tripleo_keystone_environment:
   KOLLA_BOOTSTRAP: true
   KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-  TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-tripleo_keystone_image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
+  TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+tripleo_keystone_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-keystone:current-tripleo
 tripleo_keystone_logging_environment: null
 tripleo_keystone_logging_volumes:
 - /var/log/containers/keystone:/var/log/keystone:z
@@ -88,6 +81,11 @@ tripleo_keystone_volumes:
 - /var/lib/kolla/config_files/keystone.json:/var/lib/kolla/config_files/config.json:ro
 - /var/lib/config-data/puppet-generated/keystone:/var/lib/kolla/config_files/src:ro
 tripleo_nova_libvirt_virsh_container: nova_virtproxyd
-tripleo_podman_tls_verify: 'true'
+tripleo_podman_tls_verify: 'false'
+tripleo_tripleo_lvmfilter_devices_allowlist: []
+tripleo_tripleo_lvmfilter_devices_denylist:
+- .*
+tripleo_tripleo_lvmfilter_enabled: false
+tripleo_update_trusted_cas_ca_map: {}
 tuned_custom_profile: ''
 tuned_profile: throughput-performance

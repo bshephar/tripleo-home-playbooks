@@ -1,20 +1,3 @@
-- become: true
-  loop:
-  - service_name: cinderv2
-    service_type: volumev2
-  - service_name: cinderv3
-    service_type: volume
-  loop_control:
-    index_var: cinder_api_service
-  name: Clean up legacy Cinder keystone catalog entries
-  openstack.cloud.catalog_service:
-    cloud: overcloud
-    name: '{{ item.service_name }}'
-    service_type: '{{ item.service_type }}'
-    state: absent
-  when:
-  - step|int == 4
-  - not ansible_check_mode|bool
 - args:
     executable: /bin/bash
   become: true
@@ -78,7 +61,8 @@
         - OS::TripleO::Services::OVNController
         - OS::TripleO::Services::OVNMetadataAgent
         ContainerImagePrepare:
-        - set:
+        - push_destination: registry.okd.bne-shift.net:8443
+          set:
             ceph_alertmanager_image: alertmanager
             ceph_alertmanager_namespace: quay.io/prometheus
             ceph_alertmanager_tag: v0.23.0
@@ -113,8 +97,11 @@
             rhel_containers: false
             tag: current-tripleo
           tag_from_label: rdo_version
-        ContainerImageRegistryCredentials: {}
-        DockerInsecureRegistryAddress: []
+        ContainerImageRegistryCredentials:
+          registry.okd.bne-shift.net:8443:
+            init: 40Z5ML8bNmDTQUS3f1pt6HPFucr29EV7
+        DockerInsecureRegistryAddress:
+        - registry.okd.bne-shift.net:8443
         DockerRegistryMirror: ''
         NeutronMechanismDrivers:
         - ovn
@@ -520,15 +507,16 @@
   - step|int == 4
   - not ansible_check_mode|bool
 - block:
-  - name: create ovn mac address for Standalone role nodes
-    tripleo_ovn_mac_addresses:
+  - include_role:
+      name: tripleo_ovn
+      tasks_from: externaldeploy.yml
+    name: Include external deploy tasks
+    vars:
       ovn_bridge_mappings:
       - datacentre:br-ex
       ovn_static_bridge_mac_mappings: {}
-      playbook_dir: '{{ playbook_dir }}'
-      role_name: Standalone
-      server_resource_names: '{{ groups["Standalone"] }}'
       stack_name: overcloud
+      tripleo_role_name: Standalone
   name: ovn_controller_external_deploy_init
   when:
   - step|int == 0
@@ -545,15 +533,16 @@
   when:
   - step|int == 0
 - block:
-  - name: create ovn mac address for Compute role nodes
-    tripleo_ovn_mac_addresses:
+  - include_role:
+      name: tripleo_ovn
+      tasks_from: externaldeploy.yml
+    name: Include external deploy tasks
+    vars:
       ovn_bridge_mappings:
       - datacentre:br-ex
       ovn_static_bridge_mac_mappings: {}
-      playbook_dir: '{{ playbook_dir }}'
-      role_name: Compute
-      server_resource_names: '{{ groups["Compute"] }}'
       stack_name: overcloud
+      tripleo_role_name: Compute
   name: ovn_controller_external_deploy_init
   when:
   - step|int == 0

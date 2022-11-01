@@ -9,7 +9,7 @@ container_cpuset_cpus: ''
 neutron::agents::ovn_metadata::debug: false
 neutron::agents::ovn_metadata::metadata_host: 192.168.1.25
 neutron::agents::ovn_metadata::metadata_protocol: http
-neutron::agents::ovn_metadata::metadata_workers: '8'
+neutron::agents::ovn_metadata::metadata_workers: 8
 neutron::agents::ovn_metadata::ovsdb_connection_timeout: 180
 neutron::agents::ovn_metadata::ovsdb_probe_interval: 60000
 neutron::agents::ovn_metadata::shared_secret: tbSWhJKGivgVP7R2jav8YD9Cy
@@ -27,7 +27,6 @@ neutron::logging::debug: false
 neutron::notification_driver:
 - noop
 neutron::purge_config: false
-neutron::rabbit_heartbeat_in_pthread: false
 neutron::rabbit_heartbeat_timeout_threshold: 60
 neutron::report_interval: 300
 neutron::rpc_response_timeout: 60
@@ -182,7 +181,6 @@ nova::policy::enforce_scope: false
 nova::policy::policies: {}
 nova::policy::purge_config: true
 nova::purge_config: false
-nova::rabbit_heartbeat_in_pthread: false
 nova::rabbit_heartbeat_timeout_threshold: 60
 nova::rabbit_use_ssl: 'False'
 nova::ram_allocation_ratio: 1.5
@@ -206,6 +204,7 @@ ovn::controller::ovn_bridge_mappings:
 - datacentre:br-ex
 ovn::controller::ovn_cms_options: enable-chassis-as-gw
 ovn::controller::ovn_encap_ip: '%{lookup(''tenant'')}'
+ovn::controller::ovn_encap_tos: '0'
 ovn::controller::ovn_encap_type: geneve
 ovn::controller::ovn_monitor_all: true
 ovn::controller::ovn_openflow_probe_interval: 60
@@ -215,10 +214,6 @@ rbd_disk_cachemodes:
 - network=writeback
 rbd_persistent_storage: false
 resume_guests_state_on_host_boot: false
-snmp::agentaddress:
-- udp:161
-- udp6:[::1]:161
-snmp::snmpd_options: -LS0-5d
 tripleo::packages::enable_install: true
 tripleo::profile::base::database::mysql::client::enable_ssl: false
 tripleo::profile::base::database::mysql::client::mysql_client_bind_address: '%{lookup(''internal_api'')}'
@@ -307,9 +302,6 @@ tripleo::profile::base::nova::virtlogd_wrapper::debug: false
 tripleo::profile::base::nova::virtlogd_wrapper::enable_wrapper: true
 tripleo::profile::base::nova::virtlogd_wrapper::virtlogd_image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
 tripleo::profile::base::nova::virtlogd_wrapper::virtlogd_process_wrapper: /var/lib/container-config-scripts/virtlogd_wrapper
-tripleo::profile::base::snmp::snmpd_auth_type: MD5
-tripleo::profile::base::snmp::snmpd_password: f0uHSRmpNG8MM0bebdKexm6t
-tripleo::profile::base::snmp::snmpd_user: ro_snmp_user
 tripleo::profile::base::sshd::listen:
 - '%{lookup(''internal_api'')}'
 - '%{lookup(''internal_api'')}'
@@ -337,7 +329,6 @@ tripleo::profile::base::sshd::options:
 tripleo::profile::base::sshd::password_authentication: 'no'
 tripleo::profile::base::sshd::port:
 - 2022
-tripleo::trusted_cas::ca_map: {}
 vhostuser_socket_group: qemu
 vswitch::ovs::enable_hw_offload: false
 vswitch::ovs::vlan_limit: 0

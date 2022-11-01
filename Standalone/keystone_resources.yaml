@@ -12,12 +12,6 @@ cinderv3:
     public: https://openstack.bne-home.net:13776/v3
   region: regionOne
   service: volumev3
-  users:
-    cinderv3:
-      password: KutXQeLq3w0rqwJUy5MwOowdU
-      roles:
-      - admin
-      - service
 glance:
   endpoints:
     admin: http://192.168.1.25:9292

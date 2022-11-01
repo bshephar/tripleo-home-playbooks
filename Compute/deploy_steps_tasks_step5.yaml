@@ -1,8 +1,4 @@
 - include_role:
-    name: tripleo_iscsid
-    tasks_from: configure.yml
-  name: Configure iscsid
-- include_role:
     name: tripleo_nova_migration_target
     tasks_from: configure.yaml
   name: nova migration target configure tasks

@@ -41,7 +41,7 @@
 - placement
 - podman
 - redis
-- snmp
+- snmp_disabled
 - sshd
 - swift_proxy
 - swift_ringbuilder

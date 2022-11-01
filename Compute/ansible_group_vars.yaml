@@ -1,3 +1,5 @@
+ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 ansible_async_dir: /tmp/.ansible_async
 chrony_acl_rules:
 - deny all
@@ -12,15 +14,7 @@ chrony_ntp_servers:
 - 3.pool.ntp.org
 chrony_role_action: all
 hieradata_localhost_address: localhost
-map_merge:
-- ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  tripleo_tripleo_lvmfilter_devices_allowlist: []
-  tripleo_tripleo_lvmfilter_devices_denylist:
-  - .*
-  tripleo_tripleo_lvmfilter_enabled: false
-- tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-tripleo_iscsid_chap_algs: SHA3-256,SHA256,SHA1,MD5
+tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 tripleo_kernel_extra_modules: {}
 tripleo_kernel_extra_packages: {}
 tripleo_kernel_sysctl_extra_settings:
@@ -60,9 +54,12 @@ tripleo_kernel_sysctl_extra_settings:
     value: 0
   net.ipv6.ip_nonlocal_bind:
     value: 1
-  vm.unprivileged_userfaultfd:
-    value: 1
 tripleo_nova_libvirt_virsh_container: nova_virtproxyd
-tripleo_podman_tls_verify: 'true'
+tripleo_podman_tls_verify: 'false'
+tripleo_tripleo_lvmfilter_devices_allowlist: []
+tripleo_tripleo_lvmfilter_devices_denylist:
+- .*
+tripleo_tripleo_lvmfilter_enabled: false
+tripleo_update_trusted_cas_ca_map: {}
 tuned_custom_profile: ''
 tuned_profile: virtual-host

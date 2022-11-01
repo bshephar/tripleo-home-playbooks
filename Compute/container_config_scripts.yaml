@@ -3,7 +3,6 @@ container_puppet_apply.sh:
     if [ -d /tmp/puppet-etc ]; then\n  # ignore copy failures as these may be the\
     \ same file depending on docker mounts\n  cp -a /tmp/puppet-etc/* /etc/puppet\
     \ || true\nfi\necho \"{\\\"step\\\": ${STEP}}\" > /etc/puppet/hieradata/docker_puppet.json\n\
-    # $::deployment_type in puppet-tripleo\nexport FACTER_deployment_type=containers\n\
     set +e\npuppet apply $EXTRA_ARGS \\\n    --verbose \\\n    --detailed-exitcodes\
     \ \\\n    --summarize \\\n    --color=false \\\n    --modulepath /etc/puppet/modules:/opt/stack/puppet-modules:/usr/share/openstack-puppet/modules\
     \ \\\n    --tags $TAGS \\\n    -e \"noop_resource('package'); noop_resource('service')\
@@ -81,8 +80,8 @@ nova_statedir_ownership.py:
     \               raise\n        else:\n            LOG.info('Ownership of %s already\
     \ %d:%d',\n                     self.path,\n                     uid,\n      \
     \               gid)\n\n    def chcon(self, context):\n        # If dir returns\
-    \ whether to recusively set context\n        try:\n            try:\n        \
-    \        selinux.lsetfilecon(self.path, context)\n                LOG.info('Setting\
+    \ whether to recursively set context\n        try:\n            try:\n       \
+    \         selinux.lsetfilecon(self.path, context)\n                LOG.info('Setting\
     \ selinux context of %s to %s',\n                     self.path, context)\n  \
     \              return True\n            except OSError as e:\n               \
     \ if self.is_dir and e.errno == 95:\n                    # Operation not supported,\
@@ -232,7 +231,7 @@ pacemaker_mutex_restart_bundle.sh:
     \nif pacemaker_supports_promoted; then\n    WAIT_TARGET_LOCAL=$(echo \"$5\" |\
     \ sed -e 's/Master/Promoted/' -e 's/Slave/Unpromoted/')\n    WAIT_TARGET_ANYWHERE=$(echo\
     \ \"${6:-_}\" | sed -e 's/Master/Promoted/' -e 's/Slave/Unpromoted/')\n    promoted_role=\"\
-    Promoted\"\nelse\n    promoted_role=\"Master\"\nfi\n\n# The lock TTL should accomodate\
+    Promoted\"\nelse\n    promoted_role=\"Master\"\nfi\n\n# The lock TTL should accommodate\
     \ for the resource start/promote timeout\nif [ \"$RESOURCE_NAME\" != \"$BUNDLE_NAME\"\
     \ ]; then\n    if [ \"$WAIT_TARGET_LOCAL\" = \"$promoted_role\" ] || [ \"$WAIT_TARGET_ANYWHERE\"\
     \ = \"$promoted_role\" ]; then\n        rsc_op=\"promote\"\n    else\n       \
@@ -304,7 +303,7 @@ pacemaker_mutex_shutdown.sh:
     \ is not running locally, no need to acquire the shutdown lock\"\n        exit\
     \ 0\n    else\n        error \"Unexpected error while connecting to the cluster\
     \ (rc: $rc), bailing out\"\n    fi\nfi\n\n# We start with a very high TTL, that\
-    \ long enough to accomodate a cluster stop.\n# As soon as the node will get offline,\
+    \ long enough to accommodate a cluster stop.\n# As soon as the node will get offline,\
     \ the other competing node will be entitled\n# to steal the lock, so they should\
     \ never wait that long in practice.\nLOCK_TTL=600\n\n\ncase $ACTION in\n    --help)\
     \ usage; exit 0;;\n    --acquire|-a) shutdown_lock_acquire ${LOCK_NAME} ${LOCK_OWNER}\
@@ -480,7 +479,7 @@ pacemaker_wait_bundle.sh:
     \   once per node that hosts a service replica.\n#  - the purpose of this script\
     \ is to ensure that restarting the\n#    service replica locally won't disrupt\
     \ the service availability\n#    for the end user. To reach that goal, the script\
-    \ waits until the\n#    service is restarted locally or globallu and reaches a\
+    \ waits until the\n#    service is restarted locally or globally and reaches a\
     \ given\n#    target state (i.e. Started, Slave or Master).\n# design note 2:\n\
     #   - we don't want to track restart error: our only job is to ensure\n#     service\
     \ restart synchronization, not service health.\n#   - In particular, we don't\

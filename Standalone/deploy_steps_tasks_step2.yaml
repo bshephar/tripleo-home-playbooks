@@ -79,10 +79,6 @@
       tripleo_ha_wrapper_service_name: haproxy
   name: HAproxy HA Wrappers Step
   when: step|int == 2
-- include_role:
-    name: tripleo_iscsid
-    tasks_from: configure.yml
-  name: Configure iscsid
 - block:
   - import_role:
       name: tripleo_ha_wrapper

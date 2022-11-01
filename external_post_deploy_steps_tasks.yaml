@@ -1,5 +1,5 @@
 - block:
-  - name: is additonal Cell?
+  - name: is additional Cell?
     set_fact:
       nova_additional_cell: false
   - block:

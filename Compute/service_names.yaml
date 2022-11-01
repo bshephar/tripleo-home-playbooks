@@ -9,7 +9,7 @@
 - nova_migration_target
 - logrotate_crond
 - podman
-- snmp
+- snmp_disabled
 - sshd
 - chrony
 - timezone

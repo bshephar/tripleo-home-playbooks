@@ -1,3 +1,5 @@
+ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
+ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 ansible_async_dir: /tmp/.ansible_async
 any_errors_fatal: true
 bond_interface_ovs_options: bond_mode=active-backup
@@ -64,14 +66,6 @@ internal_api_mtu: 9000
 internal_api_vlan_id: 20
 local_mtu: 1500
 management_mtu: 1500
-map_merge:
-- ContainerIscsidConfigImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  ContainerIscsidImage: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
-  tripleo_tripleo_lvmfilter_devices_allowlist: []
-  tripleo_tripleo_lvmfilter_devices_denylist:
-  - .*
-  tripleo_tripleo_lvmfilter_enabled: false
-- tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 max_fail_percentage: 0
 network_cidrs:
   External_cidr: '16'
@@ -127,7 +121,7 @@ service_configs:
   neutron::agents::ovn_metadata::debug: false
   neutron::agents::ovn_metadata::metadata_host: 192.168.1.25
   neutron::agents::ovn_metadata::metadata_protocol: http
-  neutron::agents::ovn_metadata::metadata_workers: '8'
+  neutron::agents::ovn_metadata::metadata_workers: 8
   neutron::agents::ovn_metadata::ovsdb_connection_timeout: 180
   neutron::agents::ovn_metadata::ovsdb_probe_interval: 60000
   neutron::agents::ovn_metadata::shared_secret: tbSWhJKGivgVP7R2jav8YD9Cy
@@ -145,7 +139,6 @@ service_configs:
   neutron::notification_driver:
   - noop
   neutron::purge_config: false
-  neutron::rabbit_heartbeat_in_pthread: false
   neutron::rabbit_heartbeat_timeout_threshold: 60
   neutron::report_interval: 300
   neutron::rpc_response_timeout: 60
@@ -301,7 +294,6 @@ service_configs:
   nova::policy::policies: {}
   nova::policy::purge_config: true
   nova::purge_config: false
-  nova::rabbit_heartbeat_in_pthread: false
   nova::rabbit_heartbeat_timeout_threshold: 60
   nova::rabbit_use_ssl: 'False'
   nova::ram_allocation_ratio: 1.5
@@ -335,6 +327,7 @@ service_configs:
   - datacentre:br-ex
   ovn::controller::ovn_cms_options: enable-chassis-as-gw
   ovn::controller::ovn_encap_ip: '%{lookup(''tenant'')}'
+  ovn::controller::ovn_encap_tos: '0'
   ovn::controller::ovn_encap_type: geneve
   ovn::controller::ovn_monitor_all: true
   ovn::controller::ovn_openflow_probe_interval: 60
@@ -345,10 +338,6 @@ service_configs:
   - network=writeback
   rbd_persistent_storage: false
   resume_guests_state_on_host_boot: false
-  snmp::agentaddress:
-  - udp:161
-  - udp6:[::1]:161
-  snmp::snmpd_options: -LS0-5d
   tripleo::packages::enable_install: true
   tripleo::profile::base::database::mysql::client::enable_ssl: false
   tripleo::profile::base::database::mysql::client::mysql_client_bind_address: '%{lookup(''internal_api'')}'
@@ -437,9 +426,6 @@ service_configs:
   tripleo::profile::base::nova::virtlogd_wrapper::enable_wrapper: true
   tripleo::profile::base::nova::virtlogd_wrapper::virtlogd_image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
   tripleo::profile::base::nova::virtlogd_wrapper::virtlogd_process_wrapper: /var/lib/container-config-scripts/virtlogd_wrapper
-  tripleo::profile::base::snmp::snmpd_auth_type: MD5
-  tripleo::profile::base::snmp::snmpd_password: f0uHSRmpNG8MM0bebdKexm6t
-  tripleo::profile::base::snmp::snmpd_user: ro_snmp_user
   tripleo::profile::base::sshd::listen:
   - '%{lookup(''internal_api'')}'
   - '%{lookup(''internal_api'')}'
@@ -467,7 +453,6 @@ service_configs:
   tripleo::profile::base::sshd::password_authentication: 'no'
   tripleo::profile::base::sshd::port:
   - 2022
-  tripleo::trusted_cas::ca_map: {}
   vhostuser_socket_group: qemu
   vswitch::ovs::enable_hw_offload: false
   vswitch::ovs::vlan_limit: 0
@@ -484,7 +469,7 @@ service_names:
 - nova_migration_target
 - logrotate_crond
 - podman
-- snmp
+- snmp_disabled
 - sshd
 - chrony
 - timezone
@@ -601,10 +586,12 @@ tripleo_firewall_rules:
     proto: udp
     state: []
     table: raw
+  124 snmp:
+    extras:
+      ensure: absent
   124 snmp 192.168.1.0/24:
-    dport: 161
-    proto: udp
-    source: 192.168.1.0/24
+    extras:
+      ensure: absent
   200 nova_libvirt:
     dport:
     - 16514
@@ -671,7 +658,7 @@ tripleo_firewall_ssl_frontend_rules:
   100 swift_proxy_server_haproxy_frontend_ssl:
     dport:
     - 13808
-tripleo_iscsid_chap_algs: SHA3-256,SHA256,SHA1,MD5
+tripleo_iscsid_image: quay.io/tripleomastercentos9/openstack-iscsid:current-tripleo
 tripleo_kernel_extra_modules: {}
 tripleo_kernel_extra_packages: {}
 tripleo_kernel_sysctl_extra_settings:
@@ -711,14 +698,16 @@ tripleo_kernel_sysctl_extra_settings:
     value: 0
   net.ipv6.ip_nonlocal_bind:
     value: 1
-  vm.unprivileged_userfaultfd:
-    value: 1
 tripleo_network_config_os_net_config_mappings: {}
 tripleo_network_config_override: {}
 tripleo_network_config_template: /home/stack/templates/nic-configs/compute-bridge-vlans.j2
-tripleo_network_config_with_ansible: true
 tripleo_nova_libvirt_virsh_container: nova_virtproxyd
-tripleo_podman_tls_verify: 'true'
+tripleo_podman_tls_verify: 'false'
 tripleo_stack_name: overcloud
+tripleo_tripleo_lvmfilter_devices_allowlist: []
+tripleo_tripleo_lvmfilter_devices_denylist:
+- .*
+tripleo_tripleo_lvmfilter_enabled: false
+tripleo_update_trusted_cas_ca_map: {}
 tuned_custom_profile: ''
 tuned_profile: virtual-host

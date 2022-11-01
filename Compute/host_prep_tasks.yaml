@@ -1,11 +1,11 @@
 - include_role:
     name: tripleo_firewall
   name: Run firewall role
-  vars:
-    tripleo_firewall_engine: iptables
+- include_role:
+    name: tripleo_update_trusted_cas
 - include_role:
     name: tripleo_iscsid
-    tasks_from: iscsid_install.yaml
+    tasks_from: install.yml
   name: Iscsid install tasks
 - include_role:
     name: tripleo_kernel
@@ -168,7 +168,7 @@
   name: ensure ceph configurations exist
 - name: is Instance HA enabled
   set_fact:
-    instance_ha_enabled: false
+    instanceha_enabled: false
 - name: enable virt_sandbox_use_netlink for healthcheck
   seboolean:
     name: virt_sandbox_use_netlink
@@ -228,7 +228,7 @@
         \ Via https://review.opendev.org/#/c/492247/ os_interface has been deprecated\
         \ in queens\n    # and we need to use 'valid_interfaces' which is a:\n   \
         \ # \"List of interfaces, in order of preference, for endpoint URL. (list\
-        \ value)\"\n    # Since it is not explicitely set in nova.conf we still keep\
+        \ value)\"\n    # Since it is not explicitly set in nova.conf we still keep\
         \ the check for os_interface\n    elif 'valid_interfaces' in options and len(options[\"\
         valid_interfaces\"]) >= 1:\n        nova_endpoint_type = options[\"valid_interfaces\"\
         ][0]\n\n    # This mimicks the code in novaclient/shell.py\n    if nova_endpoint_type\
@@ -271,15 +271,12 @@
       dest: /var/lib/nova/instanceha/check-run-nova-compute
       mode: 493
     name: install Instance HA script that runs nova-compute
-  - command: hiera -c /etc/puppet/hiera.yaml compute_instanceha_short_node_names
-    name: Get list of instance HA compute nodes
-    register: iha_nodes
   - file: path=/var/lib/nova/instanceha/enabled state=touch
     name: If instance HA is enabled on the node activate the evacuation completed
       check
-    when: iha_nodes.stdout|lower is search('"'+ansible_facts['hostname']|lower+'"')
+    when: '''compute_instanceha'' in service_names'
   name: install Instance HA recovery script
-  when: instance_ha_enabled|bool
+  when: instanceha_enabled|bool
 - name: Do we prepend nova startup with a delay
   set_fact:
     nova_compute_delay: 0
@@ -350,7 +347,6 @@
   - path: /var/lib/nova
     setype: container_file_t
   - path: /run/libvirt
-    setype: virt_var_run_t
   - path: /var/log/libvirt
     setype: container_file_t
   - path: /var/log/libvirt/qemu
@@ -427,9 +423,13 @@
     set_fact:
       tripleo_container_default_pids_limit: 4096
       tripleo_container_events_logger_mechanism: journald
-      tripleo_container_registry_login: false
+      tripleo_container_registry_insecure_registries:
+      - registry.okd.bne-shift.net:8443
+      tripleo_container_registry_login: true
       tripleo_container_registry_logins: {}
-      tripleo_container_registry_logins_json: {}
+      tripleo_container_registry_logins_json:
+        registry.okd.bne-shift.net:8443:
+          init: 40Z5ML8bNmDTQUS3f1pt6HPFucr29EV7
   - name: Convert logins json to dict
     no_log: true
     set_fact:
@@ -633,7 +633,7 @@
       \ $2\n}\n\ndelete_container() {\n  add_date \"Deleting container $1 ($2)\"\n\
       \  $CLI rm $2 || echo \"Deleting container $1 ($2) failed\"\n}\n\n\n{% raw -%}\n\
       if [ -f /proc/$PID/cgroup ]; then\n  # Get container ID based on process cgroups\n\
-      \  CT_ID=$(awk 'BEGIN {FS=\".scope|-\"} /0::|:pids:/ {if ($(NF-1)) print $(NF-1);exit}'\
+      \  CT_ID=$(awk 'BEGIN {FS=\".scope|-\"} /\\/libpod-/ {if ($(NF-1)) print $(NF-1);exit}'\
       \ /proc/$PID/cgroup)\n  CT_NAME=$($CLI inspect -f '{{.Name}}' $CT_ID)\n\n  case\
       \ $SIG in\n    HUP)\n      signal_container $CT_NAME $CT_ID\n      ;;\n    9)\n\
       \      kill_container $CT_NAME $CT_ID\n      ;;\n    15)\n      signal_container\

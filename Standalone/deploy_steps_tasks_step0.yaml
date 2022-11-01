@@ -1,4 +1,1 @@
-- include_role:
-    name: tripleo_iscsid
-    tasks_from: configure.yml
-  name: Configure iscsid
+[]

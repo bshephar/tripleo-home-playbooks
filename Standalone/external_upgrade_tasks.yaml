@@ -1,7 +1,8 @@
 - block:
   - become: true
     command: '{{ container_cli }} exec cinder_api cinder-manage db online_data_migrations'
-    delegate_to: '{{ groups[''cinder_api''][0] }}'
+    delegate_to: '{{ (groups[''cinder_api''] | difference(groups[''excluded_overcloud'']))[0]
+      }}'
     name: Online data migration for Cinder
     tags:
     - online_upgrade
@@ -15,7 +16,8 @@
       tripleo_containers_to_stop:
       - cinder_api
       - cinder_api_cron
-      tripleo_delegate_to: '{{ groups[''cinder_api''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''cinder_api''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -28,7 +30,8 @@
     vars:
       tripleo_containers_to_stop:
       - cinder_scheduler
-      tripleo_delegate_to: '{{ groups[''cinder_scheduler''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''cinder_scheduler''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -42,7 +45,8 @@
     vars:
       tripleo_containers_to_stop:
       - clustercheck
-      tripleo_delegate_to: '{{ groups[''clustercheck''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''clustercheck''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -56,7 +60,8 @@
     vars:
       tripleo_containers_to_stop:
       - logrotate_crond
-      tripleo_delegate_to: '{{ groups[''logrotate_crond''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''logrotate_crond''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -71,7 +76,8 @@
       tripleo_containers_to_stop:
       - glance_api
       - glance_api_cron
-      tripleo_delegate_to: '{{ groups[''glance_api''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''glance_api''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -86,7 +92,8 @@
       tripleo_containers_to_stop:
       - heat_api
       - heat_api_cron
-      tripleo_delegate_to: '{{ groups[''heat_api''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''heat_api''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -100,7 +107,8 @@
     vars:
       tripleo_containers_to_stop:
       - heat_api_cfn
-      tripleo_delegate_to: '{{ groups[''heat_api_cfn''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''heat_api_cfn''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -114,7 +122,8 @@
     vars:
       tripleo_containers_to_stop:
       - heat_engine
-      tripleo_delegate_to: '{{ groups[''heat_engine''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''heat_engine''] | | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -128,7 +137,8 @@
     vars:
       tripleo_containers_to_stop:
       - horizon
-      tripleo_delegate_to: '{{ groups[''horizon''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''horizon''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -143,7 +153,8 @@
       tripleo_containers_to_stop:
       - keystone
       - keystone_cron
-      tripleo_delegate_to: '{{ groups[''keystone''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''keystone''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -157,7 +168,8 @@
     vars:
       tripleo_containers_to_stop:
       - memcached
-      tripleo_delegate_to: '{{ groups[''memcached''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''memcached''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -198,7 +210,8 @@
     vars:
       tripleo_containers_to_stop:
       - neutron_api
-      tripleo_delegate_to: '{{ groups[''neutron_api''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''neutron_api''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -213,7 +226,8 @@
       tripleo_containers_to_stop:
       - nova_api
       - nova_api_cron
-      tripleo_delegate_to: '{{ groups[''nova_api''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''nova_api''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -223,7 +237,8 @@
 - block:
   - become: true
     command: '{{ container_cli }} exec nova_conductor nova-manage db online_data_migrations'
-    delegate_to: '{{ groups[''nova_conductor''][0] }}'
+    delegate_to: '{{ (groups[''nova_conductor''] | difference(groups[''excluded_overcloud'']))[0]
+      }}'
     name: Online data migration for Nova
     tags:
     - online_upgrade
@@ -236,7 +251,8 @@
     vars:
       tripleo_containers_to_stop:
       - nova_conductor
-      tripleo_delegate_to: '{{ groups[''nova_conductor''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''nova_conductor''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -250,7 +266,8 @@
     vars:
       tripleo_containers_to_stop:
       - nova_metadata
-      tripleo_delegate_to: '{{ groups[''nova_metadata''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''nova_metadata''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -264,7 +281,8 @@
     vars:
       tripleo_containers_to_stop:
       - nova_scheduler
-      tripleo_delegate_to: '{{ groups[''nova_scheduler''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''nova_scheduler''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -278,7 +296,8 @@
     vars:
       tripleo_containers_to_stop:
       - nova_vnc_proxy
-      tripleo_delegate_to: '{{ groups[''nova_vnc_proxy''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''nova_vnc_proxy''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -292,7 +311,8 @@
     vars:
       tripleo_containers_to_stop:
       - octavia_api
-      tripleo_delegate_to: '{{ groups[''octavia_api''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''octavia_api''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -306,7 +326,8 @@
     vars:
       tripleo_containers_to_stop:
       - octavia_health_manager
-      tripleo_delegate_to: '{{ groups[''octavia_health_manager''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''octavia_health_manager''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -320,7 +341,8 @@
     vars:
       tripleo_containers_to_stop:
       - octavia_housekeeping
-      tripleo_delegate_to: '{{ groups[''octavia_housekeeping''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''octavia_housekeeping''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -334,7 +356,8 @@
     vars:
       tripleo_containers_to_stop:
       - octavia_worker
-      tripleo_delegate_to: '{{ groups[''octavia_worker''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''octavia_worker''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data
@@ -347,7 +370,8 @@
     name: Stop cluster
     shell: "set -eu\nFILE=/usr/sbin/pcs\nif test -f \"$FILE\"; then\n  /usr/sbin/pcs\
       \ cluster stop --force\nfi\n"
-    with_items: '{{ groups[''pacemaker''] | default([]) }}'
+    with_items: '{{ groups[''pacemaker''] | difference(groups[''excluded_overcloud''])
+      }}'
   tags:
   - never
   - system_upgrade_stop_services
@@ -362,7 +386,8 @@
       tripleo_containers_to_stop:
         with_items:
         - redis
-      tripleo_delegate_to: '{{ groups[''redis''] | default([]) }}'
+      tripleo_delegate_to: '{{ groups[''redis''] | difference(groups[''excluded_overcloud''])
+        }}'
   tags:
   - never
   - system_upgrade_transfer_data

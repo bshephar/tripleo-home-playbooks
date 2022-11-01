@@ -1,13 +1,14 @@
 - block:
-  - name: create ovn mac address for Standalone role nodes
-    tripleo_ovn_mac_addresses:
+  - include_role:
+      name: tripleo_ovn
+      tasks_from: externaldeploy.yml
+    name: Include external deploy tasks
+    vars:
       ovn_bridge_mappings:
       - datacentre:br-ex
       ovn_static_bridge_mac_mappings: {}
-      playbook_dir: '{{ playbook_dir }}'
-      role_name: Standalone
-      server_resource_names: '{{ groups["Standalone"] }}'
       stack_name: overcloud
+      tripleo_role_name: Standalone
   name: ovn_controller_external_deploy_init
   when:
   - step|int == 0
@@ -24,15 +25,16 @@
   when:
   - step|int == 0
 - block:
-  - name: create ovn mac address for Compute role nodes
-    tripleo_ovn_mac_addresses:
+  - include_role:
+      name: tripleo_ovn
+      tasks_from: externaldeploy.yml
+    name: Include external deploy tasks
+    vars:
       ovn_bridge_mappings:
       - datacentre:br-ex
       ovn_static_bridge_mac_mappings: {}
-      playbook_dir: '{{ playbook_dir }}'
-      role_name: Compute
-      server_resource_names: '{{ groups["Compute"] }}'
       stack_name: overcloud
+      tripleo_role_name: Compute
   name: ovn_controller_external_deploy_init
   when:
   - step|int == 0

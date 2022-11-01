@@ -5,8 +5,8 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
-    deploy_identifier: 1665140099
+    bootstrap_server_id: 29111558-a5a8-4065-b707-2600087b6416
+    deploy_identifier: 1667281683
     enable_debug: False
     enable_puppet: True
     container_cli: podman
@@ -16,21 +16,16 @@
     docker_puppet_process_count: 6
     docker_puppet_mount_host_puppet: True
   tasks:
+
     - name: Pre Deployment Step Tasks
       delegate_to: localhost
       run_once: true
       debug:
         msg: Use --start-at-task 'Pre Deployment Step Tasks' to resume from this task
-    - name: Standalone Pre Deployment Step Tasks block
-      include_tasks: Standalone/pre_deploy_step_tasks.yaml
-      when:
-        - tripleo_role_name == 'Standalone'
-        - playbook_dir ~ '/Standalone/pre_deploy_step_tasks.yaml' is exists
-    - name: Compute Pre Deployment Step Tasks block
-      include_tasks: Compute/pre_deploy_step_tasks.yaml
-      when:
-        - tripleo_role_name == 'Compute'
-        - playbook_dir ~ '/Compute/pre_deploy_step_tasks.yaml' is exists
+    - include_tasks: "{{ _task_file_path }}"
+      vars:
+        _task_file_path: "{{ tripleo_role_name }}/pre_deploy_step_tasks.yaml"
+      when: "'{{ playbook_dir }}/{{ _task_file_path }}' is exists"
   tags:
     - overcloud
     - pre_deploy_steps_tasks

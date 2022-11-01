@@ -81,8 +81,8 @@
     name: tripleo_container_tag
   name: Cinder Volume tag container image for pacemaker
   vars:
-    container_image: quay.io/tripleomastercentos9/openstack-cinder-volume:current-tripleo
-    container_image_latest: quay.io/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+    container_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+    container_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -198,8 +198,8 @@
     name: tripleo_container_tag
   name: HAproxy tag container image for pacemaker
   vars:
-    container_image: quay.io/tripleomastercentos9/openstack-haproxy:current-tripleo
-    container_image_latest: quay.io/tripleomastercentos9/openstack-haproxy:pcmklatest
+    container_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-haproxy:current-tripleo
+    container_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-haproxy:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -224,12 +224,10 @@
   - step|int == 1
 - include_role:
     name: tripleo_iscsid
-    tasks_from: configure.yml
-  name: Configure iscsid
-- include_role:
-    name: tripleo_iscsid
-    tasks_from: iscsid.yaml
+    tasks_from: run.yml
   name: Iscsid role
+  vars:
+    tripleo_iscsid_config_dir: /var/lib/config-data/puppet-generated/iscsid
   when:
   - step|int == 3
 - containers.podman.podman_container_info:
@@ -291,8 +289,8 @@
     name: tripleo_container_tag
   name: MySQL tag container image for pacemaker
   vars:
-    container_image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
-    container_image_latest: quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest
+    container_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:current-tripleo
+    container_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -362,6 +360,20 @@
   when:
   - step|int == 1
   - tripleo_nvdimm_pmem_namespaces != ''
+- block:
+  - name: Enable post-copy by setting unprivileged_userfaultfd
+    sysctl:
+      name: vm.unprivileged_userfaultfd
+      reload: true
+      state: present
+      sysctl_file: /etc/sysctl.d/99-tripleo-postcopy.conf
+      sysctl_set: true
+      value: 1
+  name: manage OS version 9 specific sysctls
+  when:
+  - step|int == 1
+  - ansible_facts['os_family'] == 'RedHat'
+  - ansible_facts['distribution_major_version'] is version('9', '==')
 - block:
   - name: is KSM enabled
     set_fact:
@@ -563,10 +575,13 @@
       tripleo_ovn_cluster_nb_db_port: 6641
       tripleo_ovn_cluster_nb_local_port: 6643
       tripleo_ovn_cluster_nb_remote_port: 6643
+      tripleo_ovn_cluster_nb_ssl_ca_cert: /etc/ipa/ca.crt
       tripleo_ovn_cluster_network: internal_api
+      tripleo_ovn_cluster_northd_ssl_ca_cert: /etc/ipa/ca.crt
       tripleo_ovn_cluster_sb_db_port: 6642
       tripleo_ovn_cluster_sb_local_port: 6644
       tripleo_ovn_cluster_sb_remote_port: 6644
+      tripleo_ovn_cluster_sb_ssl_ca_cert: /etc/ipa/ca.crt
   name: Prepare OVN cluster
   when: step|int == 1
 - block:
@@ -705,8 +720,8 @@
     name: tripleo_container_tag
   name: RabbitMQ tag container image for pacemaker
   vars:
-    container_image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo
-    container_image_latest: quay.io/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+    container_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+    container_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:pcmklatest
   when: step|int == 1
 - block:
   - import_role:
@@ -732,7 +747,7 @@
       name: '{{ prefetch_image }}'
       validate_certs: false
     delay: 5
-    loop: '{{ lookup(''file'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
+    loop: '{{ lookup(''template'', tripleo_role_name + ''/docker_config.yaml'', errors=''ignore'')
       | default(''{}'', True) | from_yaml | recursive_get_key_from_dict(key=''image'')
       | unique }}'
     loop_control:

@@ -55,6 +55,7 @@ mysql:
   octavia::db::mysql::dbname: octavia
   octavia::db::mysql::host: '%'
   octavia::db::mysql::password: peshpcOkRNosh44C3XNwUGxtw
+  octavia::db::mysql::persistence_dbname: octavia_persistence
   octavia::db::mysql::user: octavia
   placement::db::mysql::dbname: placement
   placement::db::mysql::host: '%'

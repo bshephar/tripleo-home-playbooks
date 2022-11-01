@@ -489,7 +489,9 @@
     when:
     - undercloud_hosts_entries is defined
   - name: Set container_registry_insecure_registries fact.
-    set_fact: {}
+    set_fact:
+      tripleo_container_registry_insecure_registries:
+      - registry.okd.bne-shift.net:8443
   - include_role:
       name: tripleo_podman
       tasks_from: tripleo_podman_install.yml
@@ -511,10 +513,18 @@
   name: redis_container_puppet_tmpfile_cleanup
   when: step|int == 1
 - name: Stop snmp service
-  service: name=snmpd state=stopped
+  service:
+    name: snmpd
+    state: stopped
   when:
   - step|int == 1
   - snmpd_enabled|bool
+- name: Uninstall net-snmp
+  package:
+    name: net-snmp
+    state: absent
+  when:
+  - step|int == 1
 - block:
   - failed_when: false
     name: Disable tripleo-iptables.service

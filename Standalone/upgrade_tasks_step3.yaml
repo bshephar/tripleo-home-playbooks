@@ -1,8 +1,8 @@
 - block:
   - name: Get container cinder_volume image
     set_fact:
-      cinder_volume_image: quay.io/tripleomastercentos9/openstack-cinder-volume:current-tripleo
-      cinder_volume_image_latest: quay.io/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+      cinder_volume_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+      cinder_volume_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:pcmklatest
   - command: '{{container_cli}} pull {{cinder_volume_image}}'
     delay: 3
     name: Pull latest cinder_volume images
@@ -30,8 +30,8 @@
 - block:
   - name: Get container haproxy image
     set_fact:
-      haproxy_image: quay.io/tripleomastercentos9/openstack-haproxy:current-tripleo
-      haproxy_image_latest: quay.io/tripleomastercentos9/openstack-haproxy:pcmklatest
+      haproxy_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-haproxy:current-tripleo
+      haproxy_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-haproxy:pcmklatest
   - command: '{{container_cli}} pull {{haproxy_image}}'
     delay: 3
     name: Pull latest haproxy images
@@ -75,8 +75,8 @@
 - block:
   - name: Get container galera image
     set_fact:
-      galera_image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
-      galera_image_latest: quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest
+      galera_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:current-tripleo
+      galera_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:pcmklatest
   - command: '{{container_cli}} pull {{galera_image}}'
     delay: 3
     name: Pull latest galera images
@@ -142,15 +142,15 @@
     name: Upgrade Mysql database from a temporary container
     shell: '{{ container_cli }} run --rm --log-driver=k8s-file --log-opt path=/var/log/containers/mysql/db-upgrade.log
       \ -u root --net=host -e "KOLLA_CONFIG_STRATEGY=COPY_ALWAYS" -v {{ mysql_upgrade_db_bind_mounts
-      | join('' -v '')}} "quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest"
+      | join('' -v '')}} "registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:pcmklatest"
       /bin/bash -ecx "$UPGRADE_SCRIPT"'
   name: Check and upgrade Mysql database after major version upgrade
   when: step|int == 3
 - block:
   - name: Get container rabbitmq image
     set_fact:
-      rabbitmq_image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo
-      rabbitmq_image_latest: quay.io/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+      rabbitmq_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+      rabbitmq_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:pcmklatest
   - command: '{{container_cli}} pull {{rabbitmq_image}}'
     delay: 3
     name: Pull latest rabbitmq images
@@ -175,52 +175,6 @@
   name: Retag the pacemaker image if containerized
   when:
   - step|int == 3
-- block:
-  - args:
-      creates: /etc/sysconfig/ip6tables.n-o-upgrade
-    name: blank ipv6 rule before activating ipv6 firewall.
-    shell: cat /etc/sysconfig/ip6tables > /etc/sysconfig/ip6tables.n-o-upgrade; cat</dev/null>/etc/sysconfig/ip6tables
-  - name: cleanup unmanaged rules pushed by iptables-services
-    shell: "iptables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT &>/dev/null\
-      \ && \\\n  iptables -D INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n\
-      iptables -C INPUT -p icmp -j ACCEPT &>/dev/null && \\\n  iptables -D INPUT -p\
-      \ icmp -j ACCEPT\niptables -C INPUT -i lo -j ACCEPT &>/dev/null && \\\n  iptables\
-      \ -D INPUT -i lo -j ACCEPT\niptables -C INPUT -p tcp -m state --state NEW -m\
-      \ tcp --dport 22 -j ACCEPT &>/dev/null && \\\n  iptables -D INPUT -p tcp -m\
-      \ state --state NEW -m tcp --dport 22 -j ACCEPT\niptables -C INPUT -j REJECT\
-      \ --reject-with icmp-host-prohibited &>/dev/null && \\\n  iptables -D INPUT\
-      \ -j REJECT --reject-with icmp-host-prohibited\niptables -C FORWARD -j REJECT\
-      \ --reject-with icmp-host-prohibited &>/dev/null && \\\n  iptables -D FORWARD\
-      \ -j REJECT --reject-with icmp-host-prohibited\n\nsed -i '/^-A INPUT -m state\
-      \ --state RELATED,ESTABLISHED -j ACCEPT$/d' /etc/sysconfig/iptables\nsed -i\
-      \ '/^-A INPUT -p icmp -j ACCEPT$/d' /etc/sysconfig/iptables\nsed -i '/^-A INPUT\
-      \ -i lo -j ACCEPT$/d' /etc/sysconfig/iptables\nsed -i '/^-A INPUT -p tcp -m\
-      \ state --state NEW -m tcp --dport 22 -j ACCEPT$/d' /etc/sysconfig/iptables\n\
-      sed -i '/^-A INPUT -j REJECT --reject-with icmp-host-prohibited$/d' /etc/sysconfig/iptables\n\
-      sed -i '/^-A FORWARD -j REJECT --reject-with icmp-host-prohibited$/d' /etc/sysconfig/iptables\n\
-      \nip6tables -C INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT &>/dev/null\
-      \ && \\\n  ip6tables -D INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n\
-      ip6tables -C INPUT -p ipv6-icmp -j ACCEPT &>/dev/null && \\\n  ip6tables -D\
-      \ INPUT -p ipv6-icmp -j ACCEPT\nip6tables -C INPUT -i lo -j ACCEPT &>/dev/null\
-      \ && \\\n  ip6tables -D INPUT -i lo -j ACCEPT\nip6tables -C INPUT -p tcp -m\
-      \ state --state NEW -m tcp --dport 22 -j ACCEPT &>/dev/null && \\\n  ip6tables\
-      \ -D INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\nip6tables\
-      \ -C INPUT -d fe80::/64 -p udp -m udp --dport 546 -m state --state NEW -j ACCEPT\
-      \ &>/dev/null && \\\n  ip6tables -D INPUT -d fe80::/64 -p udp -m udp --dport\
-      \ 546 -m state --state NEW -j ACCEPT\nip6tables -C INPUT -j REJECT --reject-with\
-      \ icmp6-adm-prohibited &>/dev/null && \\\n  ip6tables -D INPUT -j REJECT --reject-with\
-      \ icmp6-adm-prohibited\nip6tables -C FORWARD -j REJECT --reject-with icmp6-adm-prohibited\
-      \ &>/dev/null && \\\n  ip6tables -D FORWARD -j REJECT --reject-with icmp6-adm-prohibited\n\
-      \nsed -i '/^-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT$/d' /etc/sysconfig/ip6tables\n\
-      sed -i '/^-A INPUT -p ipv6-icmp -j ACCEPT$/d' /etc/sysconfig/ip6tables\nsed\
-      \ -i '/^-A INPUT -i lo -j ACCEPT$/d' /etc/sysconfig/ip6tables\nsed -i '/^-A\
-      \ INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT$/d' /etc/sysconfig/ip6tables\n\
-      sed -i '/^-A INPUT -d fe80::\\/64 -p udp -m udp --dport 546 -m state --state\
-      \ NEW -j ACCEPT$/d' /etc/sysconfig/ip6tables\nsed -i '/^-A INPUT -j REJECT --reject-with\
-      \ icmp6-adm-prohibited$/d' /etc/sysconfig/ip6tables\nsed -i '/^-A FORWARD -j\
-      \ REJECT --reject-with icmp6-adm-prohibited$/d' /etc/sysconfig/ip6tables"
-  when:
-  - (step | int) == 3
 - name: Gather missing facts
   setup:
     gather_subset:

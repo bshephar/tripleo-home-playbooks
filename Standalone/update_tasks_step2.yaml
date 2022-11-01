@@ -1,8 +1,8 @@
 - block:
   - name: Get container cinder_volume image
     set_fact:
-      cinder_volume_image: quay.io/tripleomastercentos9/openstack-cinder-volume:current-tripleo
-      cinder_volume_image_latest: quay.io/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+      cinder_volume_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+      cinder_volume_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:pcmklatest
   - command: '{{container_cli}} pull {{cinder_volume_image}}'
     delay: 3
     name: Pull latest cinder_volume images
@@ -37,8 +37,8 @@
 - block:
   - name: Get container haproxy image
     set_fact:
-      haproxy_image: quay.io/tripleomastercentos9/openstack-haproxy:current-tripleo
-      haproxy_image_latest: quay.io/tripleomastercentos9/openstack-haproxy:pcmklatest
+      haproxy_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-haproxy:current-tripleo
+      haproxy_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-haproxy:pcmklatest
   - command: '{{container_cli}} pull {{haproxy_image}}'
     delay: 3
     name: Pull latest haproxy images
@@ -66,8 +66,8 @@
 - block:
   - name: Get container galera image
     set_fact:
-      galera_image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
-      galera_image_latest: quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest
+      galera_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:current-tripleo
+      galera_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:pcmklatest
   - command: '{{container_cli}} pull {{galera_image}}'
     delay: 3
     name: Pull latest galera images
@@ -107,8 +107,8 @@
 - block:
   - name: Get container rabbitmq image
     set_fact:
-      rabbitmq_image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo
-      rabbitmq_image_latest: quay.io/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+      rabbitmq_image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+      rabbitmq_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:pcmklatest
   - command: '{{container_cli}} pull {{rabbitmq_image}}'
     delay: 3
     name: Pull latest rabbitmq images
@@ -141,16 +141,7 @@
     state: absent
   name: Delete if symlink
   when: swift_log_link.stat.islnk is defined and swift_log_link.stat.islnk
-- name: Special treatment for OpenvSwitch
-  register: ovs_upgrade
-  tripleo_ovs_upgrade: null
-  when:
-  - step|int == 2
-- name: Always ensure the openvswitch service is enabled and running after upgrades
-  service:
-    enabled: true
-    name: openvswitch
-    state: started
-  when:
-  - step|int == 2
-  - ovs_upgrade.changed|bool
+- include_role:
+    name: tripleo_packages
+    tasks_from: update_ovs.yml
+  when: step|int == 2

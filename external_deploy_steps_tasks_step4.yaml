@@ -1,21 +1,4 @@
 - become: true
-  loop:
-  - service_name: cinderv2
-    service_type: volumev2
-  - service_name: cinderv3
-    service_type: volume
-  loop_control:
-    index_var: cinder_api_service
-  name: Clean up legacy Cinder keystone catalog entries
-  openstack.cloud.catalog_service:
-    cloud: overcloud
-    name: '{{ item.service_name }}'
-    service_type: '{{ item.service_type }}'
-    state: absent
-  when:
-  - step|int == 4
-  - not ansible_check_mode|bool
-- become: true
   block:
   - include_role:
       name: tripleo_keystone_resources

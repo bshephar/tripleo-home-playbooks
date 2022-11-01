@@ -9,22 +9,22 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
+    bootstrap_server_id: 29111558-a5a8-4065-b707-2600087b6416
     step: '0'
-    deploy_identifier: 1665140099
+    deploy_identifier: 1667281683
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
     container_healthcheck_disabled: False
   tasks:
-    - include_tasks: Standalone/upgrade_tasks_step0.yaml
-      when: tripleo_role_name == 'Standalone'
+
+    - include_tasks: "{{ _task_file_path }}"
+      vars:
+        _task_file_path: "{{ tripleo_role_name }}/upgrade_tasks_step{{ step }}.yaml"
+      when: "'{{ playbook_dir }}/{{ _task_file_path }}' is exists"
       tags:
         - always
-    - include_tasks: Compute/upgrade_tasks_step0.yaml
-      when: tripleo_role_name == 'Compute'
-      tags:
-        - always
+
   tags:
     - upgrade_steps
     - upgrade_step0
@@ -35,22 +35,22 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
+    bootstrap_server_id: 29111558-a5a8-4065-b707-2600087b6416
     step: '1'
-    deploy_identifier: 1665140099
+    deploy_identifier: 1667281683
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
     container_healthcheck_disabled: False
   tasks:
-    - include_tasks: Standalone/upgrade_tasks_step1.yaml
-      when: tripleo_role_name == 'Standalone'
+
+    - include_tasks: "{{ _task_file_path }}"
+      vars:
+        _task_file_path: "{{ tripleo_role_name }}/upgrade_tasks_step{{ step }}.yaml"
+      when: "'{{ playbook_dir }}/{{ _task_file_path }}' is exists"
       tags:
         - always
-    - include_tasks: Compute/upgrade_tasks_step1.yaml
-      when: tripleo_role_name == 'Compute'
-      tags:
-        - always
+
   tags:
     - upgrade_steps
     - upgrade_step1
@@ -61,22 +61,22 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
+    bootstrap_server_id: 29111558-a5a8-4065-b707-2600087b6416
     step: '2'
-    deploy_identifier: 1665140099
+    deploy_identifier: 1667281683
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
     container_healthcheck_disabled: False
   tasks:
-    - include_tasks: Standalone/upgrade_tasks_step2.yaml
-      when: tripleo_role_name == 'Standalone'
+
+    - include_tasks: "{{ _task_file_path }}"
+      vars:
+        _task_file_path: "{{ tripleo_role_name }}/upgrade_tasks_step{{ step }}.yaml"
+      when: "'{{ playbook_dir }}/{{ _task_file_path }}' is exists"
       tags:
         - always
-    - include_tasks: Compute/upgrade_tasks_step2.yaml
-      when: tripleo_role_name == 'Compute'
-      tags:
-        - always
+
   tags:
     - upgrade_steps
     - upgrade_step2
@@ -87,22 +87,22 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
+    bootstrap_server_id: 29111558-a5a8-4065-b707-2600087b6416
     step: '3'
-    deploy_identifier: 1665140099
+    deploy_identifier: 1667281683
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
     container_healthcheck_disabled: False
   tasks:
-    - include_tasks: Standalone/upgrade_tasks_step3.yaml
-      when: tripleo_role_name == 'Standalone'
+
+    - include_tasks: "{{ _task_file_path }}"
+      vars:
+        _task_file_path: "{{ tripleo_role_name }}/upgrade_tasks_step{{ step }}.yaml"
+      when: "'{{ playbook_dir }}/{{ _task_file_path }}' is exists"
       tags:
         - always
-    - include_tasks: Compute/upgrade_tasks_step3.yaml
-      when: tripleo_role_name == 'Compute'
-      tags:
-        - always
+
   tags:
     - upgrade_steps
     - upgrade_step3
@@ -113,22 +113,22 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
+    bootstrap_server_id: 29111558-a5a8-4065-b707-2600087b6416
     step: '4'
-    deploy_identifier: 1665140099
+    deploy_identifier: 1667281683
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
     container_healthcheck_disabled: False
   tasks:
-    - include_tasks: Standalone/upgrade_tasks_step4.yaml
-      when: tripleo_role_name == 'Standalone'
+
+    - include_tasks: "{{ _task_file_path }}"
+      vars:
+        _task_file_path: "{{ tripleo_role_name }}/upgrade_tasks_step{{ step }}.yaml"
+      when: "'{{ playbook_dir }}/{{ _task_file_path }}' is exists"
       tags:
         - always
-    - include_tasks: Compute/upgrade_tasks_step4.yaml
-      when: tripleo_role_name == 'Compute'
-      tags:
-        - always
+
   tags:
     - upgrade_steps
     - upgrade_step4
@@ -139,22 +139,22 @@
   gather_facts: "{{ gather_facts | default(false) }}"
   any_errors_fatal: true
   vars:
-    bootstrap_server_id: fc00550c-efce-4e5a-b136-d5e66ef01896
+    bootstrap_server_id: 29111558-a5a8-4065-b707-2600087b6416
     step: '5'
-    deploy_identifier: 1665140099
+    deploy_identifier: 1667281683
     enable_debug: False
     container_cli: podman
     container_log_stdout_path: /var/log/containers/stdouts
     container_healthcheck_disabled: False
   tasks:
-    - include_tasks: Standalone/upgrade_tasks_step5.yaml
-      when: tripleo_role_name == 'Standalone'
+
+    - include_tasks: "{{ _task_file_path }}"
+      vars:
+        _task_file_path: "{{ tripleo_role_name }}/upgrade_tasks_step{{ step }}.yaml"
+      when: "'{{ playbook_dir }}/{{ _task_file_path }}' is exists"
       tags:
         - always
-    - include_tasks: Compute/upgrade_tasks_step5.yaml
-      when: tripleo_role_name == 'Compute'
-      tags:
-        - always
+
   tags:
     - upgrade_steps
     - upgrade_step5

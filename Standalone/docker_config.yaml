@@ -2,7 +2,7 @@ step_0:
   ovn_cluster_north_db_server:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-ovn-nb-db-server:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-nb-db-server:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -33,7 +33,7 @@ step_0:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-ovn-northd:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-northd:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -58,7 +58,7 @@ step_0:
   ovn_cluster_south_db_server:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-ovn-sb-db-server:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-sb-db-server:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -90,7 +90,7 @@ step_1:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-memcached:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-memcached:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -147,7 +147,7 @@ step_1:
       DB_ROOT_PASSWORD: 2nASGaGKnN
       KOLLA_BOOTSTRAP: true
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:current-tripleo
     net: host
     start_order: 1
     user: root
@@ -171,7 +171,7 @@ step_1:
     - 'mysql:'
     - /var/lib/mysql
     detach: false
-    image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:current-tripleo
     net: host
     start_order: 0
     user: root
@@ -182,8 +182,8 @@ step_1:
       KOLLA_BOOTSTRAP: true
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
       RABBITMQ_CLUSTER_COOKIE: pkfHIvq4mdPSYc173Anc
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:current-tripleo
     net: host
     privileged: false
     start_order: 0
@@ -198,7 +198,7 @@ step_1:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-redis:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-redis:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -216,7 +216,7 @@ step_1:
     - -c
     - chown -R redis:redis /var/log/redis
     detach: false
-    image: quay.io/tripleomastercentos9/openstack-redis:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-redis:current-tripleo
     net: none
     privileged: false
     start_order: 0
@@ -229,7 +229,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R cinder:cinder /var/log/cinder
-    image: quay.io/tripleomastercentos9/openstack-cinder-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-api:current-tripleo
     net: none
     privileged: false
     user: root
@@ -241,7 +241,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R cinder:cinder /var/log/cinder
-    image: quay.io/tripleomastercentos9/openstack-cinder-scheduler:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-scheduler:current-tripleo
     net: none
     privileged: false
     user: root
@@ -252,7 +252,7 @@ step_2:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:current-tripleo
     net: host
     restart: always
     start_order: 1
@@ -278,8 +278,8 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     start_order: 1
@@ -302,7 +302,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R glance:glance /var/log/glance
-    image: quay.io/tripleomastercentos9/openstack-glance-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-glance-api:current-tripleo
     net: none
     privileged: false
     user: root
@@ -314,7 +314,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R heat:heat /var/log/heat
-    image: quay.io/tripleomastercentos9/openstack-heat-engine:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-heat-engine:current-tripleo
     net: none
     user: root
     volumes:
@@ -325,7 +325,7 @@ step_2:
     - -c
     - touch /var/log/horizon/horizon.log ; chown -R apache:apache /var/log/horizon
       && chmod -R a+rx /etc/openstack-dashboard
-    image: quay.io/tripleomastercentos9/openstack-horizon:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-horizon:current-tripleo
     net: none
     user: root
     volumes:
@@ -337,7 +337,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R keystone:keystone /var/log/keystone
-    image: quay.io/tripleomastercentos9/openstack-keystone:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-keystone:current-tripleo
     net: none
     start_order: 1
     user: root
@@ -352,8 +352,8 @@ step_2:
     - include tripleo::profile::pacemaker::database::mysql_bundle
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-mariadb:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:current-tripleo
     ipc: host
     net: host
     start_order: 0
@@ -377,7 +377,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R neutron:neutron /var/log/neutron
-    image: quay.io/tripleomastercentos9/openstack-neutron-server:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-neutron-server:current-tripleo
     net: none
     privileged: false
     user: root
@@ -390,8 +390,8 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: none
     privileged: false
     user: root
@@ -404,8 +404,8 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
     user: root
@@ -417,8 +417,8 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-nova-conductor:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-conductor:current-tripleo
     net: none
     privileged: false
     user: root
@@ -429,7 +429,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R nova:nova /var/log/nova
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: none
     privileged: false
     user: root
@@ -442,7 +442,7 @@ step_2:
     - -c
     - mkdir -p /etc/octavia/conf.d/octavia-api; chown -R octavia:octavia /etc/octavia/conf.d/octavia-api;
       chown -R octavia:octavia /var/log/octavia
-    image: quay.io/tripleomastercentos9/openstack-octavia-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-api:current-tripleo
     net: none
     start_order: 0
     user: root
@@ -456,7 +456,7 @@ step_2:
     - -c
     - mkdir -p /etc/octavia/conf.d/octavia-health-manager; chown -R octavia:octavia
       /etc/octavia/conf.d/octavia-health-manager
-    image: quay.io/tripleomastercentos9/openstack-octavia-health-manager:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-health-manager:current-tripleo
     net: none
     start_order: 0
     user: root
@@ -468,7 +468,7 @@ step_2:
     - -c
     - mkdir -p /etc/octavia/conf.d/octavia-housekeeping; chown -R octavia:octavia
       /etc/octavia/conf.d/octavia-housekeeping
-    image: quay.io/tripleomastercentos9/openstack-octavia-housekeeping:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-housekeeping:current-tripleo
     net: none
     start_order: 0
     user: root
@@ -479,7 +479,7 @@ step_2:
     - /bin/bash
     - -c
     - mkdir -p /etc/octavia/conf.d/octavia-worker; chown -R octavia:octavia /etc/octavia/conf.d/octavia-worker
-    image: quay.io/tripleomastercentos9/openstack-octavia-worker:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-worker:current-tripleo
     net: none
     start_order: 0
     user: root
@@ -490,7 +490,7 @@ step_2:
     - /bin/bash
     - -c
     - chown -R placement:placement /var/log/placement
-    image: quay.io/tripleomastercentos9/openstack-placement-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-placement-api:current-tripleo
     net: none
     start_order: 1
     user: root
@@ -508,8 +508,8 @@ step_2:
       KOLLA_BOOTSTRAP: true
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
       RABBITMQ_CLUSTER_COOKIE: pkfHIvq4mdPSYc173Anc
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-rabbitmq:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:current-tripleo
     ipc: host
     net: host
     start_order: 0
@@ -529,11 +529,13 @@ step_2:
     - /bin/true:/bin/epmd
 step_3:
   cinder_api_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-cinder-api:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-api:current-tripleo
     net: host
     privileged: false
     user: root
@@ -555,7 +557,7 @@ step_3:
     - /bin/bash
     - -c
     - chown -R cinder:cinder /var/log/cinder
-    image: quay.io/tripleomastercentos9/openstack-cinder-volume:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:current-tripleo
     net: none
     privileged: false
     start_order: 0
@@ -563,13 +565,15 @@ step_3:
     volumes:
     - /var/log/containers/cinder:/var/log/cinder
   glance_api_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     command: /usr/bin/bootstrap_host_exec glance_api su glance -s /bin/bash -c '/usr/local/bin/kolla_start'
     detach: false
     environment:
       KOLLA_BOOTSTRAP: true
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-glance-api:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-glance-api:current-tripleo
     net: host
     privileged: false
     user: root
@@ -591,11 +595,13 @@ step_3:
     - /var/lib/config-data/puppet-generated/iscsid/etc/iscsi:/var/lib/kolla/config_files/src-iscsid:ro
     - /var/lib/glance:/var/lib/glance:slave
   heat_engine_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-heat-engine:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-heat-engine:current-tripleo
     net: host
     privileged: false
     user: root
@@ -622,7 +628,7 @@ step_3:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-horizon:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-horizon:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -643,11 +649,13 @@ step_3:
     - /var/tmp/horizon:/var/tmp:z
     - /var/www:/var/www:ro
   neutron_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-neutron-server:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-neutron-server:current-tripleo
     net: host
     privileged: false
     user: root
@@ -666,11 +674,13 @@ step_3:
     - /var/lib/kolla/config_files/neutron_api_db_sync.json:/var/lib/kolla/config_files/config.json:ro
     - /var/lib/config-data/puppet-generated/neutron:/var/lib/kolla/config_files/src:ro
   nova_api_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: host
     start_order: 0
     user: root
@@ -692,7 +702,7 @@ step_3:
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: host
     start_order: 1
     user: root
@@ -712,11 +722,13 @@ step_3:
     - /var/lib/config-data/puppet-generated/nova:/var/lib/kolla/config_files/src:ro
     - /var/lib/container-config-scripts/nova_api_ensure_default_cells.sh:/nova_api_ensure_default_cells.sh:ro
   nova_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-nova-conductor:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-conductor:current-tripleo
     net: host
     start_order: 3
     user: root
@@ -738,9 +750,9 @@ step_3:
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
       __OS_DEBUG: 'false'
-    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
     security_opt:
@@ -754,7 +766,7 @@ step_3:
     cgroupns: host
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     privileged: true
@@ -784,7 +796,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -799,7 +811,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -832,7 +844,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -846,7 +858,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -879,7 +891,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -893,7 +905,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -926,7 +938,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -941,7 +953,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -974,7 +986,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -988,7 +1000,7 @@ step_3:
     - tripleo_nova_virtlogd_wrapper.service
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
     pids_limit: 65536
@@ -1021,7 +1033,7 @@ step_3:
     - /etc/selinux/config:/etc/selinux/config:ro
     - /etc/libvirt:/etc/libvirt:shared
     - /etc/ssh/ssh_known_hosts:/etc/ssh/ssh_known_hosts:ro
-    - /run/libvirt:/run/libvirt:shared
+    - /run/libvirt:/run/libvirt:shared,z
     - /var/lib/nova:/var/lib/nova:shared
     - /var/lib/libvirt:/var/lib/libvirt:shared
     - /var/cache/libvirt:/var/cache/libvirt:shared
@@ -1030,11 +1042,13 @@ step_3:
     - /var/lib/tripleo-config/ceph:/var/lib/kolla/config_files/src-ceph:ro
     - /var/lib/kolla/config_files/nova_virtstoraged.json:/var/lib/kolla/config_files/config.json:ro
   octavia_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-octavia-api:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-api:current-tripleo
     net: host
     privileged: false
     start_order: 0
@@ -1054,11 +1068,13 @@ step_3:
     - /var/log/containers/octavia:/var/log/octavia:z
     - /run/octavia:/run/octavia:shared,z
   placement_api_db_sync:
+    cap_add:
+    - AUDIT_WRITE
     detach: false
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-placement-api:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-placement-api:current-tripleo
     net: host
     start_order: 1
     user: root
@@ -1084,8 +1100,8 @@ step_3:
       /swift_ringbuilder/etc/swift/backups
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
     net: none
     user: root
     volumes:
@@ -1093,13 +1109,20 @@ step_3:
     - /var/lib/config-data/puppet-generated/swift_ringbuilder:/swift_ringbuilder:ro
   swift_setup_srv:
     command:
-    - chown
-    - -R
-    - 'swift:'
+    - find
     - /srv/node
+    - -maxdepth
+    - '1'
+    - -type
+    - d
+    - -exec
+    - chown
+    - 'swift:'
+    - '{}'
+    - ;
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-swift-account:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-account:current-tripleo
     net: none
     user: root
     volumes:
@@ -1110,7 +1133,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-cinder-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1134,7 +1157,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron cinder
-    image: quay.io/tripleomastercentos9/openstack-cinder-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1158,7 +1181,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: quay.io/tripleomastercentos9/openstack-cinder-scheduler:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-scheduler:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1180,7 +1203,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-glance-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-glance-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1207,7 +1230,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron glance
-    image: quay.io/tripleomastercentos9/openstack-glance-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-glance-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1232,7 +1255,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-heat-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-heat-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1256,7 +1279,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-heat-api-cfn:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-heat-api-cfn:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1280,7 +1303,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron heat
-    image: quay.io/tripleomastercentos9/openstack-heat-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-heat-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1304,7 +1327,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: quay.io/tripleomastercentos9/openstack-heat-engine:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-heat-engine:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1337,7 +1360,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron
-    image: quay.io/tripleomastercentos9/openstack-cron:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cron:current-tripleo
     net: none
     pid: host
     privileged: true
@@ -1361,7 +1384,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-neutron-server:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-neutron-server:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1385,7 +1408,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1410,7 +1433,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron nova
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1435,7 +1458,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: quay.io/tripleomastercentos9/openstack-nova-conductor:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-conductor:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1457,7 +1480,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: host
     restart: always
     start_order: 2
@@ -1477,11 +1500,13 @@ step_4:
     - /var/lib/kolla/config_files/nova_metadata.json:/var/lib/kolla/config_files/config.json:ro
     - /var/lib/config-data/puppet-generated/nova_metadata:/var/lib/kolla/config_files/src:ro
   nova_migration_target:
+    cap_add:
+    - AUDIT_WRITE
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -1506,7 +1531,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: quay.io/tripleomastercentos9/openstack-nova-scheduler:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-scheduler:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1528,7 +1553,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-nova-novncproxy:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-novncproxy:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1550,7 +1575,7 @@ step_4:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
       __OS_DEBUG: 'false'
-    image: quay.io/tripleomastercentos9/openstack-nova-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-api:current-tripleo
     net: host
     privileged: false
     start_order: 3
@@ -1575,7 +1600,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-octavia-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-api:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -1599,7 +1624,7 @@ step_4:
   octavia_driver_agent:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-octavia-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-api:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -1625,7 +1650,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 6642
-    image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     net: host
     privileged: true
     restart: always
@@ -1644,7 +1669,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     pid: host
     privileged: true
@@ -1674,7 +1699,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-placement-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-placement-api:current-tripleo
     net: host
     restart: always
     start_order: 1
@@ -1698,7 +1723,7 @@ step_4:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
       __OS_DEBUG: 'false'
-    image: quay.io/tripleomastercentos9/openstack-placement-api:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-placement-api:current-tripleo
     net: host
     privileged: false
     start_order: 2
@@ -1726,8 +1751,8 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1665140099'
-    image: quay.io/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true
     start_order: 0
@@ -1749,7 +1774,7 @@ step_4:
   swift_account_auditor:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-swift-account:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-account:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1772,7 +1797,7 @@ step_4:
   swift_account_reaper:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-swift-account:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-account:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1797,7 +1822,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-account:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-account:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1822,7 +1847,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-account:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-account:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1845,7 +1870,7 @@ step_4:
   swift_container_auditor:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-swift-container:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-container:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1870,7 +1895,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-container:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-container:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1895,7 +1920,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-container:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-container:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1918,7 +1943,7 @@ step_4:
   swift_container_updater:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-swift-container:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-container:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1941,7 +1966,7 @@ step_4:
   swift_object_auditor:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-swift-object:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-object:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1964,7 +1989,7 @@ step_4:
   swift_object_expirer:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
     net: host
     restart: always
     user: swift
@@ -1989,7 +2014,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-object:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-object:current-tripleo
     net: host
     restart: always
     user: swift
@@ -2014,7 +2039,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-object:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-object:current-tripleo
     net: host
     restart: always
     user: swift
@@ -2037,7 +2062,7 @@ step_4:
   swift_object_updater:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-swift-object:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-object:current-tripleo
     net: host
     restart: always
     user: swift
@@ -2062,7 +2087,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-proxy-server:current-tripleo
     net: host
     restart: always
     start_order: 2
@@ -2087,7 +2112,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /usr/share/openstack-tripleo-common/healthcheck/cron swift
-    image: quay.io/tripleomastercentos9/openstack-swift-object:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-object:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -2115,7 +2140,7 @@ step_4:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-swift-object:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-swift-object:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -2144,7 +2169,7 @@ step_5:
       LIBGUESTFS_BACKEND: direct
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-compute:current-tripleo
     ipc: host
     net: host
     privileged: true
@@ -2179,12 +2204,35 @@ step_5:
     - /sys/bus/pci:/sys/bus/pci
     - /boot:/boot:ro
     - /var/lib/nova:/var/lib/nova:shared
+  nova_wait_for_compute_service:
+    detach: false
+    environment:
+      KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
+      __OS_DEBUG: 'false'
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-nova-compute:current-tripleo
+    net: host
+    start_order: 4
+    user: nova
+    volumes:
+    - /etc/hosts:/etc/hosts:ro
+    - /etc/localtime:/etc/localtime:ro
+    - /etc/pki/ca-trust/extracted:/etc/pki/ca-trust/extracted:ro
+    - /etc/pki/ca-trust/source/anchors:/etc/pki/ca-trust/source/anchors:ro
+    - /etc/pki/tls/certs/ca-bundle.crt:/etc/pki/tls/certs/ca-bundle.crt:ro
+    - /etc/pki/tls/certs/ca-bundle.trust.crt:/etc/pki/tls/certs/ca-bundle.trust.crt:ro
+    - /etc/pki/tls/cert.pem:/etc/pki/tls/cert.pem:ro
+    - /dev/log:/dev/log
+    - /etc/puppet:/etc/puppet:ro
+    - /var/lib/kolla/config_files/nova_compute_wait_for_compute_service.json:/var/lib/kolla/config_files/config.json:ro
+    - /var/lib/config-data/puppet-generated/nova_libvirt:/var/lib/kolla/config_files/src:ro
+    - /var/log/containers/nova:/var/log/nova
+    - /var/lib/container-config-scripts:/container-config-scripts
   octavia_health_manager:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-octavia-health-manager:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-health-manager:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -2208,7 +2256,7 @@ step_5:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck
-    image: quay.io/tripleomastercentos9/openstack-octavia-housekeeping:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-housekeeping:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -2230,7 +2278,7 @@ step_5:
   octavia_rsyslog:
     environment:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
-    image: quay.io/tripleomastercentos9/openstack-rsyslog:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rsyslog:current-tripleo
     net: host
     privileged: false
     restart: always
@@ -2253,7 +2301,7 @@ step_5:
       KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
     healthcheck:
       test: /openstack/healthcheck 5672
-    image: quay.io/tripleomastercentos9/openstack-octavia-worker:current-tripleo
+    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-octavia-worker:current-tripleo
     net: host
     privileged: false
     restart: always

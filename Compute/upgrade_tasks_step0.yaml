@@ -52,7 +52,10 @@
     loop: '{{ dnf_module_list|list }}'
     name: Ensure DNF modules have the right stream
     vars:
-      dnf_module_list: []
+      dnf_module_list:
+      - distribution_version: '8'
+        module: container-tools
+        stream: '3.0'
     when:
     - dnf_module_list|length > 0
     - item.distribution_version is defined
@@ -63,15 +66,23 @@
       name:
       - jq
       - lvm2
-      - net-snmp
       - openstack-selinux
       - os-net-config
       - puppet-tripleo
       - python3-heat-agent*
-      - python3-openstackclient
       - rsync
       state: present
     when: ansible_facts['distribution_major_version'] is version('8', '==')
+  - name: Ensure TripleO prerequisite packages are installed and use role based heat
+      variable to provide specific list of packages
+    package:
+      name: '{{ base_tripleo_packages }}'
+      state: present
+    vars:
+      base_tripleo_packages: []
+    when:
+    - ansible_facts['distribution_major_version'] is version('8', '==')
+    - base_tripleo_packages|length > 0
   name: Package and repo update tasks
   when: step|int == 0
 - check_mode: false
