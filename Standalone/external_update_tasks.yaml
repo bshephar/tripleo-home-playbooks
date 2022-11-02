@@ -22,7 +22,7 @@
   become: true
   containers.podman.podman_image:
     force: true
-    name: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    name: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     validate_certs: false
   delegate_to: '{{ item }}'
   loop: '{{ groups[''ovn_controller''] | difference(groups[''excluded_overcloud''])
@@ -57,7 +57,7 @@
   name: OVN Container image used
   tags: ovn
   vars:
-    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   when: step|int == 1
 - async: 600
   become: true
@@ -74,7 +74,7 @@
     - tripleo_step4
     config_overrides:
       ovn_controller:
-        image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+        image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     config_patterns: ovn_controller.json
     debug: '{{ enable_debug | bool }}'
     log_base_path: '{{ container_log_stdout_path }}'

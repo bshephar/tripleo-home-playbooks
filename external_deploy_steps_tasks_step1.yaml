@@ -5,18 +5,7 @@
     tripleo_container_image_prepare_content:
       parameter_defaults:
         AdditionalArchitectures: []
-        ComputeContainerImagePrepare:
-        - set:
-            name_prefix: openstack-
-            name_suffix: ''
-            namespace: quay.io/tripleomastercentos9
-            neutron_driver: ovn
-            pushgateway_image: pushgateway
-            pushgateway_namespace: quay.io/prometheus
-            pushgateway_tag: v1.4.2
-            rhel_containers: false
-            tag: current-tripleo
-          tag_from_label: rdo_version
+        ComputeContainerImagePrepare: {}
         ComputeCount: 1
         ComputeServices:
         - OS::TripleO::Services::BootParams
@@ -40,8 +29,7 @@
         - OS::TripleO::Services::OVNController
         - OS::TripleO::Services::OVNMetadataAgent
         ContainerImagePrepare:
-        - push_destination: registry.okd.bne-shift.net:8443
-          set:
+        - set:
             ceph_alertmanager_image: alertmanager
             ceph_alertmanager_namespace: quay.io/prometheus
             ceph_alertmanager_tag: v0.23.0
@@ -79,8 +67,7 @@
         ContainerImageRegistryCredentials:
           registry.okd.bne-shift.net:8443:
             init: 40Z5ML8bNmDTQUS3f1pt6HPFucr29EV7
-        DockerInsecureRegistryAddress:
-        - registry.okd.bne-shift.net:8443
+        DockerInsecureRegistryAddress: []
         DockerRegistryMirror: ''
         NeutronMechanismDrivers:
         - ovn

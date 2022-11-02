@@ -702,7 +702,7 @@ tripleo_network_config_os_net_config_mappings: {}
 tripleo_network_config_override: {}
 tripleo_network_config_template: /home/stack/templates/nic-configs/compute-bridge-vlans.j2
 tripleo_nova_libvirt_virsh_container: nova_virtproxyd
-tripleo_podman_tls_verify: 'false'
+tripleo_podman_tls_verify: 'true'
 tripleo_stack_name: overcloud
 tripleo_tripleo_lvmfilter_devices_allowlist: []
 tripleo_tripleo_lvmfilter_devices_denylist:

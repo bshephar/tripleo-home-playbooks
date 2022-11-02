@@ -8,7 +8,7 @@ step_2:
     - include ::tripleo::profile::base::nova::virtlogd_wrapper
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667379345'
     image: quay.io/tripleomastercentos9/openstack-nova-libvirt:current-tripleo
     net: host
     pid: host
@@ -33,7 +33,7 @@ step_2:
     - -c
     - chown -R nova:nova /var/log/nova
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667379345'
     image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
     privileged: false
@@ -46,7 +46,7 @@ step_3:
     detach: false
     environment:
       NOVA_STATEDIR_OWNERSHIP_SKIP: triliovault-mounts
-      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667379345'
       __OS_DEBUG: 'false'
     image: quay.io/tripleomastercentos9/openstack-nova-compute:current-tripleo
     net: none
@@ -448,7 +448,7 @@ step_4:
     - include tripleo::profile::base::neutron::ovn_metadata
     detach: false
     environment:
-      TRIPLEO_DEPLOY_IDENTIFIER: '1667281683'
+      TRIPLEO_DEPLOY_IDENTIFIER: '1667379345'
     image: quay.io/tripleomastercentos9/openstack-neutron-metadata-agent-ovn:current-tripleo
     net: host
     privileged: true

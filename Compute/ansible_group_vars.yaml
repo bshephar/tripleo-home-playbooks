@@ -55,7 +55,7 @@ tripleo_kernel_sysctl_extra_settings:
   net.ipv6.ip_nonlocal_bind:
     value: 1
 tripleo_nova_libvirt_virsh_container: nova_virtproxyd
-tripleo_podman_tls_verify: 'false'
+tripleo_podman_tls_verify: 'true'
 tripleo_tripleo_lvmfilter_devices_allowlist: []
 tripleo_tripleo_lvmfilter_devices_denylist:
 - .*

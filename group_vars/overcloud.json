@@ -118,7 +118,7 @@
     ],
     "controller_node_ips": "192.168.1.7",
     "controller_node_names": "overcloud-controller-0",
-    "deploy_identifier": "1665140099",
+    "deploy_identifier": "1667281683",
     "designate_api_network": "internal_api",
     "designate_bind_network": "external",
     "designate_mdns_network": "internal_api",
@@ -174,7 +174,7 @@
         "placement",
         "podman",
         "redis",
-        "snmp",
+        "snmp_disabled",
         "sshd",
         "swift_proxy",
         "swift_ringbuilder",
@@ -746,18 +746,18 @@
         "overcloud-controller-0"
     ],
     "redis_vip": "172.16.2.135",
-    "snmp_bootstrap_node_ip": "192.168.1.6",
-    "snmp_enabled": true,
-    "snmp_node_ips": [
+    "snmp_disabled_bootstrap_node_ip": "192.168.1.6",
+    "snmp_disabled_enabled": true,
+    "snmp_disabled_node_ips": [
         "192.168.1.6",
         "192.168.1.7"
     ],
-    "snmp_node_names": [
+    "snmp_disabled_node_names": [
         "overcloud-compute-0.ctlplane.localdomain",
         "overcloud-controller-0.ctlplane.localdomain"
     ],
-    "snmp_short_bootstrap_node_name": "overcloud-compute-0",
-    "snmp_short_node_names": [
+    "snmp_disabled_short_bootstrap_node_name": "overcloud-compute-0",
+    "snmp_disabled_short_node_names": [
         "overcloud-compute-0",
         "overcloud-controller-0"
     ],

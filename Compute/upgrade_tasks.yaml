@@ -43,9 +43,7 @@
     when:
     - undercloud_hosts_entries is defined
   - name: Set container_registry_insecure_registries fact.
-    set_fact:
-      tripleo_container_registry_insecure_registries:
-      - registry.okd.bne-shift.net:8443
+    set_fact: {}
   - include_role:
       name: tripleo_podman
       tasks_from: tripleo_podman_install.yml

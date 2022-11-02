@@ -2,7 +2,7 @@
   become: true
   containers.podman.podman_image:
     force: true
-    name: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    name: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     validate_certs: false
   delegate_to: '{{ item }}'
   loop: '{{ groups[''ovn_controller''] | difference(groups[''excluded_overcloud''])

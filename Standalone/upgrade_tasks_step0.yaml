@@ -7,7 +7,7 @@
   - name: cinder_volume image facts
     set_fact:
       cinder_volume_image_current: '{{cinder_volume_image_current_res.stdout}}'
-      cinder_volume_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-cinder-volume:pcmklatest
+      cinder_volume_image_latest: quay.io/tripleomastercentos9/openstack-cinder-volume:pcmklatest
   - import_role:
       name: tripleo_container_tag
     name: Temporarily tag the current cinder_volume image id with the upgraded image
@@ -43,7 +43,7 @@
   - name: Image facts for haproxy
     set_fact:
       haproxy_image_current: '{{haproxy_image_current_res.stdout}}'
-      haproxy_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-haproxy:pcmklatest
+      haproxy_image_latest: quay.io/tripleomastercentos9/openstack-haproxy:pcmklatest
   - import_role:
       name: tripleo_container_tag
     name: Temporarily tag the current haproxy image id with the upgraded image name
@@ -84,7 +84,7 @@
   - name: Image facts for galera
     set_fact:
       galera_image_current: '{{galera_image_current_res.stdout}}'
-      galera_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-mariadb:pcmklatest
+      galera_image_latest: quay.io/tripleomastercentos9/openstack-mariadb:pcmklatest
   - import_role:
       name: tripleo_container_tag
     name: Temporarily tag the current galera image id with the upgraded image name
@@ -118,7 +118,7 @@
   - name: Image facts for rabbitmq
     set_fact:
       rabbitmq_image_current: '{{rabbitmq_image_current_res.stdout}}'
-      rabbitmq_image_latest: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-rabbitmq:pcmklatest
+      rabbitmq_image_latest: quay.io/tripleomastercentos9/openstack-rabbitmq:pcmklatest
   - block:
     - import_role:
         name: tripleo_container_tag

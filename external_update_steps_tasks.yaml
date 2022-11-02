@@ -22,7 +22,7 @@
   become: true
   containers.podman.podman_image:
     force: true
-    name: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
+    name: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
     validate_certs: false
   delegate_to: '{{ item }}'
   loop: '{{ groups[''ovn_controller''] | difference(groups[''excluded_overcloud''])
@@ -57,49 +57,6 @@
   name: OVN Container image used
   tags: ovn
   vars:
-    image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
-  when: step|int == 1
-- async: 600
-  become: true
-  delegate_to: '{{ item }}'
-  loop: '{{ groups[''ovn_controller''] | difference(groups[''excluded_overcloud''])
-    }}'
-  name: Update ovn_controller.
-  poll: 0
-  register: ovn_controller_update
-  tags: ovn
-  tripleo_container_manage:
-    config_dir: /var/lib/tripleo-config/container-startup-config/step_4
-    config_id:
-    - tripleo_step4
-    config_overrides:
-      ovn_controller:
-        image: registry.okd.bne-shift.net:8443/tripleomastercentos9/openstack-ovn-controller:current-tripleo
-    config_patterns: ovn_controller.json
-    debug: '{{ enable_debug | bool }}'
-    log_base_path: '{{ container_log_stdout_path }}'
-  when: step|int == 1
-- async_status:
-    jid: '{{ async_result_item.ansible_job_id }}'
-  become: true
-  delay: 1
-  delegate_to: '{{ async_result_item.item }}'
-  loop: '{{ovn_controller_update.results }}'
-  loop_control:
-    loop_var: async_result_item
-  name: Was the ovn_controller successful.
-  register: async_poll_results
-  retries: 600
-  tags: ovn
-  until: async_poll_results.finished
-  when:
-  - step|int == 1
-  - '''results'' in ovn_controller_update'
-- debug:
-    msg: ovn container will be using {{ image }}
-  name: OVN Container image used
-  tags: ovn
-  vars:
     image: quay.io/tripleomastercentos9/openstack-ovn-controller:current-tripleo
   when: step|int == 1
 - async: 600
@@ -122,3 +79,19 @@
     debug: '{{ enable_debug | bool }}'
     log_base_path: '{{ container_log_stdout_path }}'
   when: step|int == 1
+- async_status:
+    jid: '{{ async_result_item.ansible_job_id }}'
+  become: true
+  delay: 1
+  delegate_to: '{{ async_result_item.item }}'
+  loop: '{{ovn_controller_update.results }}'
+  loop_control:
+    loop_var: async_result_item
+  name: Was the ovn_controller successful.
+  register: async_poll_results
+  retries: 600
+  tags: ovn
+  until: async_poll_results.finished
+  when:
+  - step|int == 1
+  - '''results'' in ovn_controller_update'
